@@ -1,5 +1,5 @@
 # Korrijo
 
-A simple evaluator for handwritten exams.
+Un sistema sencillo que le permite al docente agilizar la corrección de exámenes manuscritos.
 
-This is the general README.
+En este README es importante indicar la estructura del repositorio.
