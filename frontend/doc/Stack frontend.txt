@@ -1,0 +1,7 @@
+- Next.js 16 + TypeScript (App Router)
+- Tailwind CSS + shadcn/ui para UI (esto último para componentes como botones, modales, formularios, tabs, etc.)
+- Lucide para iconos
+- react-hook-form + zod para formularios y validación del lado cliente
+- TanStack Query (antes React Query) para llamadas a la API del backend — cache, estados de loading/error, revalidación. Nos ahorramos muchísimo boilerplate.
+- Auth.js para el flujo de login (magic link + Google OAuth)
+- next-intl para i18n

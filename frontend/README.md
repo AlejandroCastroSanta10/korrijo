@@ -1,3 +1,3 @@
-# Korrijo frontend
+# Backend de Korrijo
 
-README for the frontend part.
+Aquí se explicará todo el frontend de la aplicación.
