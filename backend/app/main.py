@@ -1,12 +1,21 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+from app.api import health
+from app.core.config import settings
 
 app = FastAPI(
-    title="API de Korrijo",
-    description="Backend del sistema de corrección automática de exámenes manuscritos",
-    version="0.1.0-snapshot",
+    title=settings.app_name,
+    description="API del sistema de corrección automática de exámenes manuscritos",
+    version=settings.app_version,
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.cors_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-@app.get("/")
-async def root() -> dict[str, str]:
-    return {"message": "Korrijo API"}
+app.include_router(health.router)

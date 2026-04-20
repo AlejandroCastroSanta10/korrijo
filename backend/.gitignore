@@ -3,3 +3,6 @@
 
 # Pycaches
 *pycache*
+
+# Variables file
+.env
