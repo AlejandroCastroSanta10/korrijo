@@ -1,10 +1,4 @@
-- Python 3.12.X como lenguaje de programación
-- FastAPI para montar la API del backend + Pydantic v2 para schemas y validación
+- Python 3.12 como lenguaje de programación
+- FastAPI para montar la API del backend + Pydantic
 - SQLAlchemy 2.0 como ORM + Alembic para migraciones
-- Uvicorn como servidor web ASGI de desarrollo
-
-- PostgreSQL como BD relacional (via Docker)
-
-- uv como gestor de dependencias
-
-- pytest para tests
+- Uvicorn como servidor web de desarrollo
