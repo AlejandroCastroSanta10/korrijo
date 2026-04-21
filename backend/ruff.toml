@@ -1,0 +1,40 @@
+# Ruff configuration for the Korrijo backend.
+# Docs: https://docs.astral.sh/ruff/configuration/
+
+# Target the Python version used in the project
+target-version = "py312"
+
+# Standard line length (matches Black / most community tools)
+line-length = 100
+
+# Directories and files to exclude from linting
+extend-exclude = [
+    ".venv",
+    "__pycache__",
+]
+
+[lint]
+# Rule sets to enable. Start pragmatic, add more as the project matures.
+#   E, W     -> pycodestyle (PEP 8 style errors and warnings)
+#   F        -> pyflakes (unused imports, undefined names, etc.)
+#   I        -> isort (import ordering)
+#   B        -> flake8-bugbear (common bug patterns)
+#   UP       -> pyupgrade (suggest modern Python syntax)
+#   SIM      -> flake8-simplify (code simplification hints)
+#   RUF      -> Ruff-specific rules
+select = ["E", "W", "F", "I", "B", "UP", "SIM", "RUF"]
+
+# Rules explicitly disabled
+ignore = [
+    "E501",  # line too long (handled by the formatter)
+]
+
+[lint.per-file-ignores]
+# __init__.py files often re-export symbols; don't flag unused imports there.
+"__init__.py" = ["F401"]
+
+[format]
+# Use double quotes for strings (community default)
+quote-style = "double"
+# Indent with spaces
+indent-style = "space"
