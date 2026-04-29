@@ -22,3 +22,8 @@ npm run dev
 ```
 
 Abrir [http://localhost:3000](http://localhost:3000) en el navegador. La página raíz muestra el estado de la conexión con el backend.
+
+## Sistema de diseño
+
+Se usa shadcn/ui. Sus componentes instalados se ubican en `src/components/ui`. Si queremos modificar el estilo de la app habrá que modificar
+los ficheros `components.json` y `src/app/globals.css`. Si se desea también se pueden modificar/ampliar los componentes shadcn instalados.
