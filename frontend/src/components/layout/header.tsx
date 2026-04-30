@@ -5,8 +5,8 @@ import { BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const navLinks = [
-  { label: "Sobre la herramienta", href: "/#about" },
-  { label: "FAQs", href: "/#faqs" },
+  { label: "Sobre la herramienta", href: "/login#about" },
+  { label: "FAQs", href: "/login#faqs" },
   { label: "Ayuda", href: "/contact" },
 ];
 
@@ -15,7 +15,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 border-b border-zinc-200 bg-white/80 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/80">
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6">
         <Link
-          href="/"
+          href="/login#auth"
           className="flex items-center gap-2 font-bold text-zinc-900 dark:text-zinc-50"
         >
           <BookOpen className="size-5" />
@@ -34,8 +34,9 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* TODO: link a /login en v0.2.0 */}
-        <Button>¡Prueba Korrijo ahora!</Button>
+        <Button asChild>
+          <Link href="/login#auth">¡Prueba Korrijo ahora!</Link>
+        </Button>
       </div>
     </header>
   );
