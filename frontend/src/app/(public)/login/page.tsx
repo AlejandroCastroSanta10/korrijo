@@ -1,54 +1,29 @@
-"use client";
+import { Play } from "lucide-react";
+import AuthForm from "@/components/auth/auth-form";
 
-import { useEffect, useState } from "react";
-import { fetchHealth, type HealthResponse } from "@/lib/api";
-
-type Status =
-  | { kind: "loading" }
-  | { kind: "success"; data: HealthResponse }
-  | { kind: "error"; message: string };
-
-export default function Home() {
-  const [status, setStatus] = useState<Status>({ kind: "loading" });
-
-  useEffect(() => {
-    fetchHealth()
-      .then((data) => setStatus({ kind: "success", data }))
-      .catch((err: unknown) =>
-        setStatus({
-          kind: "error",
-          message: err instanceof Error ? err.message : "Error desconocido",
-        }),
-      );
-  }, []);
-
+export default function LandingPage() {
   return (
-    <div className="flex flex-1 items-center justify-center bg-zinc-50 dark:bg-black">
-      <main className="flex flex-col items-center gap-4 rounded-2xl border border-zinc-200 bg-white p-10 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-        <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">
-          Estado del backend
-        </h1>
+    <section
+      id="auth"
+      className="flex flex-1 flex-col gap-12 px-6 py-16 max-w-7xl mx-auto w-full"
+    >
+      <h1 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-5xl">
+        <span className="block">Céntrate en enseñar.</span>
+        <span className="block text-primary">
+          <i>Korrijo</i> se encarga del resto.
+        </span>
+      </h1>
 
-        {status.kind === "loading" && (
-          <p className="text-zinc-500">Comprobando conexión…</p>
-        )}
+      <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_2fr]">
+        <div className="flex flex-col justify-center items-center">
+          <AuthForm />
+        </div>
 
-        {status.kind === "success" && (
-          <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
-            <span className="text-lg">✓</span>
-            <span className="font-mono text-sm">
-              {JSON.stringify(status.data)}
-            </span>
-          </div>
-        )}
-
-        {status.kind === "error" && (
-          <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
-            <span className="text-lg">✗</span>
-            <span className="text-sm">{status.message}</span>
-          </div>
-        )}
-      </main>
-    </div>
+        {/* TODO: sustituir por vídeo demo en v0.2.0 */}
+        <div className="flex items-center justify-center rounded-2xl border border-zinc-200 bg-zinc-100 min-h-[500px] dark:border-zinc-700 dark:bg-zinc-800">
+          <Play className="size-16 text-zinc-400" />
+        </div>
+      </div>
+    </section>
   );
 }
