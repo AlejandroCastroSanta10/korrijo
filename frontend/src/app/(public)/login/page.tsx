@@ -63,7 +63,7 @@ export default function LandingPage() {
       {/* Sección 1: auth */}
       <section
         id="auth"
-        className="flex flex-1 flex-col gap-12 px-6 py-16 max-w-7xl mx-auto w-full"
+        className="flex flex-1 flex-col gap-12 px-6 py-16 max-w-7xl mx-auto w-full scroll-mt-16"
       >
         <h1 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-5xl">
           <span className="block">Céntrate en enseñar.</span>
@@ -87,7 +87,7 @@ export default function LandingPage() {
       {/* Sección 2: about (Sobre la herramienta) */}
       <section
         id="about"
-        className="bg-zinc-50 dark:bg-zinc-900 px-6 py-20"
+        className="bg-zinc-50 dark:bg-zinc-900 px-6 py-20 scroll-mt-16"
       >
         <div className="mx-auto max-w-5xl flex flex-col gap-12">
           <div className="flex flex-col items-center gap-4 text-center">
@@ -104,7 +104,7 @@ export default function LandingPage() {
             {steps.map(({ icon: Icon, number, description }) => (
               <div key={number} className="flex flex-col items-center gap-4 text-center h-full">
                 <Icon className="size-12 text-zinc-700 dark:text-zinc-300" strokeWidth={1.5} />
-                <p className="flex-1 text-sm text-zinc-600 dark:text-zinc-400">{description}</p>
+                <div className="flex-1 text-sm text-zinc-600 dark:text-zinc-400">{description}</div>
                 <span className="text-4xl font-bold text-zinc-300 dark:text-zinc-700">
                   {number}
                 </span>
@@ -115,7 +115,7 @@ export default function LandingPage() {
       </section>
 
       {/* Sección 3: FAQs */}
-      <section id="faqs" className="px-6 py-20">
+      <section id="faqs" className="px-6 py-20 scroll-mt-16">
         <div className="mx-auto max-w-3xl flex flex-col gap-12">
           <h2 className="text-3xl font-bold tracking-tight text-center text-zinc-900 dark:text-zinc-50 sm:text-4xl">
             Preguntas frecuentes (FAQs)

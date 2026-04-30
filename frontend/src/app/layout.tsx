@@ -13,7 +13,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className="scroll-smooth">
+    <html lang="es" data-scroll-behavior="smooth">
       <body className="flex min-h-screen flex-col">
         {children}
         <Toaster />
