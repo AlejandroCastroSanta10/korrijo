@@ -35,7 +35,7 @@ export default function Header() {
         </nav>
 
         {/* TODO: link a /login en v0.2.0 */}
-        <Button>Prueba Korrijo</Button>
+        <Button>¡Prueba Korrijo ahora!</Button>
       </div>
     </header>
   );
