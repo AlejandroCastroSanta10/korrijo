@@ -5,9 +5,9 @@ import { BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const navLinks = [
-  { label: "Sobre la herramienta", href: "#about" },
-  { label: "FAQs", href: "#faqs" },
-  { label: "Ayuda", href: "/contacto" },
+  { label: "Sobre la herramienta", href: "/#about" },
+  { label: "FAQs", href: "/#faqs" },
+  { label: "Ayuda", href: "/contact" },
 ];
 
 export default function Header() {
