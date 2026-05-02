@@ -28,11 +28,9 @@ pip install -r requirements-dev.txt
 
 ## Variables de entorno
 
-El backend usa `pydantic-settings` para cargar la configuración. Sus valores se sobreescriben si están declarados en un fichero `.env`.
+El backend usa `pydantic-settings` para cargar la configuración desde un fichero `.env`. Crear el `.env` es **obligatorio** porque `DATABASE_URL` no tiene valor por defecto.
 
-En `.env.example` hay una plantilla. Para desarrollo local, los valores por defecto definidos en `app/core/config.py` son suficientes, así que crear el `.env` es opcional. Esto es más de cara a producción.
-
-Pero para personalizar algún valor, copiar la plantilla y editarla:
+Copiar la plantilla y ajustar los valores si es necesario:
 
 ```bash
 cp .env.example .env
@@ -54,6 +52,20 @@ Por ahora son solo estos dos:
 
 - [http://localhost:8000/health](http://localhost:8000/health) — health check, devuelve `{"status": "ok"}`
 - [http://localhost:8000/docs](http://localhost:8000/docs) — documentación de la API con Swagger
+
+## Base de datos
+
+> Pre-requisito: los servicios de Docker deben estar corriendo (`docker compose up -d` desde la raíz).
+
+Las migraciones se gestionan con Alembic. Desde el directorio `backend/` con el entorno virtual activado:
+
+```bash
+# Aplicar todas las migraciones pendientes
+alembic upgrade head
+
+# Crear una nueva migración a partir de los cambios en los modelos
+alembic revision --autogenerate -m "descripción"
+```
 
 ## Desarrollo
 
