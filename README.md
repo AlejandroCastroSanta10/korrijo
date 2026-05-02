@@ -19,11 +19,37 @@ korrijo/
 
 ---
 
-## Requisitos previos
+## Requisitos para ejecutar la aplicación en local
 
 - [Node.js](https://nodejs.org/) 20+
 - [Python](https://www.python.org/) 3.12+
-- [Git](https://git-scm.com/)
+- [Docker](https://www.docker.com/)
+
+---
+
+## Infraestructura local
+
+La infraestructura de desarrollo (base de datos y servidor de correo) se gestiona con Docker Compose.
+
+Copia el fichero de variables de entorno y ajusta los valores si lo necesitas:
+
+```bash
+cp .env.example .env
+```
+
+| Comando | Efecto |
+|---|---|
+| `docker compose up -d` | Levanta los servicios en segundo plano |
+| `docker compose down` | Para y elimina los contenedores (los datos persisten) |
+| `docker compose down -v` | Para los contenedores y **borra también los volúmenes** (se pierden los datos) |
+
+### Servicios disponibles
+
+| Servicio | Puerto | Descripción |
+|---|---|---|
+| PostgreSQL | `5432` | Base de datos principal |
+| Mailpit (SMTP) | `1025` | Servidor de correo para desarrollo |
+| Mailpit (UI) | `8025` | Interfaz web: http://localhost:8025 |
 
 ---
 
