@@ -8,10 +8,10 @@
 
 ## 2. Modelo MagicLinkToken
 
-- [ ] 2.1 Crear `app/db/models/magic_link_token.py` con campos: `id` (UUID, PK, gen_random_uuid()), `token` (String, único, indexado, no nulo), `email` (String, no nulo), `expires_at` (DateTime timezone), `used_at` (DateTime timezone, nullable), `created_at` (DateTime timezone, server_default now())
-- [ ] 2.2 Exportar `MagicLinkToken` desde `app/db/models/__init__.py`
-- [ ] 2.3 Generar migración Alembic: `alembic revision --autogenerate -m "create magic_link_tokens table"`
-- [ ] 2.4 Aplicar migración: `alembic upgrade head`
+- [x] 2.1 Crear `app/db/models/magic_link_token.py` con campos: `id` (UUID, PK, gen_random_uuid()), `token` (String, único, indexado, no nulo), `email` (String, no nulo), `expires_at` (DateTime timezone), `used_at` (DateTime timezone, nullable), `created_at` (DateTime timezone, server_default now())
+- [x] 2.2 Exportar `MagicLinkToken` desde `app/db/models/__init__.py`
+- [x] 2.3 Generar migración Alembic: `alembic revision --autogenerate -m "create magic_link_tokens table"`
+- [x] 2.4 Aplicar migración: `alembic upgrade head`
 
 ## 3. Servicio de email
 
