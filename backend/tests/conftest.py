@@ -1,3 +1,5 @@
+from collections.abc import AsyncGenerator
+
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
@@ -13,7 +15,7 @@ TestingSessionLocal = async_sessionmaker(engine, expire_on_commit=False)
 
 
 @pytest_asyncio.fixture
-async def session() -> AsyncSession:
+async def session() -> AsyncGenerator[AsyncSession, None]:
     async with TestingSessionLocal() as sess:
         for table in reversed(Base.metadata.sorted_tables):
             await sess.execute(table.delete())
@@ -22,7 +24,7 @@ async def session() -> AsyncSession:
 
 
 @pytest_asyncio.fixture
-async def client(session: AsyncSession) -> AsyncClient:
+async def client(session: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
     async def override_get_session():
         yield session
 

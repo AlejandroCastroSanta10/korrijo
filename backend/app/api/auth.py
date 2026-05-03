@@ -1,15 +1,19 @@
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, EmailStr
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import settings
 from app.db.session import get_session
 from app.services.auth import count_recent_tokens, create_magic_link_token
 from app.services.email import SmtpEmailService
-from app.core.config import settings
 
 router = APIRouter()
 
 _email_service = SmtpEmailService()
+
+SessionDep = Annotated[AsyncSession, Depends(get_session)]
 
 
 class RequestMagicLinkBody(BaseModel):
@@ -19,7 +23,7 @@ class RequestMagicLinkBody(BaseModel):
 @router.post("/request-magic-link", status_code=status.HTTP_202_ACCEPTED)
 async def request_magic_link(
     body: RequestMagicLinkBody,
-    session: AsyncSession = Depends(get_session),
+    session: SessionDep,
 ) -> dict:
     recent = await count_recent_tokens(body.email, session)
     if recent >= 3:
