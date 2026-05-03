@@ -14,6 +14,8 @@ Haz clic en el siguiente enlace para iniciar sesión en Korrijo:
 {link}
 
 Este enlace es válido durante {expiration_minutes} minutos.
+
+Si no has sido tú quien ha solicitado iniciar sesión en Korrijo, ignora este mensaje.
 """
 
 _HTML_TEMPLATE = """\
@@ -24,6 +26,8 @@ _HTML_TEMPLATE = """\
   <p>Haz clic en el siguiente enlace para iniciar sesión en Korrijo:</p>
   <p><a href="{link}">{link}</a></p>
   <p>Este enlace es válido durante <strong>{expiration_minutes} minutos</strong>.</p>
+
+  <p>Si no has sido tú quien ha solicitado iniciar sesión en Korrijo, ignora este mensaje.</p>
 </body>
 </html>
 """

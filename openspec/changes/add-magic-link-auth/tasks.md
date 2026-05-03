@@ -26,16 +26,16 @@
 
 ## 5. Servicio de autenticación — verificación y sesión
 
-- [ ] 5.1 Implementar `verify_magic_link_token(token: str, session: AsyncSession) -> User` en `app/services/auth.py`: valida existencia, expiración y uso del token; crea o recupera el usuario; marca `used_at`; lanza excepciones específicas (`TokenInvalid`, `TokenExpired`, `TokenAlreadyUsed`)
-- [ ] 5.2 Crear `app/services/session.py` con helpers `sign_session(user_id: str) -> str` y `verify_session(cookie_value: str) -> str` usando `itsdangerous.URLSafeTimedSerializer`
+- [x] 5.1 Implementar `verify_magic_link_token(token: str, session: AsyncSession) -> User` en `app/services/auth.py`: valida existencia, expiración y uso del token; crea o recupera el usuario; marca `used_at`; lanza excepciones específicas (`TokenInvalid`, `TokenExpired`, `TokenAlreadyUsed`)
+- [x] 5.2 Crear `app/services/session.py` con helpers `sign_session(user_id: str) -> str` y `verify_session(cookie_value: str) -> str` usando `itsdangerous.URLSafeTimedSerializer`
 
 ## 6. Router y endpoints
 
-- [ ] 6.1 Crear `app/api/deps.py` con dependencia `get_current_user(request: Request, session: AsyncSession) -> User` que lee y verifica la cookie de sesión, devuelve el usuario o lanza 401
+- [x] 6.1 Crear `app/api/deps.py` con dependencia `get_current_user(request: Request, session: AsyncSession) -> User` que lee y verifica la cookie de sesión, devuelve el usuario o lanza 401
 - [x] 6.2 Crear `app/api/auth.py` con `POST /auth/request-magic-link`: valida body, comprueba rate limit (429 si excedido), llama a `create_magic_link_token`, llama a `SmtpEmailService.send_magic_link`, devuelve 202
-- [ ] 6.3 Añadir `POST /auth/verify` en el mismo router: valida body, llama a `verify_magic_link_token`, emite cookie HttpOnly + SameSite=Lax (Secure solo si `app_base_url` empieza por `https`), devuelve 200 con datos del usuario
-- [ ] 6.4 Añadir `GET /auth/me` en el mismo router usando `get_current_user`, devuelve `{"id", "email", "name"}`
-- [ ] 6.5 Añadir `POST /auth/logout` en el mismo router: elimina la cookie (Set-Cookie con expiración pasada), devuelve 204
+- [x] 6.3 Añadir `POST /auth/verify` en el mismo router: valida body, llama a `verify_magic_link_token`, emite cookie HttpOnly + SameSite=Lax (Secure solo si `app_base_url` empieza por `https`), devuelve 200 con datos del usuario
+- [x] 6.4 Añadir `GET /auth/me` en el mismo router usando `get_current_user`, devuelve `{"id", "email", "name"}`
+- [x] 6.5 Añadir `POST /auth/logout` en el mismo router: elimina la cookie (Set-Cookie con expiración pasada), devuelve 204
 - [x] 6.6 Registrar el router en `app/main.py` con prefijo `/auth`
 - [x] 6.7 Verificar que el middleware CORS tiene `allow_credentials=True` y que `allow_origins` no es `["*"]`
 
@@ -45,10 +45,10 @@
 - [x] 7.2 Tras la solicitud existe un registro en `magic_link_tokens` con token, email y `expires_at` correctos
 - [x] 7.3 El servicio de email es invocado (mock de `SmtpEmailService`, no envía de verdad)
 - [x] 7.4 La cuarta solicitud para el mismo email en menos de `magic_link_expiration_minutes` minutos devuelve 429
-- [ ] 7.5 `POST /auth/verify` con token válido devuelve 200, emite cookie de sesión y marca `used_at`
-- [ ] 7.6 `POST /auth/verify` con token expirado devuelve 400 con código `expired`
-- [ ] 7.7 `POST /auth/verify` con token ya usado devuelve 400 con código `already_used`
-- [ ] 7.8 `POST /auth/verify` con token inexistente devuelve 400 con código `invalid`
-- [ ] 7.9 `GET /auth/me` con cookie de sesión válida devuelve el usuario correcto
-- [ ] 7.10 `GET /auth/me` sin cookie devuelve 401
-- [ ] 7.11 `POST /auth/logout` con cookie válida devuelve 204 y la cookie queda invalidada
+- [x] 7.5 `POST /auth/verify` con token válido devuelve 200, emite cookie de sesión y marca `used_at`
+- [x] 7.6 `POST /auth/verify` con token expirado devuelve 400 con código `expired`
+- [x] 7.7 `POST /auth/verify` con token ya usado devuelve 400 con código `already_used`
+- [x] 7.8 `POST /auth/verify` con token inexistente devuelve 400 con código `invalid`
+- [x] 7.9 `GET /auth/me` con cookie de sesión válida devuelve el usuario correcto
+- [x] 7.10 `GET /auth/me` sin cookie devuelve 401
+- [x] 7.11 `POST /auth/logout` con cookie válida devuelve 204 y la cookie queda invalidada
