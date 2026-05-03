@@ -21,8 +21,8 @@
 
 ## 4. Servicio de autenticación — solicitud
 
-- [ ] 4.1 Crear `app/services/auth.py` con función `create_magic_link_token(email: str, session: AsyncSession) -> str` que genera el token con `secrets.token_urlsafe(32)`, persiste en BD y devuelve la URL completa del enlace
-- [ ] 4.2 Implementar `count_recent_tokens(email: str, session: AsyncSession) -> int` que cuenta tokens del mismo email creados en los últimos `magic_link_expiration_minutes` minutos
+- [x] 4.1 Crear `app/services/auth.py` con función `create_magic_link_token(email: str, session: AsyncSession) -> str` que genera el token con `secrets.token_urlsafe(32)`, persiste en BD y devuelve la URL completa del enlace
+- [x] 4.2 Implementar `count_recent_tokens(email: str, session: AsyncSession) -> int` que cuenta tokens del mismo email creados en los últimos `magic_link_expiration_minutes` minutos
 
 ## 5. Servicio de autenticación — verificación y sesión
 
@@ -32,12 +32,12 @@
 ## 6. Router y endpoints
 
 - [ ] 6.1 Crear `app/api/deps.py` con dependencia `get_current_user(request: Request, session: AsyncSession) -> User` que lee y verifica la cookie de sesión, devuelve el usuario o lanza 401
-- [ ] 6.2 Crear `app/api/auth.py` con `POST /auth/request-magic-link`: valida body, comprueba rate limit (429 si excedido), llama a `create_magic_link_token`, llama a `SmtpEmailService.send_magic_link`, devuelve 202
+- [x] 6.2 Crear `app/api/auth.py` con `POST /auth/request-magic-link`: valida body, comprueba rate limit (429 si excedido), llama a `create_magic_link_token`, llama a `SmtpEmailService.send_magic_link`, devuelve 202
 - [ ] 6.3 Añadir `POST /auth/verify` en el mismo router: valida body, llama a `verify_magic_link_token`, emite cookie HttpOnly + SameSite=Lax (Secure solo si `app_base_url` empieza por `https`), devuelve 200 con datos del usuario
 - [ ] 6.4 Añadir `GET /auth/me` en el mismo router usando `get_current_user`, devuelve `{"id", "email", "name"}`
 - [ ] 6.5 Añadir `POST /auth/logout` en el mismo router: elimina la cookie (Set-Cookie con expiración pasada), devuelve 204
-- [ ] 6.6 Registrar el router en `app/main.py` con prefijo `/auth`
-- [ ] 6.7 Verificar que el middleware CORS tiene `allow_credentials=True` y que `allow_origins` no es `["*"]`
+- [x] 6.6 Registrar el router en `app/main.py` con prefijo `/auth`
+- [x] 6.7 Verificar que el middleware CORS tiene `allow_credentials=True` y que `allow_origins` no es `["*"]`
 
 ## 7. Tests
 
