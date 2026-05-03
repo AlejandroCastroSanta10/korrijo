@@ -72,7 +72,7 @@ async def verify_magic_link(
         max_age=settings.session_max_age_days * 86400,
         httponly=True,
         samesite="lax",
-        secure=secure,
+        secure=secure, # Solo en producción sería segura
     )
 
     return {"id": str(user.id), "email": user.email, "name": user.name}
