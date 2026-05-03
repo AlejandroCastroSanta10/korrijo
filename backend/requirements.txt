@@ -6,3 +6,4 @@ alembic
 asyncpg
 aiosmtplib
 itsdangerous
+email-validator

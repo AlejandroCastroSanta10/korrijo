@@ -41,10 +41,10 @@
 
 ## 7. Tests
 
-- [ ] 7.1 `POST /auth/request-magic-link` con email válido devuelve 202
-- [ ] 7.2 Tras la solicitud existe un registro en `magic_link_tokens` con token, email y `expires_at` correctos
-- [ ] 7.3 El servicio de email es invocado (mock de `SmtpEmailService`, no envía de verdad)
-- [ ] 7.4 La cuarta solicitud para el mismo email en menos de `magic_link_expiration_minutes` minutos devuelve 429
+- [x] 7.1 `POST /auth/request-magic-link` con email válido devuelve 202
+- [x] 7.2 Tras la solicitud existe un registro en `magic_link_tokens` con token, email y `expires_at` correctos
+- [x] 7.3 El servicio de email es invocado (mock de `SmtpEmailService`, no envía de verdad)
+- [x] 7.4 La cuarta solicitud para el mismo email en menos de `magic_link_expiration_minutes` minutos devuelve 429
 - [ ] 7.5 `POST /auth/verify` con token válido devuelve 200, emite cookie de sesión y marca `used_at`
 - [ ] 7.6 `POST /auth/verify` con token expirado devuelve 400 con código `expired`
 - [ ] 7.7 `POST /auth/verify` con token ya usado devuelve 400 con código `already_used`
