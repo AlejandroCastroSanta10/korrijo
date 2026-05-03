@@ -1,10 +1,10 @@
 ## 1. Dependencias y configuración
 
-- [ ] 1.1 Añadir `aiosmtplib` e `itsdangerous` a `backend/requirements.txt`
-- [ ] 1.2 Añadir variables SMTP a `app/core/config.py`: `smtp_host` (default `localhost`), `smtp_port` (default `1025`), `smtp_from` (default `noreply@korrijo.local`)
-- [ ] 1.3 Añadir variables de magic link a `app/core/config.py`: `magic_link_expiration_minutes` (default `15`), `app_base_url` (default `http://localhost:3000`)
-- [ ] 1.4 Añadir variables de sesión a `app/core/config.py`: `session_secret_key` (obligatorio, sin default), `session_cookie_name` (default `korrijo_session`), `session_max_age_days` (default `30`)
-- [ ] 1.5 Actualizar `backend/.env.example` con las nuevas variables
+- [x] 1.1 Añadir `aiosmtplib` e `itsdangerous` a `backend/requirements.txt`
+- [x] 1.2 Añadir variables SMTP a `app/core/config.py`: `smtp_host` (default `localhost`), `smtp_port` (default `1025`), `smtp_from` (default `noreply@korrijo.local`)
+- [x] 1.3 Añadir variables de magic link a `app/core/config.py`: `magic_link_expiration_minutes` (default `15`), `app_base_url` (default `http://localhost:3000`)
+- [x] 1.4 Añadir variables de sesión a `app/core/config.py`: `session_secret_key` (obligatorio, sin default), `session_cookie_name` (default `korrijo_session`), `session_max_age_days` (default `30`)
+- [x] 1.5 Actualizar `backend/.env.example` con las nuevas variables
 
 ## 2. Modelo MagicLinkToken
 
