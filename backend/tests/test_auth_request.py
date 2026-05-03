@@ -57,13 +57,15 @@ async def test_request_magic_link_calls_email_service(client: AsyncClient):
 async def test_request_magic_link_rate_limit(client: AsyncClient, session: AsyncSession):
     email = "ratelimit@example.com"
 
+    import secrets
+
     from app.core.config import settings
     from app.db.models.magic_link_token import MagicLinkToken
 
     for _ in range(3):
         session.add(
             MagicLinkToken(
-                token=f"token-{_}",
+                token=secrets.token_urlsafe(32),
                 email=email,
                 expires_at=datetime.now(UTC) + timedelta(minutes=settings.magic_link_expiration_minutes),
             )
