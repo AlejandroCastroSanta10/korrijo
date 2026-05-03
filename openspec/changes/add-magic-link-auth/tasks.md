@@ -15,9 +15,9 @@
 
 ## 3. Servicio de email
 
-- [ ] 3.1 Crear `app/services/email.py` con clase abstracta `EmailService` y método `send_magic_link(to_email: str, link: str, expiration_minutes: int) -> None`
-- [ ] 3.2 Implementar `SmtpEmailService` en el mismo fichero usando `aiosmtplib` (sin autenticación, compatible con Mailpit)
-- [ ] 3.3 Añadir plantilla de email en HTML y texto plano: saludo, enlace clicable, mención de expiración en X minutos, aviso "si no fuiste tú, ignora este mensaje"
+- [x] 3.1 Crear `app/services/email.py` con clase abstracta `EmailService` y método `send_magic_link(to_email: str, link: str, expiration_minutes: int) -> None`
+- [x] 3.2 Implementar `SmtpEmailService` en el mismo fichero usando `aiosmtplib` (sin autenticación, compatible con Mailpit)
+- [x] 3.3 Añadir plantilla de email en HTML y texto plano: saludo, enlace clicable, mención de expiración en X minutos, aviso "si no fuiste tú, ignora este mensaje"
 
 ## 4. Servicio de autenticación — solicitud
 
