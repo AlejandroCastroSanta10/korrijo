@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRequestMagicLink } from "@/lib/hooks/auth";
 import { ApiError } from "@/lib/api";
+import { toast } from "sonner";
 
 const RESEND_COOLDOWN = 30;
 
@@ -81,7 +82,11 @@ function EmailSentView({
 
   const handleResend = () => {
     mutation.mutate(email, {
-      onSuccess: () => setCooldown(RESEND_COOLDOWN),
+      onSuccess: () => {
+        setCooldown(RESEND_COOLDOWN);
+        toast.success("Enlace reenviado");
+      },
+      onError: (error) => toast.error(getErrorMessage(error)),
     });
   };
 
@@ -101,9 +106,6 @@ function EmailSentView({
 
       {mutation.error && (
         <p className="text-xs text-red-500">{getErrorMessage(mutation.error)}</p>
-      )}
-      {mutation.isSuccess && cooldown === RESEND_COOLDOWN && (
-        <p className="text-xs text-green-600">Enlace reenviado</p>
       )}
 
       <Button
