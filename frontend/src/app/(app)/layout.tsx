@@ -1,5 +1,6 @@
 import PrivateHeader from "@/components/layout/private-header";
 import Footer from "@/components/layout/footer";
+
 export default function AppLayout({
   children,
 }: {
@@ -9,7 +10,7 @@ export default function AppLayout({
     <>
       <PrivateHeader />
       <main className="flex flex-1 flex-col">{children}</main>
-      <Footer />
+      <Footer homeHref="/app/new" />
     </>
   );
 }

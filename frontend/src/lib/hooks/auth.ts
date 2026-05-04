@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 
 export interface CurrentUser {
@@ -16,8 +16,12 @@ export function useCurrentUser() {
 }
 
 export function useLogout() {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: () => api.post<void>("/auth/logout", {}),
+    onSuccess: () => {
+      queryClient.removeQueries({ queryKey: ["currentUser"] });
+    },
   });
 }
 
