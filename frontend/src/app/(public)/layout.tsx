@@ -1,5 +1,5 @@
-import Header from "@/components/layout/header";
-import Footer from "@/components/layout/footer";
+import SmartHeader from "@/components/layout/smart-header";
+import SmartFooter from "@/components/layout/smart-footer";
 
 export default function PublicLayout({
   children,
@@ -8,9 +8,9 @@ export default function PublicLayout({
 }) {
   return (
     <>
-      <Header />
+      <SmartHeader />
       <main className="flex flex-1 flex-col">{children}</main>
-      <Footer />
+      <SmartFooter />
     </>
   );
 }
