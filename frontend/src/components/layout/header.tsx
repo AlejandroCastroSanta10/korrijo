@@ -17,8 +17,7 @@ export default function Header() {
           href="/login#auth"
           className="flex items-center gap-2 font-bold text-zinc-900 dark:text-zinc-50"
         >
-          <BookOpen className="size-5" />
-          Korrijo
+          <i className="text-3xl">Korrijo</i>
         </a>
 
         <nav className="hidden items-center gap-6 text-sm text-zinc-600 sm:flex dark:text-zinc-400">
