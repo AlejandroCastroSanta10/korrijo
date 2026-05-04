@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { BookOpen, CircleUser } from "lucide-react";
+import { CircleUser } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -50,13 +50,13 @@ export default function PrivateHeader() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" aria-label="Menú de usuario">
-              <CircleUser className="size-5" />
+              <CircleUser className="size-7" />
             </Button>
           </DropdownMenuTrigger>
 
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel className="font-normal text-zinc-500 dark:text-zinc-400">
-              {user?.email ?? "—"}
+              {user?.name ?? (user?.email ?? "—")}
             </DropdownMenuLabel>
 
             <DropdownMenuSeparator />

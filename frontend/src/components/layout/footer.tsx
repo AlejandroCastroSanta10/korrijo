@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { BookOpen } from "lucide-react";
 
 const footerLinks = [
   { label: "Términos y políticas", href: "/politics" },
@@ -15,8 +14,7 @@ export default function Footer() {
           href="/"
           className="flex items-center gap-2 font-bold text-zinc-900 dark:text-zinc-50"
         >
-          <BookOpen className="size-5" />
-          Korrijo
+          <i className="text-xl">Korrijo</i>
         </Link>
 
         <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-zinc-500 dark:text-zinc-400">

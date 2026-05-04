@@ -1,6 +1,5 @@
 // Este es un server component
 
-import { BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const navLinks = [
