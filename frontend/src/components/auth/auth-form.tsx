@@ -1,36 +1,145 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
+import { useRequestMagicLink } from "@/lib/hooks/auth";
+import { ApiError } from "@/lib/api";
+import { toast } from "sonner";
 
-function GoogleIcon() {
+const RESEND_COOLDOWN = 30;
+
+const schema = z.object({
+  email: z.email("Introduce un email válido."),
+});
+type FormData = z.infer<typeof schema>;
+
+function getErrorMessage(error: Error): string {
+  if (error instanceof ApiError) {
+    if (error.status === 429) {
+      return "Has enviado demasiadas solicitudes a ese email. Espera unos minutos antes de volver a hacerlo.";
+    }
+    return error.message;
+  }
+  return "No se puede conectar con el servidor. Inténtalo más tarde.";
+}
+
+function EmailForm({ onSuccess }: { onSuccess: (email: string) => void }) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>({ resolver: zodResolver(schema) });
+
+  const mutation = useRequestMagicLink();
+
+  const onSubmit = (data: FormData) => {
+    mutation.mutate(data.email, {
+      onSuccess: () => onSuccess(data.email),
+    });
+  };
+
   return (
-    <svg viewBox="0 0 24 24" className="size-4 shrink-0">
-      <path
-        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-        fill="#4285F4"
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
+      <Input
+        type="email"
+        placeholder="Introduce tu correo electrónico"
+        aria-invalid={!!errors.email}
+        {...register("email")}
       />
-      <path
-        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-        fill="#34A853"
-      />
-      <path
-        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"
-        fill="#FBBC05"
-      />
-      <path
-        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-        fill="#EA4335"
-      />
-    </svg>
+      {errors.email && (
+        <p className="text-xs text-red-500">{errors.email.message}</p>
+      )}
+      {mutation.error && (
+        <p className="text-xs text-red-500">{getErrorMessage(mutation.error)}</p>
+      )}
+      <Button type="submit" className="w-full" disabled={mutation.isPending}>
+        {mutation.isPending ? "Cargando..." : "Continuar"}
+      </Button>
+    </form>
+  );
+}
+
+function EmailSentView({
+  email,
+  onChangeEmail,
+}: {
+  email: string;
+  onChangeEmail: () => void;
+}) {
+  const mutation = useRequestMagicLink();
+  const [cooldown, setCooldown] = useState(RESEND_COOLDOWN);
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const timer = setTimeout(() => setCooldown((c) => c - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [cooldown]);
+
+  const handleResend = () => {
+    mutation.mutate(email, {
+      onSuccess: () => {
+        setCooldown(RESEND_COOLDOWN);
+        toast.success("Enlace reenviado");
+      },
+      onError: (error) => toast.error(getErrorMessage(error)),
+    });
+  };
+
+  return (
+    <div className="flex flex-col gap-4 text-center">
+      <div className="flex flex-col gap-1">
+        <p className="font-semibold text-zinc-900 dark:text-zinc-50">
+          Revisa tu correo
+        </p>
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          Hemos enviado un enlace de acceso a{" "}
+          <span className="font-medium text-zinc-700 dark:text-zinc-300">
+            {email}
+          </span>
+        </p>
+      </div>
+
+      {mutation.error && (
+        <p className="text-xs text-red-500">{getErrorMessage(mutation.error)}</p>
+      )}
+
+      <Button
+        variant="outline"
+        className="w-full"
+        disabled={cooldown > 0 || mutation.isPending}
+        onClick={handleResend}
+      >
+        {mutation.isPending
+          ? "Reenviando..."
+          : cooldown > 0
+            ? `Reenviar enlace (${cooldown}s)`
+            : "Reenviar enlace"}
+      </Button>
+
+      <button
+        type="button"
+        onClick={onChangeEmail}
+        className="text-sm text-zinc-400 underline hover:text-zinc-700 dark:hover:text-zinc-200"
+      >
+        Cambiar email
+      </button>
+    </div>
   );
 }
 
 export default function AuthForm() {
-  const [email, setEmail] = useState("");
+  const [view, setView] = useState<"form" | "sent">("form");
+  const [submittedEmail, setSubmittedEmail] = useState("");
+
+  const handleSuccess = (email: string) => {
+    setSubmittedEmail(email);
+    setView("sent");
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -39,34 +148,23 @@ export default function AuthForm() {
       </p>
 
       <div className="flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-        {/* TODO: Google OAuth en v0.2.0 */}
-        <Button variant="outline" className="w-full gap-2">
-          <GoogleIcon />
-          Continúa con Google
-        </Button>
-
-        <div className="flex items-center gap-3">
-          <Separator className="flex-1" />
-          <span className="text-sm text-zinc-400">o</span>
-          <Separator className="flex-1" />
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <Input
-            type="email"
-            placeholder="Introduce tu correo electrónico"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+        {view === "form" ? (
+          <>
+            <EmailForm onSuccess={handleSuccess} />
+          </>
+        ) : (
+          <EmailSentView
+            email={submittedEmail}
+            onChangeEmail={() => setView("form")}
           />
-          {/* TODO: magic link en v0.2.0 */}
-          <Button className="w-full" disabled={!email}>
-            Continuar con email
-          </Button>
-        </div>
+        )}
 
         <p className="text-center text-xs text-zinc-400">
           Al continuar, reconoces las{" "}
-          <Link href="/politics" className="underline hover:text-zinc-700 dark:hover:text-zinc-200">
+          <Link
+            href="/politics"
+            className="underline hover:text-zinc-700 dark:hover:text-zinc-200"
+          >
             políticas de Korrijo
           </Link>
         </p>
