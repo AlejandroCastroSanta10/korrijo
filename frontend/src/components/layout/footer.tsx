@@ -2,7 +2,7 @@ import Link from "next/link";
 
 const footerLinks = [
   { label: "Términos y políticas", href: "/politics" },
-  { label: "Sobre mí", href: "/creator" },
+  { label: "Sobre el creador", href: "/creator" },
   { label: "Contacto", href: "/contact" },
 ];
 

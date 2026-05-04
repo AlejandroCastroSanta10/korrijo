@@ -9,7 +9,7 @@ export interface CurrentUser {
 
 export function useCurrentUser() {
   return useQuery({
-    queryKey: ["currentUser"],
+    queryKey: ["auth", "me"],
     queryFn: () => api.get<CurrentUser>("/auth/me"),
     retry: false,
   });
@@ -20,7 +20,7 @@ export function useLogout() {
   return useMutation({
     mutationFn: () => api.post<void>("/auth/logout", {}),
     onSuccess: () => {
-      queryClient.removeQueries({ queryKey: ["currentUser"] });
+      queryClient.removeQueries({ queryKey: ["auth"] });
     },
   });
 }
