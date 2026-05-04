@@ -1,14 +1,25 @@
 import { API_URL } from "./config";
 
-export type HealthResponse = {
-  status: string;
-};
+async function apiFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
+  const res = await fetch(`${API_URL}${path}`, {
+    ...init,
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      ...init.headers,
+    },
+  });
 
-export async function fetchHealth(): Promise<HealthResponse> {
-  const res = await fetch(`${API_URL}/health`);
   if (!res.ok) {
-    throw new Error(`Error ${res.status}: ${res.statusText}`);
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body?.detail ?? `Error ${res.status}`);
   }
-  
-  return res.json() as Promise<HealthResponse>;
+
+  return res.json() as Promise<T>;
 }
+
+export const api = {
+  get: <T>(path: string) => apiFetch<T>(path),
+  post: <T>(path: string, body: unknown) =>
+    apiFetch<T>(path, { method: "POST", body: JSON.stringify(body) }),
+};
