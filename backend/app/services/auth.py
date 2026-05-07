@@ -43,9 +43,7 @@ async def create_magic_link_token(email: str, session: AsyncSession) -> str:
 
 
 async def verify_magic_link_token(token: str, session: AsyncSession) -> User:
-    result = await session.execute(
-        select(MagicLinkToken).where(MagicLinkToken.token == token)
-    )
+    result = await session.execute(select(MagicLinkToken).where(MagicLinkToken.token == token))
     ml_token = result.scalar_one_or_none()
 
     if ml_token is None:
@@ -55,9 +53,7 @@ async def verify_magic_link_token(token: str, session: AsyncSession) -> User:
     if ml_token.expires_at < datetime.now(UTC):
         raise TokenExpired()
 
-    user_result = await session.execute(
-        select(User).where(User.email == ml_token.email)
-    )
+    user_result = await session.execute(select(User).where(User.email == ml_token.email))
     user = user_result.scalar_one_or_none()
     if user is None:
         user = User(email=ml_token.email)

@@ -63,7 +63,9 @@ async def verify_magic_link(
     except TokenExpired:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="expired") from None
     except TokenAlreadyUsed:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="already_used") from None
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="already_used"
+        ) from None
 
     secure = settings.app_base_url.startswith("https")
     response.set_cookie(
@@ -72,7 +74,7 @@ async def verify_magic_link(
         max_age=settings.session_max_age_days * 86400,
         httponly=True,
         samesite="lax",
-        secure=secure, # Solo en producción sería segura
+        secure=secure,  # Solo en producción sería segura
     )
 
     return {"id": str(user.id), "email": user.email, "name": user.name}
