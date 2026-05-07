@@ -1,0 +1,78 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-ci.yml"
+  pull_request:
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-ci.yml"
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: korrijodb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/korrijodb
+      CORS_ORIGINS: '["http://localhost:3000"]'
+      SMTP_HOST: localhost
+      SMTP_PORT: 1025
+      SMTP_FROM: noreply@korrijo.local
+      MAGIC_LINK_EXPIRATION_MINUTES: 15
+      APP_BASE_URL: http://localhost:3000
+      SESSION_SECRET_KEY: ci-secret-key
+      SESSION_COOKIE_NAME: korrijo_session
+      SESSION_MAX_AGE_DAYS: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('backend/requirements-dev.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        working-directory: backend
+        run: pip install -r requirements-dev.txt
+
+      - name: Run migrations
+        working-directory: backend
+        run: alembic upgrade head
+
+      - name: Lint (ruff check)
+        working-directory: backend
+        run: ruff check .
+
+      - name: Format check (ruff format)
+        working-directory: backend
+        run: ruff format --check .
+
+      - name: Test (pytest)
+        working-directory: backend
+        run: pytest
