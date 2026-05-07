@@ -35,15 +35,11 @@ _HTML_TEMPLATE = """\
 
 class EmailService(ABC):
     @abstractmethod
-    async def send_magic_link(
-        self, to_email: str, link: str, expiration_minutes: int
-    ) -> None: ...
+    async def send_magic_link(self, to_email: str, link: str, expiration_minutes: int) -> None: ...
 
 
 class SmtpEmailService(EmailService):
-    async def send_magic_link(
-        self, to_email: str, link: str, expiration_minutes: int
-    ) -> None:
+    async def send_magic_link(self, to_email: str, link: str, expiration_minutes: int) -> None:
         message = MIMEMultipart("alternative")
         message["Subject"] = "Tu enlace de acceso a Korrijo"
         message["From"] = settings.smtp_from

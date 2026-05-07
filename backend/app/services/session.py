@@ -4,6 +4,7 @@ from app.core.config import settings
 
 _serializer = URLSafeTimedSerializer(settings.session_secret_key)
 
+
 # Toma el UUID del usuario y devuelve un string firmado criptográficamente con itsdangerous.
 # Este string es el que se mete en la cookie.
 def sign_session(user_id: str) -> str:

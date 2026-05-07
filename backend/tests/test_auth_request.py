@@ -12,20 +12,14 @@ from app.db.models.magic_link_token import MagicLinkToken
 @pytest.mark.asyncio
 async def test_request_magic_link_returns_202(client: AsyncClient):
     with patch("app.api.auth._email_service.send_magic_link", new_callable=AsyncMock):
-        response = await client.post(
-            "/auth/request-magic-link", json={"email": "test@example.com"}
-        )
+        response = await client.post("/auth/request-magic-link", json={"email": "test@example.com"})
     assert response.status_code == 202
 
 
 @pytest.mark.asyncio
-async def test_request_magic_link_creates_token_in_db(
-    client: AsyncClient, session: AsyncSession
-):
+async def test_request_magic_link_creates_token_in_db(client: AsyncClient, session: AsyncSession):
     with patch("app.api.auth._email_service.send_magic_link", new_callable=AsyncMock):
-        await client.post(
-            "/auth/request-magic-link", json={"email": "test@example.com"}
-        )
+        await client.post("/auth/request-magic-link", json={"email": "test@example.com"})
 
     result = await session.execute(
         select(MagicLinkToken).where(MagicLinkToken.email == "test@example.com")
@@ -40,12 +34,8 @@ async def test_request_magic_link_creates_token_in_db(
 
 @pytest.mark.asyncio
 async def test_request_magic_link_calls_email_service(client: AsyncClient):
-    with patch(
-        "app.api.auth._email_service.send_magic_link", new_callable=AsyncMock
-    ) as mock_send:
-        await client.post(
-            "/auth/request-magic-link", json={"email": "test@example.com"}
-        )
+    with patch("app.api.auth._email_service.send_magic_link", new_callable=AsyncMock) as mock_send:
+        await client.post("/auth/request-magic-link", json={"email": "test@example.com"})
 
     mock_send.assert_called_once()
     call_args = mock_send.call_args
@@ -67,14 +57,13 @@ async def test_request_magic_link_rate_limit(client: AsyncClient, session: Async
             MagicLinkToken(
                 token=secrets.token_urlsafe(32),
                 email=email,
-                expires_at=datetime.now(UTC) + timedelta(minutes=settings.magic_link_expiration_minutes),
+                expires_at=datetime.now(UTC)
+                + timedelta(minutes=settings.magic_link_expiration_minutes),
             )
         )
     await session.commit()
 
     with patch("app.api.auth._email_service.send_magic_link", new_callable=AsyncMock):
-        response = await client.post(
-            "/auth/request-magic-link", json={"email": email}
-        )
+        response = await client.post("/auth/request-magic-link", json={"email": email})
 
     assert response.status_code == 429

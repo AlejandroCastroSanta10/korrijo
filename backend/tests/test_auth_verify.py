@@ -46,9 +46,7 @@ async def test_verify_valid_token_returns_200_with_cookie_and_marks_used_at(
     assert data["email"] == "user@example.com"
     assert settings.session_cookie_name in response.cookies
 
-    result = await session.execute(
-        select(MagicLinkToken).where(MagicLinkToken.token == token_str)
-    )
+    result = await session.execute(select(MagicLinkToken).where(MagicLinkToken.token == token_str))
     ml_token = result.scalar_one()
     assert ml_token.used_at is not None
 
@@ -94,9 +92,7 @@ async def test_verify_invalid_token_returns_400(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_get_me_with_valid_cookie_returns_user(
-    client: AsyncClient, session: AsyncSession
-):
+async def test_get_me_with_valid_cookie_returns_user(client: AsyncClient, session: AsyncSession):
     user = User(email="me@example.com")
     session.add(user)
     await session.commit()
@@ -121,9 +117,7 @@ async def test_get_me_without_cookie_returns_401(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_logout_returns_204_and_deletes_cookie(
-    client: AsyncClient, session: AsyncSession
-):
+async def test_logout_returns_204_and_deletes_cookie(client: AsyncClient, session: AsyncSession):
     user = User(email="logout@example.com")
     session.add(user)
     await session.commit()
