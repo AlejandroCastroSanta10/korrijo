@@ -7,3 +7,4 @@ asyncpg
 aiosmtplib
 itsdangerous
 email-validator
+ollama
