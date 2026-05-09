@@ -3,7 +3,7 @@
 Korrijo es una herramienta web para docentes que automatiza la corrección de exámenes manuscritos. A partir de una rúbrica y un examen modelo, genera un informe de feedback y una calificación propuesta para cada examen subido, reduciendo el tiempo que el profesor dedica a la parte más mecánica de la evaluación.
 
 > **Trabajo de Fin de Grado** — Ingeniería Informática, especialidad Ingeniería del Software.
-> Autor: Alejandro Castro Santa. Versión actual: **v0.1.0**
+> Autor: Alejandro Castro Santa. Versión actual: **v0.2.0**
 
 ---
 
