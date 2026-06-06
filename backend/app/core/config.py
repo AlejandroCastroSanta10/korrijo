@@ -32,5 +32,10 @@ class Settings(BaseSettings):
     session_cookie_name: str = "korrijo_session"
     session_max_age_days: int = 30
 
+    # Ollama / pipeline
+    ollama_base_url: str = "http://localhost:11434"
+    pipeline_llm_model: str | None = None
+    pipeline_vlm_model: str | None = None
+
 
 settings = Settings()
