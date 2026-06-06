@@ -1,7 +1,7 @@
 """Punto de entrada único del módulo de extracción en documentos nativos.
 
 Detecta el formato del fichero por su extensión y delega en el extractor
-correspondiente. 
+correspondiente.
 
 La única función que deben usar los consumidores
 de este módulo es extract (from app.pipeline.extractors.router import extract).
@@ -13,7 +13,7 @@ from app.pipeline.extractors.pdf import ScannedPDFNotSupportedError, extract_pdf
 from app.pipeline.extractors.text import extract_text
 from app.pipeline.extractors.xlsx import extract_xlsx
 
-_TEXT_EXTENSIONS = {".txt", ".md", ".csv"} # Formatos de texto que se soportan 
+_TEXT_EXTENSIONS = {".txt", ".md", ".csv"} # Formatos de texto que se soportan
 
 
 class UnsupportedFormatError(Exception):
