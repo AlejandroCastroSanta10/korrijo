@@ -19,7 +19,7 @@ class OllamaUnavailableError(ProviderError):
 class ModelNotFoundError(ProviderError):
     """El modelo solicitado no está descargado en el servidor de Ollama.
 
-    El mensaje incluye el comando ollama pull <modelo> para que se sepa 
+    El mensaje incluye el comando ollama pull <modelo> para que se sepa
     cómo resolverlo.
     """
 
