@@ -8,3 +8,5 @@ aiosmtplib
 itsdangerous
 email-validator
 ollama
+pypdf
+openpyxl

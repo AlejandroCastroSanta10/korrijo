@@ -1,0 +1,2 @@
+Tema 3: estructuras de datos lineales.
+Conceptos clave: pila, cola, lista enlazada.
