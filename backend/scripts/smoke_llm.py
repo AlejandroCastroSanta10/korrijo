@@ -19,8 +19,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from app.pipeline.llm.ollama import OllamaLLMProvider  # noqa: E402
-from app.pipeline.vlm.ollama import OllamaVLMProvider  # noqa: E402
+from app.pipeline.llm.ollama import OllamaLLMProvider
+from app.pipeline.vlm.ollama import OllamaVLMProvider
 
 SAMPLE_IMAGE = Path(__file__).parent / "pipeline_poc" / "examen_prueba.jpeg"
 
