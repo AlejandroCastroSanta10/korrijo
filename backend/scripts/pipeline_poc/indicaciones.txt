@@ -1,0 +1,14 @@
+Indicaciones del profesor para la corrección del examen "Fundamentos de redes".
+
+Sobre el examen modelo:
+- Es una referencia, no una solución literal. Da por válida cualquier respuesta del alumno
+  que sea correcta y equivalente aunque cambie la redacción o el orden de las ideas.
+- Penaliza los errores conceptuales claros. En concreto, en la Pregunta 2, el número de
+  direcciones de IPv4 (32 bits) es del orden de 4.300 millones; si el alumno indica una
+  magnitud equivocada (p. ej. "4 millones"), no consideres ese punto del todo correcto.
+- En la Pregunta 3 deben aparecer las 7 capas del modelo OSI; admite pequeñas variaciones
+  en los nombres, pero descuenta si falta alguna o el orden es incorrecto.
+
+Sobre el contexto:
+- El temario marca el nivel exigido. No pidas más profundidad de la que aparece en él ni
+  penalices por omitir detalles que el temario no cubre.

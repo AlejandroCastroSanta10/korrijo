@@ -1,8 +1,16 @@
-# Prompts del pipeline — fase de transcripción
+# Prompts del pipeline
 
-Este documento registra el diseño y la evolución del prompt que usa la fase de
-transcripción (`app/pipeline/transcription.py`) para convertir un examen
-manuscrito en una transcripción estructurada (`StructuredTranscription`).
+Este documento registra el diseño y la evolución de los prompts del pipeline de
+corrección. Tiene dos partes: la **fase de transcripción**
+(`app/pipeline/transcription.py`) y la **fase de corrección**
+(`app/pipeline/grading.py`).
+
+---
+
+# Fase de transcripción
+
+Convierte un examen manuscrito en una transcripción estructurada
+(`StructuredTranscription`).
 
 El modelo de referencia durante el desarrollo ha sido **qwen3-vl:8b** servido por
 Ollama en local (mismo modelo del PoC). Las observaciones sobre comportamiento
@@ -137,3 +145,95 @@ pytest tests/pipeline/test_transcription.py -m integration -s
 Si la transcripción del examen real no fuera lo bastante fiel, iterar aquí el
 prompt (criterios de cada pregunta, manejo de tachados, etc.) y anotar el
 resultado en una nueva sección de este documento.
+
+---
+
+# Fase de corrección
+
+La fase de corrección (`app/pipeline/grading.py`) recibe la transcripción del
+alumno más el material del profesor (rúbrica, contexto, examen modelo,
+indicaciones) y pide a un **LLM textual** una rúbrica rellenada con calificación
+propuesta por ítem y un informe de feedback. El modelo de referencia durante el
+desarrollo ha sido un qwen3 textual servido por Ollama en local.
+
+El prompt final vive como constante `GRADING_PROMPT` en `grading.py` (única
+fuente de verdad; aquí se explica el porqué, no se duplica).
+
+## v1 — Una sola llamada + validación blanda (versión adoptada)
+
+### Decisiones de diseño
+
+- **Una sola llamada al LLM.** El modelo lee la rúbrica (texto libre) y rellena
+  sus ítems en la misma pasada. Se descartó un paso previo de "estructurar la
+  rúbrica" por simplicidad para el MVP.
+- **Rúbrica de texto libre.** La redacta el profesor: formato libre, pero con
+  puntuación por ítem e incluso por nivel ("Mal 0 p / Regular 0,5 p / Bien 1 p").
+  Como no hay una lista canónica de ítems de partida, el prompt insiste en usar
+  EXACTAMENTE los ítems de la rúbrica (ni inventar ni omitir).
+- **Orden de las entradas en el prompt:** rúbrica → contexto → examen modelo →
+  indicaciones del profesor → transcripción del alumno. Contexto e indicaciones
+  son opcionales (se omiten si no se aportan).
+- **El examen modelo es referencia, no verdad absoluta:** el prompt pide criterio
+  para puntuar bien respuestas correctas que se desvíen del modelo.
+- **`feedback_report` dirigido al profesor** (coherente con el rol orientativo:
+  la decisión final es suya).
+- **Sin `format` nativo, igual que en transcripción.** Se pide el JSON en el
+  prompt + `/no_think` y se parsea con el parser robusto compartido
+  (`app/pipeline/utils.py::parse_json_object`, extraído de la fase de
+  transcripción para reutilizarlo).
+- **`num_ctx` generoso.** El prompt es largo (rúbrica + contexto + examen modelo
+  + transcripción), así que el `OllamaLLMProvider` se construye con `num_ctx`
+  amplio (p. ej. 16384) en el script y la integración.
+
+### Validación de la salida (blanda)
+
+Tras parsear y validar con Pydantic (`GradingResult`), `_enforce_constraints`
+aplica solo lo que **se puede comprobar de forma fiable**:
+
+1. Cada `assigned_score` se recorta al rango `[0, max_score del ítem]` (log
+   WARNING si se recorta).
+2. `total_score` se **recalcula** como la suma de los `assigned_score` recortados
+   y se trunca a `[0, max_score del examen]` (log WARNING si se trunca). Esto
+   garantiza el criterio de aceptación de que la nota total esté en rango, sin
+   depender de que el modelo sume bien.
+3. Detección **blanda** de alucinaciones: para cada `item_name` se comprueba con
+   un matching tolerante (normalizado, sin acentos) si aparece en la rúbrica; si
+   no, se registra un WARNING. **No falla**: con rúbrica de texto libre la
+   comprobación es orientativa, no una verdad rígida.
+
+Si la salida no parsea/valida, `grade_exam` reintenta (`max_retries`, por defecto
+2) y, agotados los intentos, lanza `GradingError`.
+
+### Riesgo residual
+
+Los modelos de razonamiento textuales (qwen3) pueden volcar todo al campo
+`thinking` y devolver `content` vacío (mismo fenómeno visto en el VLM). El
+parseo robusto + reintentos lo mitigan. A diferencia del VLM, el
+`OllamaLLMProvider` no expone aún un parámetro `think`; queda anotado como punto
+de ajuste si en uso real aparecen muchos intentos vacíos.
+
+### Validación empírica
+
+La v1 se ha validado de extremo a extremo con `scripts/grade_exam.py`: transcripción
+(qwen3-vl) + corrección (qwen3:14b) sobre el examen real `examen_prueba.jpeg`
+("Fundamentos de redes", 10 p) con la rúbrica, contexto, examen modelo e indicaciones
+de `scripts/pipeline_poc/` (todos coherentes con ese examen).
+
+**Resultado (correcto y coherente):**
+
+- Los **7 ítems** de la rúbrica aparecen rellenados, ninguno inventado (criterios 3 y 4).
+- `total_score` = **9,25 / 10**, en rango (criterio 2).
+- **Cazó el error sembrado a propósito:** el alumno escribió "4 millones" de direcciones
+  IPv4 en vez de ~4.300 millones; el ítem *IPv4* recibió 0,75/1,5 con el comentario
+  correcto. Es decir, el prompt + la rúbrica + las indicaciones logran que el modelo
+  penalice un error de orden de magnitud en lugar de darlo por bueno.
+- El `feedback_report` resume la corrección y justifica el descuento sin inventar hechos
+  (criterio 5).
+- En la fase previa de transcripción se observó un intento vacío de qwen3-vl que se
+  resolvió con el reintento (comportamiento ya documentado arriba), sin afectar a la
+  corrección.
+
+Reproducible también con el test de integración
+`tests/pipeline/test_grading.py::test_grading_examen_real` (se salta si no hay
+Ollama/modelo). Si en futuras iteraciones el comportamiento cambia, anotar aquí la nueva
+versión del prompt y sus hallazgos.
