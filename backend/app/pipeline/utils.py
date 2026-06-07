@@ -42,7 +42,7 @@ ruido: bloques de razonamiento `<think>`, vallas de código markdown, preámbulo
 de cortesía, comas finales o comillas tipográficas. parse_json_object extrae y
 repara el primer objeto JSON de esa salida.
 
-Lo comparten las fases del pipeline que piden JSON como salida en el prompt en lugar 
+Lo comparten las fases del pipeline que piden JSON como salida en el prompt en lugar
 de usar salida estructurada nativa (transcripción y corrección).
 """
 

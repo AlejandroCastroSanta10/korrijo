@@ -21,6 +21,9 @@ logger = logging.getLogger(__name__)
 # Número de intentos extra si la salida del LLM no se puede parsear/validar.
 _DEFAULT_MAX_RETRIES = 2
 
+# Margen al comparar floats de puntuación (el modelo a veces redondea).
+_SCORE_TOLERANCE = 0.01
+
 
 class GradingError(Exception):
     """No se ha podido obtener una corrección válida del examen."""
@@ -60,8 +63,8 @@ Vas a recibir, en este orden: la RÚBRICA del profesor, opcionalmente CONTEXTO y
 las INDICACIONES del profesor, un EXAMEN MODELO con las respuestas de referencia
 y, por último, la TRANSCRIPCIÓN de las respuestas del alumno.
 No tomes el examen modelo como una verdad absoluta, sino únicamente como una referencia.
-Tienes que tener también criterio porque aunque la respuesta del alumno se desvíe del modelo 
-puede ser que se tenga que puntuar bien. 
+Tienes que tener también criterio porque aunque la respuesta del alumno se desvíe del modelo
+puede ser que se tenga que puntuar bien.
 
 Tu tarea es puntuar cada ítem de la rúbrica y redactar un informe con feedback sobre la
 corrección.
@@ -126,12 +129,12 @@ def _section(title: str, body: str) -> str:
 
 
 def _build_prompt(
-    transcription: StructuredTranscription, 
-    rubric_text: str, 
+    transcription: StructuredTranscription,
+    rubric_text: str,
     model_exam_text: str,
-    max_score: float, 
-    context_text: str | None, 
-    teacher_instructions: str | None, 
+    max_score: float,
+    context_text: str | None,
+    teacher_instructions: str | None,
 ) -> str:
     """Compone el prompt completo que irá al LLM, inyectando las entradas en este orden:
     rúbrica → contexto → examen modelo → indicaciones → transcripción.
@@ -160,7 +163,7 @@ async def grade_exam(
     transcription: StructuredTranscription,
     rubric_text: str,
     model_exam_text: str,
-    max_score: float, 
+    max_score: float,
     llm_provider: LLMProvider,
     *,
     context_text: str | None = None,
@@ -230,6 +233,8 @@ def _enforce_constraints(
 ) -> GradingResult:
     """Aplica las garantías que sí se pueden comprobar y avisa de lo demás.
 
+    - Comprueba que el total_score que devuelve el modelo cuadre con la suma de
+      sus assigned_score; avisa si no (incoherencia aritmética del modelo).
     - Recorta cada assigned_score al rango [0, max_score del ítem].
     - Recalcula total_score como la suma de los recortados y lo trunca a
       [0, max_score del examen].
@@ -238,6 +243,16 @@ def _enforce_constraints(
       orientativa.
     """
     rubric_normalized = _normalize(rubric_text)
+
+    # ¿El total que dice el modelo cuadra con la suma de sus propios ítems?
+    reported_sum = sum(item.assigned_score for item in result.rubric_filled)
+    if abs(result.total_score - reported_sum) > _SCORE_TOLERANCE:
+        logger.warning(
+            "total_score del modelo (%.2f) no coincide con la suma de sus ítems "
+            "(%.2f); se usará el valor recalculado.",
+            result.total_score,
+            reported_sum,
+        )
 
     clamped_items: list[RubricItemResult] = []
     for item in result.rubric_filled:
