@@ -53,6 +53,15 @@ async def test_transcribe_codifica_imagenes_en_base64(provider):
     assert sent_message["images"] == [base64.b64encode(raw).decode()]
 
 
+async def test_transcribe_desactiva_thinking_por_defecto(provider):
+    with patch.object(provider, "_client") as client:
+        client.chat = AsyncMock(return_value=_chat_response("ok"))
+
+        await provider.transcribe([b"x"], "p")
+
+    assert client.chat.await_args.kwargs["think"] is False
+
+
 async def test_transcribe_traduce_connect_error(provider):
     with patch.object(provider, "_client") as client:
         client.chat = AsyncMock(side_effect=httpx.ConnectError("boom"))

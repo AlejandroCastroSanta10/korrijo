@@ -29,6 +29,12 @@ class OllamaVLMProvider(VLMProvider):
             debe ser generoso para imágenes grandes y prompts largos.
         timeout: segundos para la llamada HTTP completa. Los VLM son
             MUCHO más lentos que los LLM textuales; por defecto 300s.
+        think: controla el modo razonamiento de modelos híbridos (ej. qwen3-vl).
+            Por defecto False. IMPORTANTE: con think=None (el defecto del
+            cliente) qwen3-vl vuelca todo en el campo 'thinking' y devuelve
+            'content' VACÍO; pasar think=False enruta el razonamiento aparte
+            y deja la respuesta en 'content'. El '/no_think' del prompt por
+            sí solo no basta.
     """
     def __init__(
         self,
@@ -39,6 +45,7 @@ class OllamaVLMProvider(VLMProvider):
         top_p: float = 0.9,
         num_ctx: int = 8192,
         timeout: float = 300.0,
+        think: bool | None = False,
     ) -> None:
         resolved_model = model or settings.pipeline_vlm_model
         if not resolved_model:
@@ -53,6 +60,7 @@ class OllamaVLMProvider(VLMProvider):
         self.top_p = top_p
         self.num_ctx = num_ctx
         self.timeout = timeout
+        self.think = think
         self._client = AsyncClient(host=self.base_url, timeout=timeout)
 
     async def transcribe(self, images: list[bytes], prompt: str) -> str:
@@ -67,6 +75,7 @@ class OllamaVLMProvider(VLMProvider):
                     "top_p": self.top_p,
                     "num_ctx": self.num_ctx,
                 },
+                think=self.think,
             )
         except ResponseError as exc:
             raise self._translate_response_error(exc) from exc

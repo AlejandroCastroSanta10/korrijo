@@ -294,8 +294,10 @@ def _extract_first_object(text: str) -> str | None:
 def _repair(candidate: str) -> str:
     """Aplica reparaciones suaves a un JSON casi válido."""
     repaired = candidate
-    # Comillas tipográficas a comillas rectas.
-    repaired = repaired.translate(str.maketrans({"“": '"', "”": '"', "‘": "'", "’": "'"}))
+    # Comillas tipográficas a comillas rectas
+    repaired = repaired.translate(
+        str.maketrans({chr(0x201C): '"', chr(0x201D): '"', chr(0x2018): "'", chr(0x2019): "'"})
+    )
     # Comas finales antes de } o ].
     repaired = _TRAILING_COMMA.sub(r"\1", repaired)
     return repaired
