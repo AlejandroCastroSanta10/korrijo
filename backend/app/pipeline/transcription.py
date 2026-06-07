@@ -5,14 +5,12 @@ transcripción estructurada: por cada pregunta, la respuesta literal del
 alumno asociada a su número, más los metadatos de cabecera del examen.
 """
 
-import json
 import logging
-import re
 from pathlib import Path
 
 from pydantic import BaseModel, Field, ValidationError
 
-from app.pipeline.utils import pdf_to_images
+from app.pipeline.utils import JSONParseError, parse_json_object, pdf_to_images
 from app.pipeline.vlm.base import VLMProvider
 
 logger = logging.getLogger(__name__)
@@ -166,9 +164,9 @@ async def transcribe_exam(
     for attempt in range(1, attempts + 1):
         raw = await vlm_provider.transcribe(images, TRANSCRIPTION_PROMPT)
         try:
-            payload = _parse_json_object(raw)
+            payload = parse_json_object(raw)
             return StructuredTranscription.model_validate(payload)
-        except (TranscriptionParseError, ValidationError) as exc:
+        except (JSONParseError, ValidationError) as exc:
             last_error = exc
             logger.warning(
                 "Transcripción no parseable (intento %d/%d) para %s: %s",
@@ -204,100 +202,3 @@ def _load_images(path: Path) -> list[bytes]:
         f"Formato de examen no soportado: '{suffix or path}'. "
         "Admitidos: PDF e imágenes (.jpg, .jpeg, .png)."
     )
-
-
-# --------------------------------------------------------------------------- #
-# Parsing robusto de la salida del modelo
-# --------------------------------------------------------------------------- #
-
-
-class TranscriptionParseError(TranscriptionError):
-    """La salida del VLM no contiene un JSON parseable."""
-
-
-_THINK_BLOCK = re.compile(r"<think>.*?</think>", re.DOTALL | re.IGNORECASE)
-_CODE_FENCE = re.compile(r"```(?:json)?\s*(.*?)\s*```", re.DOTALL | re.IGNORECASE)
-_TRAILING_COMMA = re.compile(r",\s*([}\]])")
-
-
-def _parse_json_object(raw: str) -> dict:
-    """Extrae y parsea el objeto JSON de la respuesta del modelo.
-
-    Tolera los desvíos típicos de un modelo local: bloques <think>, vallas de
-    código markdown, preámbulos de texto, comas finales y comillas tipográficas.
-    """
-    if not raw or not raw.strip():
-        raise TranscriptionParseError("El VLM devolvió una respuesta vacía.")
-
-    text = _THINK_BLOCK.sub("", raw)
-
-    fenced = _CODE_FENCE.search(text)
-    if fenced:
-        text = fenced.group(1)
-
-    candidate = _extract_first_object(text)
-    if candidate is None:
-        raise TranscriptionParseError(
-            f"No se encontró ningún objeto JSON en la respuesta: {raw!r}"
-        )
-
-    for attempt in (candidate, _repair(candidate)):
-        try:
-            parsed = json.loads(attempt)
-        except json.JSONDecodeError:
-            continue
-        if isinstance(parsed, dict):
-            return parsed
-        raise TranscriptionParseError(
-            f"El JSON de la respuesta no es un objeto: {attempt!r}"
-        )
-
-    raise TranscriptionParseError(
-        f"El JSON de la respuesta está malformado y no se pudo reparar: {candidate!r}"
-    )
-
-
-def _extract_first_object(text: str) -> str | None:
-    """Devuelve el primer objeto JSON balanceado del texto, o None.
-
-    Recorre desde la primera llave de apertura contando profundidad y
-    respetando las cadenas (para no confundir llaves dentro de strings).
-    """
-    start = text.find("{")
-    if start == -1:
-        return None
-
-    depth = 0
-    in_string = False
-    escaped = False
-    for index in range(start, len(text)):
-        char = text[index]
-        if in_string:
-            if escaped:
-                escaped = False
-            elif char == "\\":
-                escaped = True
-            elif char == '"':
-                in_string = False
-            continue
-        if char == '"':
-            in_string = True
-        elif char == "{":
-            depth += 1
-        elif char == "}":
-            depth -= 1
-            if depth == 0:
-                return text[start : index + 1]
-    return None
-
-
-def _repair(candidate: str) -> str:
-    """Aplica reparaciones suaves a un JSON casi válido."""
-    repaired = candidate
-    # Comillas tipográficas a comillas rectas
-    repaired = repaired.translate(
-        str.maketrans({chr(0x201C): '"', chr(0x201D): '"', chr(0x2018): "'", chr(0x2019): "'"})
-    )
-    # Comas finales antes de } o ].
-    repaired = _TRAILING_COMMA.sub(r"\1", repaired)
-    return repaired
