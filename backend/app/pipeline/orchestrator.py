@@ -133,7 +133,7 @@ def prepare_session(
     max_score: float,
     *,
     model_exam_path: str | Path,
-    context_paths: Sequence[str | Path] | None = (),
+    context_paths: Sequence[str | Path] = (),
     teacher_instructions: str | None = None,
 ) -> CorrectionSession:
     """Extrae el material del profesor a texto y arma una CorrectionSession.

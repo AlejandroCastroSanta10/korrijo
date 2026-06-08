@@ -105,7 +105,7 @@ def _build_parser() -> argparse.ArgumentParser:
 
     return parser
 
-def _fail(message: str) -> "int":
+def _fail(message: str) -> int:
     """Imprime un error"""
     print(f"Error: {message}", file=sys.stderr)
     return 1
