@@ -2,7 +2,7 @@
 hacer pruebas de la funcionalidad principal por línea de comandos.
 
 Ejecuta el pipeline completo (extracción → transcripción → corrección) sobre una
-tanda de exámenes (de una misma sesión) y vuelca el resultado en JSON. 
+tanda de exámenes (de una misma sesión) y vuelca el resultado en JSON.
 Es la forma de probar la funcionalidad principal de Korrijo sin frontend.
 
 Ejecutar el script desde backend/, con el entorno activado. Argumentos de programa:
@@ -76,6 +76,7 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--max-score",
         type=float,
+        required=True,
         help="Puntuación máxima del examen (> 0).",
     )
 
@@ -93,7 +94,7 @@ def _build_parser() -> argparse.ArgumentParser:
         "--instructions",
         help="Indicaciones del profesor: texto literal o ruta a un fichero. Opcional.",
     )
-    
+
     parser.add_argument(
         "--output", help="Ruta donde guardar el resultado completo en JSON. Opcional."
     )
@@ -140,18 +141,13 @@ def _validate_inputs(args: argparse.Namespace) -> tuple[str, str] | None:
     if args.max_score <= 0:
         return _fail(f"--max-score debe ser > 0 (recibido {args.max_score}).") and None
 
-    vlm_model = args.vlm_model or settings.pipeline_vlm_model
+    # Los modelos salen del .env
+    vlm_model = settings.pipeline_vlm_model
     if not vlm_model:
-        return _fail(
-            "no hay modelo de visión. Pásalo con --vlm-model o configúralo en "
-            "PIPELINE_VLM_MODEL (.env)."
-        ) and None
-    llm_model = args.llm_model or settings.pipeline_llm_model
+        return _fail("no hay modelo de visión configurado en PIPELINE_VLM_MODEL (.env).") and None
+    llm_model = settings.pipeline_llm_model
     if not llm_model:
-        return _fail(
-            "no hay modelo textual. Pásalo con --llm-model o configúralo en "
-            "PIPELINE_LLM_MODEL (.env)."
-        ) and None
+        return _fail("no hay modelo textual configurado en PIPELINE_LLM_MODEL (.env).") and None
 
     return vlm_model, llm_model
 
