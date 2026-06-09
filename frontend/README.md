@@ -1,4 +1,4 @@
-# Korrijo - Frontend
+# Frontend de Korrijo
 
 Frontend de Korrijo. Construido con [Next.js](https://nextjs.org).
 
