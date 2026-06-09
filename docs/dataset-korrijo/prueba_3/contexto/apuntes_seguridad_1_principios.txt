@@ -1,0 +1,152 @@
+SEGURIDAD EN EL DISEÑO DE SOFTWARE
+Apuntes del profesor — Parte 1: Principios Fundamentales
+=========================================================
+
+
+1. INTRODUCCIÓN A LA SEGURIDAD EN EL DISEÑO
+--------------------------------------------
+
+La seguridad en el software no es una característica que se añade al final del desarrollo,
+sino una propiedad que debe integrarse desde las primeras decisiones de diseño. Un sistema
+inseguro por diseño no puede hacerse seguro parcheándolo a posteriori.
+
+El coste de corregir una vulnerabilidad crece exponencialmente según la fase en que se detecta:
+- En diseño: coste bajo (cambiar una decisión arquitectónica)
+- En implementación: coste medio (refactorizar código)
+- En producción: coste alto (parches de emergencia, brechas, reputación)
+
+Este principio se conoce como "shift left security": desplazar la seguridad hacia las
+fases tempranas del ciclo de vida del software.
+
+
+2. PRINCIPIOS FUNDAMENTALES DE DISEÑO SEGURO
+---------------------------------------------
+
+2.1 Principio de mínimo privilegio (Least Privilege)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Cada componente, usuario o proceso debe tener únicamente los permisos estrictamente
+necesarios para realizar su función, y ninguno más.
+
+Aplicaciones prácticas:
+- Un servicio que solo lee datos no debe tener permisos de escritura en la base de datos.
+- Un usuario de aplicación en la base de datos no debe ser el administrador (root/sa).
+- Un microservicio no debe poder acceder a recursos de otros microservicios que no necesita.
+- Los tokens de API deben tener el scope mínimo necesario.
+
+Por qué es importante:
+Si un atacante compromete un componente con privilegios mínimos, el daño queda contenido.
+No puede moverse lateralmente ni escalar privilegios fácilmente.
+
+
+2.2 Defensa en profundidad (Defense in Depth)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Estrategia de seguridad basada en implementar múltiples capas de controles independientes.
+Si una capa falla, las demás siguen protegiendo el sistema.
+
+El principio parte de asumir que ningún control individual es infalible. Un atacante que
+supera una capa debe encontrar otra, y otra, lo que incrementa el esfuerzo necesario y
+la probabilidad de detección.
+
+Capas típicas en una aplicación web:
+
+  [Red]          Firewall, WAF (Web Application Firewall), segmentación de red, IDS/IPS
+  [Transporte]   TLS/HTTPS, certificados válidos, HSTS
+  [Aplicación]   Validación de entradas, autenticación fuerte, gestión segura de sesiones,
+                 autorización granular, rate limiting
+  [Datos]        Cifrado en reposo, acceso con mínimo privilegio, enmascaramiento de datos
+  [Monitorización] Logging centralizado, alertas, SIEM, respuesta a incidentes
+
+Ejemplo: un atacante que consigue saltarse el WAF (capa de red) todavía encontrará
+validación de entradas en la aplicación. Si supera eso, los datos estarán cifrados.
+
+
+2.3 Fail Securely (Fallar de forma segura)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Cuando un sistema falla o encuentra un error, debe hacerlo de forma que no exponga
+información sensible ni abra vectores de ataque.
+
+Mal ejemplo:
+- Mostrar el stack trace completo al usuario cuando hay un error de base de datos.
+- Dejar un recurso accesible si falla el mecanismo de autorización.
+
+Buen ejemplo:
+- Mostrar un mensaje de error genérico al usuario y registrar el detalle en logs internos.
+- Denegar el acceso por defecto si la verificación de permisos no puede completarse.
+
+
+2.4 Separación de responsabilidades (Separation of Duties)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Ningún actor único debe tener control completo sobre un proceso crítico. Las tareas
+sensibles se dividen entre múltiples partes que deben cooperar.
+
+Ejemplos:
+- En banca: la persona que aprueba una transferencia no es la misma que la ejecuta.
+- En infraestructura: el desarrollador no tiene acceso directo a producción; necesita
+  pasar por un pipeline de despliegue con revisiones.
+- En criptografía: la clave de cifrado no la custodia la misma persona que tiene
+  acceso a los datos cifrados.
+
+
+2.5 Economía de mecanismos (Keep It Simple)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Los mecanismos de seguridad deben ser lo más simples posible. La complejidad introduce
+errores. Un sistema de autenticación con 2000 líneas de código tiene más probabilidades
+de contener vulnerabilidades que uno con 200 líneas bien diseñadas.
+
+Implicación práctica: usar librerías y frameworks de seguridad consolidados en lugar
+de implementar mecanismos propios (no reinventar la rueda criptográfica).
+
+
+2.6 Seguridad por diseño vs. seguridad por oscuridad
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+La seguridad por oscuridad (ocultar cómo funciona el sistema para que sea más difícil
+atacarlo) no es seguridad real. Un sistema debe ser seguro incluso asumiendo que el
+atacante conoce su funcionamiento interno (principio de Kerckhoffs).
+
+Ejemplo incorrecto: "No documentamos la API porque así los atacantes no saben cómo usarla."
+Ejemplo correcto: La API requiere autenticación y autorización robusta,
+independientemente de si su funcionamiento es público o no.
+
+
+3. MODELADO DE AMENAZAS (THREAT MODELING)
+------------------------------------------
+
+El modelado de amenazas es un proceso estructurado para identificar y priorizar
+amenazas potenciales a un sistema antes de implementarlo.
+
+3.1 ¿Cuándo realizarlo?
+~~~~~~~~~~~~~~~~~~~~~~~
+En la fase de DISEÑO, antes de escribir código. Es el momento en que las decisiones
+arquitectónicas están abiertas y los cambios son menos costosos.
+
+No significa que no pueda hacerse después (análisis de sistemas existentes), pero su
+máximo valor está en el diseño temprano.
+
+3.2 Proceso general
+~~~~~~~~~~~~~~~~~~~
+Paso 1 — Modelar el sistema
+  - Diagramas de flujo de datos (DFD)
+  - Identificar activos (qué queremos proteger), puntos de entrada y límites de confianza
+
+Paso 2 — Identificar amenazas
+  - Usar metodologías como STRIDE:
+      S — Spoofing (suplantación de identidad)
+      T — Tampering (manipulación de datos)
+      R — Repudiation (repudio de acciones)
+      I — Information Disclosure (revelación de información)
+      D — Denial of Service (denegación de servicio)
+      E — Elevation of Privilege (escalada de privilegios)
+
+Paso 3 — Evaluar y priorizar
+  - Usar métricas como CVSS o matrices de riesgo (probabilidad × impacto)
+
+Paso 4 — Definir contramedidas
+  - Para cada amenaza priorizada, definir el control de seguridad correspondiente
+
+Paso 5 — Validar
+  - Comprobar que las contramedidas son implementables y no introducen nuevas amenazas
+
+3.3 Resultado esperado
+~~~~~~~~~~~~~~~~~~~~~~
+Un documento de amenazas y contramedidas que guíe las decisiones de implementación
+y sirva de referencia para pruebas de seguridad posteriores.

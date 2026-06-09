@@ -24,6 +24,9 @@ class OllamaLLMProvider(LLMProvider):
             controla la ventana de contexto; conviene subirlo cuando el
             prompt sea largo (rúbrica + examen, por ejemplo).
         timeout: segundos para la llamada HTTP completa.
+        think: controla el modo razonamiento de modelos híbridos (ej. qwen3).
+            Por defecto True: el modelo razona la corrección para mejorarla Ponerlo a False
+            para desactivar el razonamiento y ganar tiempo, pero empeorará la corrección.
     """
     def __init__(
         self,
@@ -34,6 +37,7 @@ class OllamaLLMProvider(LLMProvider):
         top_p: float = 0.9,
         num_ctx: int = 8192,
         timeout: float = 120.0,
+        think: bool | None = True,
     ) -> None:
         resolved_model = model or settings.pipeline_llm_model
         if not resolved_model:
@@ -48,6 +52,7 @@ class OllamaLLMProvider(LLMProvider):
         self.top_p = top_p
         self.num_ctx = num_ctx
         self.timeout = timeout
+        self.think = think
         self._client = AsyncClient(host=self.base_url, timeout=timeout)
 
     async def generate(self, prompt: str, schema: dict | None = None) -> str:
@@ -61,6 +66,7 @@ class OllamaLLMProvider(LLMProvider):
                     "num_ctx": self.num_ctx,
                 },
                 format=schema if schema else None,
+                think=self.think,
             )
         except ResponseError as exc:
             raise self._translate_response_error(exc) from exc

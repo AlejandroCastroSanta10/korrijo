@@ -36,6 +36,12 @@ class Settings(BaseSettings):
     ollama_base_url: str = "http://localhost:11434"
     pipeline_llm_model: str | None = None
     pipeline_vlm_model: str | None = None
+    # Ventana de contexto en tokens. Por defecto.
+    pipeline_llm_num_ctx: int = 16384
+    pipeline_vlm_num_ctx: int = 16384
+    # Timeout (segundos) de la llamada al proveedor de inferencia. 
+    pipeline_llm_timeout: float = 300.0
+    pipeline_vlm_timeout: float = 200.0
 
 
 settings = Settings()

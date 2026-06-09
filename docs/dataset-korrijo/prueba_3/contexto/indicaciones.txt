@@ -1,0 +1,11 @@
+En cuanto a la primera parte:
+
+Cubre los conceptos de diseño base. Útil como referencia para las preguntas 1, 4 y 5.
+
+Por lo que respecta a la segunda parte de los apuntes:
+
+Referencia principal para las preguntas 2, 3 y 6. Los ejemplos de código SQL son orientativos; no se exige que el alumno los reproduzca exactamente.
+
+La tercera parte:
+
+Referencia principal para las preguntas 7 y 8. Para la pregunta 7, los tipos de XSS son contexto adicional; lo evaluable es el impacto y las contramedidas.

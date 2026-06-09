@@ -1,0 +1,173 @@
+SEGURIDAD EN EL DISEÑO DE SOFTWARE
+Apuntes del profesor — Parte 2: Vulnerabilidades Comunes y OWASP Top 10
+========================================================================
+
+
+1. OWASP TOP 10
+---------------
+
+OWASP (Open Worldwide Application Security Project) es una fundación sin ánimo de lucro
+dedicada a mejorar la seguridad del software. Su recurso más conocido es el OWASP Top 10:
+una lista de los diez riesgos de seguridad más críticos y frecuentes en aplicaciones web,
+actualizada periódicamente por la comunidad.
+
+Utilidad en el diseño seguro:
+- Proporciona un vocabulario común para hablar de seguridad entre desarrolladores,
+  arquitectos y equipos de seguridad.
+- Permite priorizar qué controles implementar: si no sabes por dónde empezar,
+  el Top 10 cubre los errores más frecuentes y de mayor impacto.
+- Se usa como checklist durante revisiones de diseño y auditorías de código.
+- Muchos estándares de cumplimiento (PCI-DSS, ISO 27001) lo referencian directamente.
+
+OWASP Top 10 (edición 2021, la más reciente en el momento de estos apuntes):
+
+  A01 — Broken Access Control
+        Controles de acceso mal implementados que permiten a usuarios acceder a recursos
+        o funciones para los que no tienen permiso.
+
+  A02 — Cryptographic Failures
+        Uso incorrecto o ausencia de criptografía para proteger datos sensibles en
+        tránsito o en reposo.
+
+  A03 — Injection
+        Inyección de código malicioso (SQL, NoSQL, OS commands, LDAP...) a través
+        de entradas no validadas.
+
+  A04 — Insecure Design
+        Fallos en la fase de diseño: ausencia de modelado de amenazas, patrones de
+        diseño inseguros, falta de controles desde el principio.
+
+  A05 — Security Misconfiguration
+        Configuraciones por defecto inseguras, permisos excesivos, puertos abiertos
+        innecesarios, mensajes de error con información sensible.
+
+  A06 — Vulnerable and Outdated Components
+        Uso de librerías, frameworks o componentes con vulnerabilidades conocidas
+        y sin actualizar.
+
+  A07 — Identification and Authentication Failures
+        Fallos en autenticación: contraseñas débiles, gestión insegura de sesiones,
+        ausencia de MFA en sistemas críticos.
+
+  A08 — Software and Data Integrity Failures
+        Falta de verificación de integridad en actualizaciones, pipelines de CI/CD
+        inseguros, deserialización insegura.
+
+  A09 — Security Logging and Monitoring Failures
+        Ausencia de logs adecuados o monitorización, lo que impide detectar y
+        responder a ataques en curso.
+
+  A10 — Server-Side Request Forgery (SSRF)
+        El servidor realiza peticiones a destinos controlados por el atacante,
+        permitiendo acceder a recursos internos.
+
+
+2. INYECCIÓN SQL
+----------------
+
+2.1 Qué es
+~~~~~~~~~~
+La inyección SQL es un tipo de ataque de inyección (A03 en OWASP Top 10) en el que
+un atacante introduce código SQL malicioso en una entrada de la aplicación que,
+sin la validación adecuada, se ejecuta directamente en la base de datos.
+
+2.2 Cómo funciona
+~~~~~~~~~~~~~~~~~
+Supongamos una consulta vulnerable construida por concatenación de strings:
+
+  query = "SELECT * FROM users WHERE username='" + username + "' AND password='" + password + "'"
+
+Si el usuario introduce como nombre de usuario:  admin' --
+La consulta resultante es:
+
+  SELECT * FROM users WHERE username='admin' --' AND password='lo_que_sea'
+
+El -- comenta el resto de la consulta. El atacante accede como admin sin saber la contraseña.
+
+Otro ejemplo destructivo — entrada: '; DROP TABLE users; --
+Resulta en:
+
+  SELECT * FROM users WHERE username=''; DROP TABLE users; --'
+
+Esto elimina la tabla completa de usuarios.
+
+2.3 Impacto
+~~~~~~~~~~~
+- Bypass de autenticación
+- Extracción de datos confidenciales (datos de usuarios, contraseñas, información financiera)
+- Modificación o eliminación de datos
+- En algunos casos, ejecución de comandos en el sistema operativo (xp_cmdshell en SQL Server)
+
+2.4 Contramedidas de diseño
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Medida 1 — Consultas parametrizadas / Prepared Statements (OBLIGATORIA)
+  Separar el código SQL de los datos del usuario. El motor de base de datos trata
+  los parámetros como datos, nunca como código.
+
+  Ejemplo en Python con psycopg2:
+    cursor.execute("SELECT * FROM users WHERE username = %s AND password = %s",
+                   (username, password))
+
+  Ejemplo en Java con PreparedStatement:
+    PreparedStatement stmt = conn.prepareStatement(
+        "SELECT * FROM users WHERE username = ? AND password = ?");
+    stmt.setString(1, username);
+    stmt.setString(2, password);
+
+Medida 2 — Uso de ORM (Object-Relational Mapper)
+  Frameworks como SQLAlchemy, Hibernate o Django ORM abstraen la capa SQL y
+  generan consultas parametrizadas automáticamente.
+
+Medida 3 — Validación y sanitización de entradas
+  Validar tipo, longitud y formato de todas las entradas del usuario.
+  Rechazar o escapar caracteres especiales (', ", --, ;).
+  IMPORTANTE: esto es una defensa secundaria, no sustituye a las consultas parametrizadas.
+
+Medida 4 — Mínimo privilegio en el usuario de base de datos
+  El usuario con el que la aplicación se conecta a la BD debe tener solo los permisos
+  necesarios: si la app solo lee, el usuario de BD no debe poder escribir ni borrar.
+
+Medida 5 — Firewall de base de datos / WAF
+  Como defensa adicional (no principal), detectar y bloquear patrones de inyección.
+
+
+3. AUTENTICACIÓN Y AUTORIZACIÓN
+---------------------------------
+
+3.1 Diferencia fundamental
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+Autenticación (AuthN): verificar la identidad. ¿Quién eres?
+  - Ejemplos: contraseña, token, certificado, biometría, MFA
+
+Autorización (AuthZ): verificar los permisos. ¿Qué puedes hacer?
+  - Ejemplos: roles (RBAC), atributos (ABAC), políticas (PBAC)
+
+El orden es siempre: primero autenticar, luego autorizar.
+Un fallo común es implementar autorización sin autenticación previa robusta,
+o autenticar sin aplicar controles de autorización granulares.
+
+3.2 Errores comunes de autenticación
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Almacenar contraseñas en texto plano o con hashing débil (MD5, SHA1 sin salt)
+- Permitir contraseñas débiles o sin política de complejidad
+- No implementar protección contra fuerza bruta (rate limiting, bloqueo de cuenta)
+- Tokens de sesión predecibles o sin expiración
+- No invalidar sesiones al cerrar sesión o tras cambio de contraseña
+- Ausencia de MFA en accesos privilegiados
+
+3.3 Buenas prácticas de autenticación
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Almacenar contraseñas con bcrypt, Argon2 o scrypt (algoritmos de hashing lentos con salt)
+- Implementar MFA (Multi-Factor Authentication) especialmente en cuentas sensibles
+- Usar tokens de sesión largos, aleatorios y con tiempo de expiración
+- Implementar rate limiting en endpoints de login
+- Usar protocolos estándar: OAuth 2.0, OpenID Connect, SAML
+  (no implementar mecanismos de autenticación propios)
+
+3.4 Buenas prácticas de autorización
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Implementar control de acceso en el servidor, nunca solo en el cliente
+- Usar RBAC (Role-Based Access Control) o ABAC (Attribute-Based Access Control)
+- Aplicar mínimo privilegio: cada rol tiene solo los permisos que necesita
+- Verificar autorización en cada petición, no solo al iniciar sesión
+- Registrar en logs los intentos de acceso a recursos no autorizados
