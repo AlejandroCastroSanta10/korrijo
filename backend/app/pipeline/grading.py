@@ -75,6 +75,11 @@ Instrucciones:
 - "max_score" de cada ítem es la puntuación máxima que la rúbrica asigna a ese
   ítem. "assigned_score" es lo que otorgas al alumno y NUNCA puede superar el
   "max_score" de ese ítem ni ser negativo.
+- Si un ítem de la rúbrica define niveles (columnas con % como 100/50/20/0, o puntos fijos),
+  elige el nivel que mejor encaje y asigna su valor exacto: con %, "assigned_score"
+  = "max_score" × %; con puntos, ese valor. Nada de valores intermedios entre
+  niveles. Solo si el ítem no define niveles que tienen ponderación, puntúa con tu 
+  criterio en [0, max_score].
 - En caso de duda, sé conservador: no regales puntos.
 - "comment" justifica brevemente la puntuación del ítem.
 - "feedback_report" es un informe en español DIRIGIDO AL PROFESOR que resume la
@@ -101,8 +106,7 @@ Devuelve ÚNICAMENTE un objeto JSON con esta forma exacta, sin texto alrededor:
   "feedback_report": "<informe en español para el profesor>"
 }
 
-/no_think
-Responde solo con el JSON, sin explicaciones ni bloques de razonamiento.
+Responde solo con el JSON, sin texto alrededor.
 """
 
 
