@@ -1,9 +1,14 @@
 # Korrijo
 
-Korrijo es una herramienta web para docentes que automatiza la corrección de exámenes manuscritos. A partir de una rúbrica y un examen modelo, genera un informe de feedback y una calificación propuesta para cada examen subido, reduciendo el tiempo que el profesor dedica a la parte más mecánica de la evaluación.
+Korrijo es una herramienta web para profesores que les facilita la corrección de exámenes manuscritos que estén compuestos por **preguntas de desarrollo** y/o **preguntas de respuesta corta**, pero todas "de escribir". 
 
-> **Trabajo de Fin de Grado** — Ingeniería Informática, especialidad Ingeniería del Software.
-> Autor: Alejandro Castro Santa. Versión actual: **v0.2.0**
+Para crear una **sesión de corrección** se tiene que proporcionar un examen modelo (*gold standard*), una rúbrica y opcionalmente contexto que quiera aportar el profesor (apuntes, diapositivas, etc.). En una segunda fase se pueden adjuntar los exámenes que se quieran corregir y para cada uno de ellos se genera una calificación propuesta y un informe de feedback para el profesor.
+
+Korrijo **NO** pretende sustituir el criterio del profesor. Su objetivo es proporcionarle una guía orientativa de los aciertos y errores del alumno, así como una nota propuesta, para que así la corrección manual sea más ágil y sencilla. 
+
+> Este proyecto es la herramienta construida para el **TFG** de Ingeniería Informática (especialidad Ingeniería del Software) de Alejandro Castro Santa.
+
+> Versión actual: **v0.3.0**
 
 ---
 
@@ -11,31 +16,34 @@ Korrijo es una herramienta web para docentes que automatiza la corrección de ex
 
 ```
 korrijo/
-├── frontend/       # Aplicación web (Next.js + TypeScript)
-├── backend/        # API REST (Python + FastAPI)
+├── frontend/       # Aplicación web Next.js
+├── backend/        # API REST (FastAPI, Python)
 ├── openspec/       # Specs SDD
 └── docs/           # Documentación general del proyecto
 ```
 
+Para poder probar la herramienta hay que llevar a cabo 3 cosas:
+
+1. Poner en marcha la infraestructura general (A)
+2. Arrancar el backend (B)
+3. Arrancar el frontend (C)
+
+Se explica todo detalladamente en los siguientes 3 apartados.
+
 ---
 
-## Requisitos para ejecutar la aplicación en local
+## A. Servicios necesarios
 
-- [Node.js](https://nodejs.org/) 20+
-- [Python](https://www.python.org/) 3.12+
-- [Docker](https://www.docker.com/)
+Se necesita tener levantada una base de datos PostgreSQL y el servicio Mailpit (servidor de correo).
+Ambos se gestiona con Docker Compose. Se necesita tener el Docker Engine instalado, por tanto.
 
----
-
-## Infraestructura local
-
-La infraestructura de desarrollo (base de datos y servidor de correo) se gestiona con Docker Compose.
-
-Copia el fichero de variables de entorno y ajusta los valores si lo necesitas:
+Copia el fichero de variables de entorno a un .env y ajusta los valores si lo consideras adecuado:
 
 ```bash
 cp .env.example .env
 ```
+
+Tienes estos comandos disponibles:
 
 | Comando | Efecto |
 |---|---|
@@ -43,50 +51,24 @@ cp .env.example .env
 | `docker compose down` | Para y elimina los contenedores (los datos persisten) |
 | `docker compose down -v` | Para los contenedores y **borra también los volúmenes** (se pierden los datos) |
 
-### Servicios disponibles
+Los servicios disponibles son estos:
 
 | Servicio | Puerto | Descripción |
 |---|---|---|
-| PostgreSQL | `5432` | Base de datos principal |
-| Mailpit (SMTP) | `1025` | Servidor de correo para desarrollo |
+| PostgreSQL | `5432` | Base de datos |
+| Mailpit (SMTP) | `1025` | Servidor de correo |
 | Mailpit (UI) | `8025` | Interfaz web: http://localhost:8025 |
 
 ---
 
-## Cómo arrancar el proyecto en local
+## B. Backend
 
-### 1. Clonar el repositorio
-
-```bash
-git clone <url-del-repositorio>
-cd korrijo
-```
-
-### 2. Arrancar el backend
-
-```bash
-cd backend
-```
-
-Consulta [`backend/README.md`](./backend/README.md) para los pasos detallados (entorno virtual, variables de entorno, ejecución del servidor).
-
-### 3. Arrancar el frontend
-
-```bash
-cd frontend
-```
-
-Consulta [`frontend/README.md`](./frontend/README.md) para los pasos detallados (instalación de dependencias, variables de entorno, servidor de desarrollo).
+Consulta [`backend/README.md`](./backend/README.md) para entender todo lo relacionado con la parte backend, incluido
+como ejecutarlo.
 
 ---
 
-## Estado del proyecto
+## C. Frontend
 
-Korrijo es el TFG de Alejandro Castro Santa, actualmente en desarrollo activo. La idea es conseguir un MVP para la entrega
-del trabajo y en el futuro continuar su desarrollo.
-
----
-
-## Licencia
-
-Código académico desarrollado como Trabajo de Fin de Grado. No se ha definido una licencia de uso pública (al menos para la versión actual).
+Consulta [`frontend/README.md`](./frontend/README.md) para para entender todo lo relacionado con la parte frontend, incluido
+como ejecutarlo ya poder probar el sistema.

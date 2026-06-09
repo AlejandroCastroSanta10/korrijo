@@ -1,42 +1,63 @@
 # Backend de Korrijo 
 
-Se trata de una API hecha en FastAPI. 
+Se trata de una API hecha en FastAPI, la cual tiene detrás toda la lógica de negocio de Korrijo, así como la interacción
+con los modelos de IA.
 
-## Requisitos
+## Requisitos y dependencias
 
-- Python 3.12+
-- `pip` y `venv` (incluidos en Python)
+- Python 3.12+ y el módulo para poder crear entornos virtuales (venv).
+- Ollama corriendo (proveedor de inferencia) y tener descargados los modelos que se quiera usar (los que he usado yo 
+están en el .env.example).
 
-## Instalación
-
-Desde el directorio `backend/`:
+Para la descarga de dependencias necesarioas, desde este directorio `backend/`:
 
 ```bash
-# 1. Crear el entorno virtual
+# 1. Creamos el entorno virtual
 python3 -m venv .venv
 
-# 2. Activarlo
+# 2. Lo activamos
 source .venv/bin/activate        # Linux / macOS
-# .venv\Scripts\Activate.ps1     # Windows PowerShell
+.venv\Scripts\Activate.ps1     # Windows PowerShell
 
-# 3. Actualizar pip (recomendado)
+# 3. Actualizamos pip (recomendado)
 pip install --upgrade pip
 
-# 4. Instalar dependencias
+# 4. Instalamos dependencias con pip
 pip install -r requirements-dev.txt
 ```
 
-## Variables de entorno
+## Configuración de las variables de entorno
 
-El backend usa `pydantic-settings` para cargar la configuración desde un fichero `.env`. Crear el `.env` es **obligatorio** porque `DATABASE_URL` no tiene valor por defecto.
+Es **obligatorio** crear un fichero `.env` en backend/ y rellenarlo con los valores adecuados.
 
-Copiar la plantilla y ajustar los valores si es necesario:
+Se tiene que copiar la plantilla y ajustar los valores que vienen por defecto si se cree necesario:
 
 ```bash
 cp .env.example .env
 ```
 
-## Arrancar el servidor
+## Cuestiones relacionadas con la Base de Datos
+
+Se necesita que el backend tenga acceso a la base de datos PostgreSQL. Para ello los servicios de Docker 
+deben estar corriendo (se hace con `docker compose up -d` desde la raíz del proyecto).
+
+Para aplicar las migraciones de la BD, desde el directorio `backend/` con el entorno virtual activado:
+
+```bash
+alembic upgrade head
+```
+
+Si se quisiera crear una migración a partir de a cambios realizados a los modelos:
+
+```bash
+alembic revision --autogenerate -m "descripción"
+```
+
+## Endpoints
+
+Se pondrá el listado definitivo de endpoints que configuran la API en versiones posteriores.
+
+## Arrancar el backend
 
 Con el entorno virtual activado:
 
@@ -44,71 +65,25 @@ Con el entorno virtual activado:
 uvicorn app.main:app --reload
 ```
 
-El servidor se levantará en [http://localhost:8000](http://localhost:8000).
+El servidor que expone la API se levantará en [http://localhost:8000](http://localhost:8000).
 
-### Endpoints
 
-Por ahora son solo estos dos:
+## Pipeline standalone (probar la funcionalidad principal sin frontend)
 
-- [http://localhost:8000/health](http://localhost:8000/health) — health check, devuelve `{"status": "ok"}`
-- [http://localhost:8000/docs](http://localhost:8000/docs) — documentación de la API con Swagger
-
-## Base de datos
-
-> Pre-requisito: los servicios de Docker deben estar corriendo (`docker compose up -d` desde la raíz).
-
-Las migraciones se gestionan con Alembic. Desde el directorio `backend/` con el entorno virtual activado:
-
-```bash
-# Aplicar todas las migraciones pendientes
-alembic upgrade head
-
-# Crear una nueva migración a partir de los cambios en los modelos
-alembic revision --autogenerate -m "descripción"
-```
-
-## Pipeline standalone (usar funcionalidad principal sin frontend)
-
-La funcionalidad principal de Korrijo —corregir exámenes manuscritos— se puede
-probar de extremo a extremo desde la línea de comandos, sin frontend ni base de
-datos, con el script `app/pipeline/run.py`.
+La funcionalidad principal de Korrijo (corregir exámenes manuscritos) se puede
+probar desde CLI, sin frontend ni base de datos, ni nada, con el script `app/pipeline/run.py`.
 
 Reproduce el flujo de una **sesión de corrección**: el material del profesor
 (rúbrica, examen modelo y contexto) se extrae **una sola vez** y se reutiliza
 para corregir una **tanda de hasta 3 exámenes**. Por cada examen ejecuta
-extracción → transcripción (VLM) → corrección (LLM) y produce la rúbrica
-rellenada con nota propuesta, un informe de feedback y métricas de ejecución
-(tiempos por fase y VRAM en pico).
+transcripción (VLM) → corrección (LLM) y produce la rúbrica
+rellenada, una nota propuesta y un informe de feedback y métricas de ejecución
+(todo ello en un fichero JSON de salida).
 
-### Requisitos
-
-1. **Ollama corriendo** (por defecto en `http://localhost:11434`):
-
-   ```bash
-   ollama serve
-   ```
-
-2. **Modelos descargados**: uno de visión (VLM) para la transcripción y uno
-   textual (LLM) para la corrección. Los del `.env` de ejemplo:
-
-   ```bash
-   ollama pull qwen3-vl:latest   # visión
-   ollama pull qwen3:14b         # textual
-   ```
-
-3. **Modelos configurados en el `.env`** (el script los lee de ahí; no hay flags
-   de modelo en el CLI):
-
-   ```bash
-   OLLAMA_BASE_URL=http://localhost:11434
-   PIPELINE_VLM_MODEL=qwen3-vl:latest
-   PIPELINE_LLM_MODEL=qwen3:14b
-   ```
-
-> El examen del alumno se sube como **PDF escaneado o imagen** (`.jpg`, `.jpeg`,
+> El examen del alumno tiene que ser **PDF escaneado o imagen** (`.jpg`, `.jpeg`,
 > `.png`). La rúbrica, el examen modelo y el contexto deben ser **documentos
 > nativos** (`.pdf` nativo, `.xlsx`, `.txt`, `.md`, `.csv`): no se admiten PDFs
-> escaneados para esos.
+> escaneados para estos.
 
 ### Ejecución
 
@@ -138,33 +113,5 @@ Argumentos:
   ruta a un fichero), `--output` (guarda el resultado completo en JSON),
   `--verbose` (logging DEBUG con tiempos detallados).
 
-La consola imprime, por cada examen, la nota orientativa, la rúbrica rellenada y
-los tiempos; al final, un resumen de la tanda (corregidos, aprobados/suspensos,
-nota media y tiempo total). Con `--output` se guarda además el resultado completo
-(transcripción, corrección y metadatos) en JSON.
-
-Un examen que falle **no aborta la tanda**: se marca con su error y el resto se
-sigue corrigiendo. Si falla la preparación de la sesión (p. ej. una rúbrica
-ilegible) o no se puede corregir ningún examen, el script termina con código de
-salida distinto de 0.
-
-> **Rendimiento:** la transcripción (VLM) es lenta. En una RTX 3060 de 12 GB, un
-> examen de tamaño normal se corrige en menos de 5 minutos. La VRAM en pico que
-> reporta el script viene de `nvidia-smi` (si no hay GPU NVIDIA, ese dato sale
-> vacío).
-
-## Desarrollo
-
-### Linting y formateo
-
-El proyecto usa [Ruff](https://docs.astral.sh/ruff/) para linting y formateo. Es recomendable usar estos comandos de vez en cuando:
-
-```bash
-ruff check .           # lint
-ruff check --fix .     # lint y corrige automáticamente lo que puede
-ruff format .          # formatea
-```
-
-### Nuevos routers
-
-¡IMPORTANTE! Los nuevos routers se crean en `app/api/` como módulos separados y se registran en `app/main.py` mediante `app.include_router(...)`.
+> **Rendimiento:** La corrección de un examen no debe tardar +5 min en el hardware de
+referencia (NVIDIA GeForce RTX 3060 de 12GB de VRAM).
