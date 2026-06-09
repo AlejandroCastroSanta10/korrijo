@@ -79,7 +79,10 @@ Instrucciones:
 - "comment" justifica brevemente la puntuación del ítem.
 - "feedback_report" es un informe en español DIRIGIDO AL PROFESOR que resume la
   corrección, justifica la nota propuesta y señala las dudas. No inventes hechos
-  que no estén respaldados por la respuesta del alumno.
+  que no estén respaldados por la respuesta del alumno. NO incluyas en él la nota
+  total ni ninguna cifra de puntuación global (ni "X sobre Y", ni "X/Y", ni "X
+  puntos"): la nota la transmite "total_score", no el texto. Describe el
+  desempeño de forma cualitativa.
 - "total_score" es la suma de los "assigned_score" y no puede superar la
   puntuación máxima del examen indicada más abajo.
 

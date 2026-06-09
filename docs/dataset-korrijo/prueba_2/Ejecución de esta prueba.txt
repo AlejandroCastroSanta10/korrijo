@@ -1,0 +1,10 @@
+Desde backend/ poner este comando:
+
+python -m app.pipeline.run \
+      --exam ../docs/dataset-korrijo/prueba_2/a_corregir/examen_isabel.pdf \
+      --rubric ../docs/dataset-korrijo/prueba_2/rubrica.pdf \
+      --model-exam ../docs/dataset-korrijo/prueba_2/gold_standard/gold_standard.pdf \
+      --context ../docs/dataset-korrijo/prueba_2/contexto/apuntes_auxiliar_enfermeria.pdf \
+      --instructions ../docs/dataset-korrijo/prueba_2/indicaciones.txt \
+      --max-score 100 \
+      --output prueba_2_resultado_isabel.json --verbose

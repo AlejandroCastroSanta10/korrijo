@@ -32,6 +32,7 @@ from pathlib import Path
 
 from pydantic import BaseModel, Field
 
+from app.core.config import settings
 from app.pipeline.errors import ProviderError
 from app.pipeline.extractors.router import (
     ScannedPDFNotSupportedError,
@@ -50,9 +51,6 @@ from app.pipeline.vlm.base import VLMProvider
 from app.pipeline.vlm.ollama import OllamaVLMProvider
 
 logger = logging.getLogger(__name__)
-
-# num_ctx generoso por defecto para el LLM ya que es largo el prompt.
-_DEFAULT_LLM_NUM_CTX = 16384
 
 # Separador con el que se concatenan varios ficheros de contexto extraídos.
 _CONTEXT_SEPARATOR = "\n\n---\n\n"
@@ -365,8 +363,16 @@ async def run_pipeline(
     )
     extraction_seconds = time.perf_counter() - extraction_started
 
-    vlm = vlm_provider or OllamaVLMProvider(model=vlm_model)
-    llm = llm_provider or OllamaLLMProvider(model=llm_model, num_ctx=_DEFAULT_LLM_NUM_CTX)
+    vlm = vlm_provider or OllamaVLMProvider(
+        model=vlm_model,
+        num_ctx=settings.pipeline_vlm_num_ctx,
+        timeout=settings.pipeline_vlm_timeout,
+    )
+    llm = llm_provider or OllamaLLMProvider(
+        model=llm_model,
+        num_ctx=settings.pipeline_llm_num_ctx,
+        timeout=settings.pipeline_llm_timeout,
+    )
 
     # Fase 2: corregir cada examen
     exams: list[ExamRun] = []
