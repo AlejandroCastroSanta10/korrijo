@@ -39,6 +39,9 @@ class Settings(BaseSettings):
     # Almacenamiento de ficheros subidos (rúbricas, contextos, exámenes...).
     storage_root: Path = _BACKEND_DIR / "storage"
 
+    # Máximo de sesiones activas por usuario.
+    max_active_sessions_per_user: int = 5
+
     # Ollama / pipeline
     ollama_base_url: str = "http://localhost:11434"
     pipeline_llm_model: str | None = None
