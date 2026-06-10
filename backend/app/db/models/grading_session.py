@@ -5,7 +5,6 @@ from uuid import UUID
 
 from sqlalchemy import (
     DateTime,
-    Enum as SAEnum,
     Float,
     ForeignKey,
     String,
@@ -13,6 +12,9 @@ from sqlalchemy import (
     Uuid,
     func,
     text,
+)
+from sqlalchemy import (
+    Enum as SAEnum,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -24,7 +26,7 @@ if TYPE_CHECKING:
     from app.db.models.user import User
 
 
-class SessionStatus(str, enum.Enum):
+class SessionStatus(enum.StrEnum):
     DRAFT = "draft"
     READY = "ready"
     ARCHIVED = "archived"
@@ -41,11 +43,11 @@ class GradingSession(Base):
     )
     name: Mapped[str] = mapped_column(String)
     max_score: Mapped[float] = mapped_column(Float, default=10.0, server_default=text("10.0"))
-    
+
     # Indicaciones del profesor (texto libre), separadas en las dos posibles.
     context_instructions: Mapped[str | None] = mapped_column(Text)
     model_exam_instructions: Mapped[str | None] = mapped_column(Text)
-    
+
     status: Mapped[SessionStatus] = mapped_column(
         SAEnum(
             SessionStatus,

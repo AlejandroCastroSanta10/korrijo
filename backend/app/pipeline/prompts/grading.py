@@ -25,7 +25,7 @@ Instrucciones:
   "max_score" de ese ítem ni ser negativo.
 - Si un ítem de la rúbrica define niveles (columnas con % como 100/50/20/0, o puntos fijos),
   elige el nivel que mejor encaje y asigna su valor exacto: con %, "assigned_score"
-  = "max_score" × %; con puntos, ese valor. Nada de valores intermedios entre
+  = "max_score" x %; con puntos, ese valor. Nada de valores intermedios entre
   niveles. Solo si el ítem no define niveles que tienen ponderación, puntúa con tu
   criterio en [0, max_score].
 - En caso de duda, sé conservador: no regales puntos.

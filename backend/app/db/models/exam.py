@@ -5,13 +5,15 @@ from uuid import UUID
 
 from sqlalchemy import (
     DateTime,
-    Enum as SAEnum,
     ForeignKey,
     String,
     Text,
     Uuid,
     func,
     text,
+)
+from sqlalchemy import (
+    Enum as SAEnum,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -22,7 +24,7 @@ if TYPE_CHECKING:
     from app.db.models.grading_session import GradingSession
 
 
-class ExamStatus(str, enum.Enum):
+class ExamStatus(enum.StrEnum):
     PENDING = "pending"
     PROCESSING = "processing"
     COMPLETED = "completed"

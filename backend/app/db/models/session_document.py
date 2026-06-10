@@ -5,7 +5,6 @@ from uuid import UUID
 
 from sqlalchemy import (
     DateTime,
-    Enum as SAEnum,
     ForeignKey,
     Integer,
     String,
@@ -13,6 +12,9 @@ from sqlalchemy import (
     Uuid,
     func,
     text,
+)
+from sqlalchemy import (
+    Enum as SAEnum,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -22,7 +24,7 @@ if TYPE_CHECKING:
     from app.db.models.grading_session import GradingSession
 
 
-class DocumentKind(str, enum.Enum):
+class DocumentKind(enum.StrEnum):
     CONTEXT = "context"
     MODEL_EXAM = "model_exam"
     RUBRIC = "rubric"
@@ -50,7 +52,7 @@ class SessionDocument(Base):
     storage_path: Mapped[str] = mapped_column(String)
     size_bytes: Mapped[int] = mapped_column(Integer)
     mime_type: Mapped[str] = mapped_column(String)
-    
+
     # Texto extraído del documento, obtenido tras la fase de extracción.
     extracted_text: Mapped[str | None] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

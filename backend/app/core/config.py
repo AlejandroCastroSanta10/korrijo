@@ -39,7 +39,7 @@ class Settings(BaseSettings):
     # Ventana de contexto en tokens. Por defecto.
     pipeline_llm_num_ctx: int = 16384
     pipeline_vlm_num_ctx: int = 16384
-    # Timeout (segundos) de la llamada al proveedor de inferencia. 
+    # Timeout (segundos) de la llamada al proveedor de inferencia.
     pipeline_llm_timeout: float = 300.0
     pipeline_vlm_timeout: float = 200.0
 
