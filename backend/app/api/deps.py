@@ -1,5 +1,6 @@
 # Dependencias compartidas (reutilizables) entre varios routers.
 
+from functools import lru_cache
 from typing import Annotated
 
 from fastapi import Depends, HTTPException, Request, status
@@ -11,8 +12,14 @@ from app.core.config import settings
 from app.db.models.user import User
 from app.db.session import get_session
 from app.services.session import verify_session
+from app.services.storage import FileStorage, LocalFileStorage
 
 SessionDep = Annotated[AsyncSession, Depends(get_session)]
+
+
+@lru_cache
+def get_file_storage() -> FileStorage:
+    return LocalFileStorage(settings.storage_root)
 
 
 async def get_current_user(request: Request, session: SessionDep) -> User:
