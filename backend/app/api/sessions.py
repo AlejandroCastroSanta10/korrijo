@@ -128,7 +128,7 @@ async def create_session(
     ).scalar_one()
     if active >= settings.max_active_sessions_per_user:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=(
                 f"Has alcanzado el máximo de {settings.max_active_sessions_per_user} "
                 "sesiones activas. Elimina alguna para crear una nueva."
