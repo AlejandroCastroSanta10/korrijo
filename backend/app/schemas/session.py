@@ -1,0 +1,55 @@
+from datetime import datetime
+from uuid import UUID
+
+from pydantic import BaseModel, ConfigDict, Field
+
+from app.db.models.exam import ExamStatus
+from app.db.models.grading_session import SessionStatus
+from app.db.models.session_document import DocumentKind
+
+
+class SessionCreate(BaseModel):
+    name: str = Field(min_length=1, max_length=200)
+    max_score: float = Field(default=10.0, gt=0)
+    context_instructions: str | None = None
+    model_exam_instructions: str | None = None
+
+
+class SessionDocumentRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    kind: DocumentKind
+    filename: str
+    size_bytes: int
+    mime_type: str
+    created_at: datetime
+
+
+class ExamRead(BaseModel):
+    id: UUID
+    filename: str
+    status: ExamStatus
+    total_score: float | None = None
+    error_message: str | None = None
+    created_at: datetime
+
+
+class SessionRead(BaseModel):
+    id: UUID
+    name: str
+    max_score: float
+    status: SessionStatus
+    context_instructions: str | None
+    model_exam_instructions: str | None
+    created_at: datetime
+    updated_at: datetime
+    graded_count: int
+    passed_count: int
+    failed_count: int
+    average_score: float | None
+
+
+class SessionDetail(SessionRead):
+    documents: list[SessionDocumentRead]
+    exams: list[ExamRead]
