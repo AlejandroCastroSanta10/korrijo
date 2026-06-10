@@ -1,4 +1,8 @@
+from pathlib import Path
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+_BACKEND_DIR = Path(__file__).resolve().parents[2]
 
 
 class Settings(BaseSettings):
@@ -31,6 +35,9 @@ class Settings(BaseSettings):
     session_secret_key: str
     session_cookie_name: str = "korrijo_session"
     session_max_age_days: int = 30
+
+    # Almacenamiento de ficheros subidos (rúbricas, contextos, exámenes...).
+    storage_root: Path = _BACKEND_DIR / "storage"
 
     # Ollama / pipeline
     ollama_base_url: str = "http://localhost:11434"
