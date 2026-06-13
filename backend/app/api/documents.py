@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Form, HTTPException, Response, UploadFile, status
+from fastapi import APIRouter, Form, HTTPException, UploadFile, status
 
 from app.api.deps import CurrentUserDep, LLMDep, SessionDep, StorageDep
 from app.api.sessions_common import load_session, owned_or_error, to_session_detail
@@ -41,12 +41,16 @@ _RUBRIC_SUM_TOLERANCE = 0.01
 # Helpers
 # --------------------------------------------------------------------------- #
 
-def _document_or_error(grading_session: GradingSession, document_id: UUID) -> SessionDocument:
-    """Devuelve el documento de la sesión"""
-    for doc in grading_session.documents:
-        if doc.id == document_id:
-            return doc
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+def _require_draft(grading_session: GradingSession) -> None:
+    """El material solo se puede subir mientras la sesión está en borrador.
+
+    Una vez validada (ready) queda congelado: subir documentos se rechaza.
+    """
+    if grading_session.status != SessionStatus.DRAFT:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="La sesión ya está validada; su material no se puede modificar.",
+        )
 
 
 async def _build_rubric_structured(
@@ -167,7 +171,7 @@ async def _store_document(
 
 
 # --------------------------------------------------------------------------- #
-# Documentos iniciales de la sesión (fase 1)
+# Enpoints relacionados con los documentos iniciales de la sesión (fase 1)
 # --------------------------------------------------------------------------- #
 
 @router.post(
@@ -185,6 +189,7 @@ async def upload_document(
     file: UploadFile,
 ) -> DocumentUploadResponse:
     grading_session = owned_or_error(await load_session(session, session_id), current_user)
+    _require_draft(grading_session)
 
     filename = file.filename or ""
     content = await file.read()
@@ -215,71 +220,6 @@ async def upload_document(
         rubric=rubric,
     )
 
-
-@router.get(
-    "/{session_id}/documents/{document_id}", response_model=SessionDocumentDetail
-)
-async def get_document(
-    session_id: UUID,
-    document_id: UUID,
-    current_user: CurrentUserDep,
-    session: SessionDep,
-) -> SessionDocumentDetail:
-    grading_session = owned_or_error(await load_session(session, session_id), current_user)
-    document = _document_or_error(grading_session, document_id)
-    return SessionDocumentDetail.model_validate(document)
-
-
-@router.get("/{session_id}/documents/{document_id}/raw")
-async def download_document(
-    session_id: UUID,
-    document_id: UUID,
-    current_user: CurrentUserDep,
-    session: SessionDep,
-    storage: StorageDep,
-) -> Response:
-    grading_session = owned_or_error(await load_session(session, session_id), current_user)
-    document = _document_or_error(grading_session, document_id)
-    try:
-        content = await storage.read(document.storage_path)
-    except StorageError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"El fichero ya no está disponible: {exc}",
-        ) from exc
-    return Response(
-        content=content,
-        media_type=document.mime_type,
-        headers={"Content-Disposition": f'attachment; filename="{document.filename}"'},
-    )
-
-
-@router.delete(
-    "/{session_id}/documents/{document_id}", status_code=status.HTTP_204_NO_CONTENT
-)
-async def delete_document(
-    session_id: UUID,
-    document_id: UUID,
-    current_user: CurrentUserDep,
-    session: SessionDep,
-    storage: StorageDep,
-) -> None:
-    grading_session = owned_or_error(await load_session(session, session_id), current_user)
-    document = _document_or_error(grading_session, document_id)
-
-    key = document.storage_path
-    await session.delete(document)
-    await session.commit()
-
-    try:
-        await storage.delete(key)
-    except StorageError as exc:
-        logger.warning("No se pudo borrar el fichero '%s' del documento: %s", key, exc)
-
-
-# --------------------------------------------------------------------------- #
-# Validación de la rúbrica (con esto fase 1 -> fase 2)
-# --------------------------------------------------------------------------- #
 
 @router.post("/{session_id}/rubric/validate", response_model=SessionDetail)
 async def validate_rubric(

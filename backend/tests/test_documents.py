@@ -267,6 +267,17 @@ async def test_upload_other_user_forbidden(client: AsyncClient, session: AsyncSe
 
 
 @pytest.mark.asyncio
+async def test_upload_rejected_when_session_ready(client: AsyncClient, session: AsyncSession):
+    user = await _make_user(session, "prof@example.com")
+    grading_session = await _make_session(session, user, status=SessionStatus.READY)
+    _login(client, user)
+
+    resp = await _upload(client, grading_session.id, "context", "apuntes.txt", b"x")
+
+    assert resp.status_code == 409
+
+
+@pytest.mark.asyncio
 async def test_upload_rubric_replaces_previous(
     client: AsyncClient, session: AsyncSession, storage: LocalFileStorage
 ):
@@ -293,85 +304,6 @@ async def test_upload_rubric_replaces_previous(
     new_key = FileStorage.key_for(user.id, grading_session.id, "segunda.txt")
     assert not await storage.exists(old_key)
     assert await storage.exists(new_key)
-
-
-# --------------------------------------------------------------------------- #
-# GET /documents/{id} y /raw
-# --------------------------------------------------------------------------- #
-
-@pytest.mark.asyncio
-async def test_get_document_detail_returns_extracted_text(
-    client: AsyncClient, session: AsyncSession
-):
-    user = await _make_user(session, "prof@example.com")
-    grading_session = await _make_session(session, user)
-    _login(client, user)
-    created = (await _upload(client, grading_session.id, "context", "apuntes.txt", b"Hola")).json()
-
-    resp = await client.get(f"/api/sessions/{grading_session.id}/documents/{created['id']}")
-
-    assert resp.status_code == 200
-    assert resp.json()["extracted_text"] == "Hola"
-
-
-@pytest.mark.asyncio
-async def test_get_document_not_found(client: AsyncClient, session: AsyncSession):
-    user = await _make_user(session, "prof@example.com")
-    grading_session = await _make_session(session, user)
-    _login(client, user)
-
-    resp = await client.get(f"/api/sessions/{grading_session.id}/documents/{uuid.uuid4()}")
-
-    assert resp.status_code == 404
-
-
-@pytest.mark.asyncio
-async def test_download_raw_returns_bytes_and_headers(
-    client: AsyncClient, session: AsyncSession
-):
-    user = await _make_user(session, "prof@example.com")
-    grading_session = await _make_session(session, user)
-    _login(client, user)
-    created = (await _upload(client, grading_session.id, "context", "apuntes.txt", b"contenido")).json()
-
-    resp = await client.get(
-        f"/api/sessions/{grading_session.id}/documents/{created['id']}/raw"
-    )
-
-    assert resp.status_code == 200
-    assert resp.content == b"contenido"
-    assert "apuntes.txt" in resp.headers["content-disposition"]
-
-
-# --------------------------------------------------------------------------- #
-# DELETE /documents/{id}
-# --------------------------------------------------------------------------- #
-
-@pytest.mark.asyncio
-async def test_delete_document_removes_db_and_file(
-    client: AsyncClient, session: AsyncSession, storage: LocalFileStorage
-):
-    user = await _make_user(session, "prof@example.com")
-    grading_session = await _make_session(session, user)
-    _login(client, user)
-    created = (await _upload(client, grading_session.id, "context", "apuntes.txt", b"x")).json()
-    key = FileStorage.key_for(user.id, grading_session.id, "apuntes.txt")
-    assert await storage.exists(key)
-
-    resp = await client.delete(
-        f"/api/sessions/{grading_session.id}/documents/{created['id']}"
-    )
-
-    assert resp.status_code == 204
-    remaining = (
-        await session.execute(
-            select(func.count())
-            .select_from(SessionDocument)
-            .where(SessionDocument.id == uuid.UUID(created["id"]))
-        )
-    ).scalar_one()
-    assert remaining == 0
-    assert not await storage.exists(key)
 
 
 # --------------------------------------------------------------------------- #
