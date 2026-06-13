@@ -6,6 +6,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from app.db.models.exam import ExamStatus
 from app.db.models.grading_session import SessionStatus
 from app.db.models.session_document import DocumentKind
+from app.pipeline.rubric import RubricItem
 
 
 class SessionCreate(BaseModel):
@@ -24,6 +25,30 @@ class SessionDocumentRead(BaseModel):
     size_bytes: int
     mime_type: str
     created_at: datetime
+
+
+class SessionDocumentDetail(SessionDocumentRead):
+    """Documento con su texto extraído."""
+
+    extracted_text: str | None = None
+
+
+class RubricStructured(BaseModel):
+    """Rúbrica estructurada en ítems, con la comprobación de suma de puntos."""
+
+    items: list[RubricItem]
+    total_max_score: float
+    warning: str | None = None
+
+
+class DocumentUploadResponse(SessionDocumentDetail):
+    """Respuesta a la subida de un documento. 'rubric' solo viene para rúbricas."""
+
+    rubric: RubricStructured | None = None
+
+
+class RubricValidateRequest(BaseModel):
+    items: list[RubricItem] = Field(min_length=1)
 
 
 class ExamRead(BaseModel):
