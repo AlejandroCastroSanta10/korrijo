@@ -16,6 +16,7 @@ from sqlalchemy import (
 from sqlalchemy import (
     Enum as SAEnum,
 )
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -47,6 +48,9 @@ class GradingSession(Base):
     # Indicaciones del profesor (texto libre), separadas en las dos posibles.
     context_instructions: Mapped[str | None] = mapped_column(Text)
     model_exam_instructions: Mapped[str | None] = mapped_column(Text)
+
+    # Rúbrica estructurada y validada por el profesor: lista de ítems
+    rubric_structured: Mapped[list | None] = mapped_column(JSONB)
 
     status: Mapped[SessionStatus] = mapped_column(
         SAEnum(

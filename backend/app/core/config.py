@@ -42,6 +42,10 @@ class Settings(BaseSettings):
     # Máximo de sesiones activas por usuario.
     max_active_sessions_per_user: int = 5
 
+    # Tamaño máximo de los documentos iniciales subidos a una sesión (en bytes).
+    max_context_upload_bytes: int = 10 * 1024 * 1024  # 10 MB (contexto)
+    max_document_upload_bytes: int = 5 * 1024 * 1024  # 5 MB (examen modelo y rúbrica)
+
     # Ollama / pipeline
     ollama_base_url: str = "http://localhost:11434"
     pipeline_llm_model: str | None = None
