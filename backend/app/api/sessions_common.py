@@ -11,7 +11,9 @@ from app.db.models.exam import Exam, ExamStatus
 from app.db.models.grading_session import GradingSession
 from app.db.models.user import User
 from app.schemas.session import (
+    ExamDetail,
     ExamRead,
+    GradingResultRead,
     SessionDetail,
     SessionDocumentRead,
     SessionRead,
@@ -67,6 +69,26 @@ def to_session_read(grading_session: GradingSession) -> SessionRead:
         created_at=grading_session.created_at,
         updated_at=grading_session.updated_at,
         **_counters(grading_session),
+    )
+
+
+def to_exam_detail(exam: Exam) -> ExamDetail:
+    result = None
+    if exam.result is not None:
+        result = GradingResultRead(
+            total_score=exam.result.total_score,
+            rubric_filled=exam.result.rubric_filled,
+            feedback_report=exam.result.feedback_report,
+            created_at=exam.result.created_at,
+        )
+    return ExamDetail(
+        id=exam.id,
+        filename=exam.filename,
+        status=exam.status,
+        total_score=exam.result.total_score if exam.result is not None else None,
+        error_message=exam.error_message,
+        created_at=exam.created_at,
+        result=result,
     )
 
 

@@ -1,7 +1,9 @@
 # Dependencias compartidas (reutilizables) entre varios routers.
 
+from collections.abc import Awaitable, Callable
 from functools import lru_cache
 from typing import Annotated
+from uuid import UUID
 
 from fastapi import Depends, HTTPException, Request, status
 from itsdangerous import BadSignature, SignatureExpired
@@ -13,6 +15,7 @@ from app.db.models.user import User
 from app.db.session import get_session
 from app.pipeline.llm.base import LLMProvider
 from app.pipeline.llm.ollama import OllamaLLMProvider
+from app.services.exams import run_exam_in_background
 from app.services.session import verify_session
 from app.services.storage import FileStorage, LocalFileStorage
 
@@ -30,6 +33,10 @@ def get_llm_provider() -> LLMProvider:
         num_ctx=settings.pipeline_llm_num_ctx,
         timeout=settings.pipeline_llm_timeout,
     )
+
+
+def get_exam_runner() -> Callable[[UUID], Awaitable[None]]:
+    return run_exam_in_background
 
 
 async def get_current_user(request: Request, session: SessionDep) -> User:
@@ -54,3 +61,4 @@ async def get_current_user(request: Request, session: SessionDep) -> User:
 CurrentUserDep = Annotated[User, Depends(get_current_user)]
 StorageDep = Annotated[FileStorage, Depends(get_file_storage)]
 LLMDep = Annotated[LLMProvider, Depends(get_llm_provider)]
+ExamRunnerDep = Annotated[Callable[[UUID], Awaitable[None]], Depends(get_exam_runner)]
