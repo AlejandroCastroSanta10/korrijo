@@ -5,8 +5,8 @@ Dos documentos por examen, ambos a partir del GradingResult ya persistido:
     1. generate_filled_rubric_pdf  -> rúbrica rellenada (tabla de ítems + total).
     2. generate_feedback_report_pdf -> informe de feedback (resumen + detalle).
 
-Se generan al vuelo en cada descarga a partir de los datos de la BD. 
-La salida es ORIENTATIVA (lo dice el pie del informe): la decisión final es del profesor.
+Se generan al vuelo en cada descarga a partir de los datos de la BD. La salida es
+ORIENTATIVA (lo dice el pie del informe): la decisión final es del profesor.
 """
 
 from io import BytesIO
@@ -62,7 +62,7 @@ def _styles() -> dict:
 def student_name(filename: str) -> str:
     """Nombre del alumno a partir del filename del examen.
 
-    'Examen_Alejandro Castro.pdf' -> 'Alejandro Castro'. 
+    'Examen_Alejandro Castro.pdf' -> 'Alejandro Castro'.
     """
     stem = Path(filename).stem
     _, sep, tail = stem.partition("_")
