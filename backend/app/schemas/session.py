@@ -6,6 +6,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from app.db.models.exam import ExamStatus
 from app.db.models.grading_session import SessionStatus
 from app.db.models.session_document import DocumentKind
+from app.pipeline.grading import RubricItemResult
 from app.pipeline.rubric import RubricItem
 
 
@@ -58,6 +59,21 @@ class ExamRead(BaseModel):
     total_score: float | None = None
     error_message: str | None = None
     created_at: datetime
+
+
+class GradingResultRead(BaseModel):
+    """Resultado de la corrección de un examen."""
+
+    total_score: float
+    rubric_filled: list[RubricItemResult]
+    feedback_report: str
+    created_at: datetime
+
+
+class ExamDetail(ExamRead):
+    """Examen con su resultado, presente solo si está completado."""
+
+    result: GradingResultRead | None = None
 
 
 class SessionRead(BaseModel):

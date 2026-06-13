@@ -46,6 +46,10 @@ class Settings(BaseSettings):
     max_context_upload_bytes: int = 10 * 1024 * 1024  # 10 MB (contexto)
     max_document_upload_bytes: int = 5 * 1024 * 1024  # 5 MB (examen modelo y rúbrica)
 
+    # Exámenes a corregir (fase 2): escaneados/imágenes.
+    max_exam_upload_bytes: int = 5 * 1024 * 1024  # 5 MB por examen
+    max_exams_per_upload: int = 3  # exámenes admitidos en una sola subida
+
     # Ollama / pipeline
     ollama_base_url: str = "http://localhost:11434"
     pipeline_llm_model: str | None = None
