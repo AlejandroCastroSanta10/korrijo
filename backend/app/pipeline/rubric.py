@@ -1,6 +1,6 @@
 """Estructuración de la rúbrica del profesor (LLM textual).
 
-A partir de la rúbrica en texto libre, pide al LLM una lista de ítems puntuables. 
+A partir de la rúbrica en texto libre, pide al LLM una lista de ítems puntuables.
 Sirve para que el profesor valide la rúbrica antes de corregir y para comprobar que
 la suma de puntos cuadra con la puntuación máxima del examen.
 """

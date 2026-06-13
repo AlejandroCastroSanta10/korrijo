@@ -134,16 +134,16 @@ async def _store_document(
         ) from exc
 
     # Rúbrica y examen modelo son únicos por sesión: se borran los previos (BD +
-    # storage)
+    # storage). Se opera sobre la colección (delete-orphan) para mantenerla
+    # consistente, sin pisar el fichero recién guardado si comparte key.
     stale_keys: list[str] = []
     if kind in _SINGLETON_KINDS:
         for old in [d for d in grading_session.documents if d.kind == kind]:
-            await session.delete(old)
+            grading_session.documents.remove(old)
             if old.storage_path != key:
                 stale_keys.append(old.storage_path)
 
     document = SessionDocument(
-        session_id=grading_session.id,
         kind=kind,
         filename=filename,
         storage_path=key,
@@ -153,7 +153,7 @@ async def _store_document(
         or "application/octet-stream",
         extracted_text=extracted_text,
     )
-    session.add(document)
+    grading_session.documents.append(document)
     await session.commit()
     await session.refresh(document)
 
