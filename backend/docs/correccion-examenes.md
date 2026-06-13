@@ -18,6 +18,25 @@ No hay endpoint de listado propio (`GET .../exams`) ni de borrado por examen: el
 detalle de la sesión ya lista los exámenes con su estado, y el borrado es a nivel
 de sesión (papelera del historial).
 
+## Descarga de PDFs
+
+Para un examen ya corregido (`completed`):
+
+- `GET /api/sessions/{id}/exams/{exam_id}/rubric.pdf` — rúbrica rellenada (tabla de
+  ítems con puntuación asignada/máxima y comentario, total destacado).
+- `GET /api/sessions/{id}/exams/{exam_id}/feedback.pdf` — informe (resumen + feedback
+  detallado del modelo + disclaimer "calificación orientativa generada por IA").
+
+Decisiones:
+
+- **`reportlab`** (pura-Python, sin dependencias de sistema) en `pdf_generator.py`.
+- **Sin caché:** se generan al vuelo desde el `GradingResult` ya persistido (cuestión
+  de milisegundos); cachear no compensa a esta escala.
+- Examen sin corregir todavía → `409`. Headers: `Content-Type: application/pdf` y
+  `Content-Disposition: attachment` con un `filename` que incluye el nombre del examen
+  (con `filename*` UTF-8 para nombres no ASCII).
+- Rutas anidadas bajo la sesión, por coherencia con el resto del router de exámenes.
+
 ## Validación de la subida
 
 - **Formatos:** `.pdf, .jpg, .jpeg, .png` (PDF escaneado o imagen). Otro → `422`.

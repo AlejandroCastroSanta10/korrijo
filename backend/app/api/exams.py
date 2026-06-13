@@ -1,4 +1,4 @@
-"""Endpoints de la fase 2: subida de exámenes y consulta de su corrección.
+"""Endpoints de la fase 2: subida de exámenes y consulta de su corrección + Descarga de PDFs
 
 La subida es asíncrona: se crea el examen en pending, se agenda la background
 task y el resultado se consulta por polling.
@@ -6,9 +6,10 @@ task y el resultado se consulta por polling.
 
 import logging
 from pathlib import Path
+from urllib.parse import quote
 from uuid import UUID
 
-from fastapi import APIRouter, BackgroundTasks, HTTPException, UploadFile, status
+from fastapi import APIRouter, BackgroundTasks, HTTPException, Response, UploadFile, status
 
 from app.api.deps import CurrentUserDep, ExamRunnerDep, SessionDep, StorageDep
 from app.api.sessions_common import load_session, owned_or_error, to_exam_detail
@@ -17,6 +18,10 @@ from app.db.models.exam import Exam, ExamStatus
 from app.db.models.grading_session import GradingSession, SessionStatus
 from app.schemas.session import ExamDetail, ExamRead
 from app.services.exams import EXAM_ALLOWED_EXTENSIONS
+from app.services.pdf_generator import (
+    generate_feedback_report_pdf,
+    generate_filled_rubric_pdf,
+)
 from app.services.storage.base import FileStorage, InvalidKey, StorageError
 
 logger = logging.getLogger(__name__)
@@ -151,7 +156,67 @@ async def get_exam_detail(
     return to_exam_detail(exam)
 
 
+@router.get("/{session_id}/exams/{exam_id}/rubric.pdf")
+async def download_rubric_pdf(
+    session_id: UUID,
+    exam_id: UUID,
+    current_user: CurrentUserDep,
+    session: SessionDep,
+) -> Response:
+    """Descarga el PDF de la rúbrica rellenada del examen."""
+    grading_session, exam = await _graded_exam_or_error(
+        session, session_id, exam_id, current_user
+    )
+    pdf = generate_filled_rubric_pdf(exam.result, grading_session, exam.filename)
+    return _pdf_response(pdf, f"rubrica_{Path(exam.filename).stem}.pdf")
+
+
+@router.get("/{session_id}/exams/{exam_id}/feedback.pdf")
+async def download_feedback_pdf(
+    session_id: UUID,
+    exam_id: UUID,
+    current_user: CurrentUserDep,
+    session: SessionDep,
+) -> Response:
+    """Descarga el PDF del informe de feedback del examen."""
+    grading_session, exam = await _graded_exam_or_error(
+        session, session_id, exam_id, current_user
+    )
+    pdf = generate_feedback_report_pdf(exam.result, grading_session, exam.filename)
+    return _pdf_response(pdf, f"informe_{Path(exam.filename).stem}.pdf")
+
+
 # ----------------------
+
+
+async def _graded_exam_or_error(
+    session: SessionDep, session_id: UUID, exam_id: UUID, current_user: CurrentUserDep
+) -> tuple[GradingSession, Exam]:
+    """Carga la sesión y el examen ya corregido, o lanza el error correspondiente."""
+    grading_session = owned_or_error(await load_session(session, session_id), current_user)
+    exam = next((e for e in grading_session.exams if e.id == exam_id), None)
+    if exam is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    if exam.status != ExamStatus.COMPLETED or exam.result is None:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="El examen aún no está corregido; no hay PDF que descargar.",
+        )
+    return grading_session, exam
+
+
+def _pdf_response(content: bytes, download_name: str) -> Response:
+    """Respuesta PDF con los headers de descarga."""
+    ascii_name = download_name.encode("ascii", "ignore").decode() or "documento.pdf"
+    disposition = (
+        f"attachment; filename=\"{ascii_name}\"; "
+        f"filename*=UTF-8''{quote(download_name)}"
+    )
+    return Response(
+        content=content,
+        media_type="application/pdf",
+        headers={"Content-Disposition": disposition},
+    )
 
 
 def _exam_key(user_id: UUID, session_id: UUID, exam_id: UUID, filename: str) -> str:
