@@ -7,6 +7,7 @@ process_exam es la función importante, run_exam_in_background es el envoltorio
 para correrlo en background.
 """
 
+import contextlib
 import logging
 import os
 import tempfile
@@ -152,16 +153,14 @@ async def process_exam(
     except (StorageError, ValueError) as exc:
         await _mark_error(session, exam, f"No se pudo procesar el examen: {exc}")
         return
-    except Exception as exc:  # noqa: BLE001 — red de seguridad: nunca dejar el examen colgado
+    except Exception as exc:  # red de seguridad: nunca dejar el examen colgado
         logger.exception("Examen %s: error inesperado durante la corrección.", exam_id)
         await _mark_error(session, exam, f"Error inesperado durante la corrección: {exc}")
         return
     finally:
         if tmp_path is not None:
-            try:
+            with contextlib.suppress(OSError):
                 os.unlink(tmp_path)
-            except OSError:
-                pass
 
     session.add(
         GradingResult(

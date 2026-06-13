@@ -67,7 +67,8 @@ corregir exámenes. Corresponde a la pantalla "Nueva sesión" del wireframe.
 - Nueva migración Alembic para la columna `rubric_structured`.
 - `python-multipart` añadido a `requirements.txt` (necesario para `multipart/form-data`).
 
-## Pendiente (fase 2)
+## Fase 2 (resuelto)
 
-- La corrección todavía usa el **texto libre** de la rúbrica; falta conectar la
-  rúbrica estructurada validada (`rubric_structured`) con el pipeline de corrección.
+- La corrección ya consume la **rúbrica estructurada validada** (`rubric_structured`),
+  serializada a texto, en vez del texto libre del documento. Ver
+  [`correccion-examenes.md`](correccion-examenes.md).
