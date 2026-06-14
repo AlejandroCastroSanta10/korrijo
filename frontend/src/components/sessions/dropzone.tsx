@@ -5,12 +5,12 @@ import { Upload, X, FileText } from "lucide-react";
 import { cn, formatBytes } from "@/lib/utils";
 
 interface DropzoneProps {
-  /** Ficheros seleccionados (longitud 0..1 si no es múltiple). */
+  /** Ficheros seleccionados. */
   value: File[];
   onChange: (files: File[]) => void;
   /** Permite varios ficheros (contexto). Si es false, el nuevo reemplaza al previo. */
   multiple?: boolean;
-  /** Atributo `accept` del input nativo (p.ej. ".pdf,.xlsx,.txt,.md,.csv"). */
+  /** Atributo 'accept' del input nativo (p.ej. ".pdf,.xlsx,.txt,.md,.csv"). */
   accept?: string;
   disabled?: boolean;
   /** Texto principal del área de subida. */
@@ -72,16 +72,16 @@ export default function Dropzone({
           if (!disabled) addFiles(e.dataTransfer.files);
         }}
         className={cn(
-          "flex w-full flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-input bg-input/20 px-6 py-8 text-center transition-colors",
+          "flex min-h-44 w-full flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-input bg-input/20 px-6 py-12 text-center transition-colors",
           "hover:bg-input/40 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 outline-none",
           dragActive && "border-ring bg-input/40",
           invalid && "border-destructive",
           disabled && "pointer-events-none opacity-50",
         )}
       >
-        <Upload className="size-6 text-muted-foreground" strokeWidth={1.5} />
-        <span className="text-sm font-medium text-foreground">{label}</span>
-        <span className="text-xs text-muted-foreground">
+        <Upload className="size-9 text-muted-foreground" strokeWidth={1.5} />
+        <span className="text-base font-medium text-foreground">{label}</span>
+        <span className="text-sm text-muted-foreground">
           O haz clic para seleccionar
         </span>
       </button>
