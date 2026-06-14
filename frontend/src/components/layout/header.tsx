@@ -11,27 +11,27 @@ const navLinks = [
 export default function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-zinc-200 bg-white/80 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/80">
-      <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6">
+      <div className="mx-auto flex h-20 max-w-5xl items-center justify-between px-6">
         <a
           href="/login#auth"
           className="flex items-center gap-2 font-bold text-zinc-900 dark:text-zinc-50"
         >
-          <i className="text-3xl">Korrijo</i>
+          <i className="text-4xl">Korrijo</i>
         </a>
 
-        <nav className="hidden items-center gap-6 text-sm text-zinc-600 sm:flex dark:text-zinc-400">
+        <nav className="hidden items-center gap-8 text-lg font-medium text-foreground/80 sm:flex">
           {navLinks.map(({ label, href }) => (
             <a
               key={href}
               href={href}
-              className="transition-colors hover:text-zinc-900 dark:hover:text-zinc-50"
+              className="transition-colors hover:text-foreground"
             >
               {label}
             </a>
           ))}
         </nav>
 
-        <Button asChild>
+        <Button asChild size="lg" className="text-base">
           <a href="/login#auth">¡Prueba Korrijo ahora!</a>
         </Button>
       </div>

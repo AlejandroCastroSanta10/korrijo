@@ -48,6 +48,7 @@ function EmailForm({ onSuccess }: { onSuccess: (email: string) => void }) {
       <Input
         type="email"
         placeholder="Introduce tu correo electrónico"
+        className="h-14 text-2xl md:text-lg"
         aria-invalid={!!errors.email}
         {...register("email")}
       />
@@ -57,7 +58,12 @@ function EmailForm({ onSuccess }: { onSuccess: (email: string) => void }) {
       {mutation.error && (
         <p className="text-xs text-red-500">{getErrorMessage(mutation.error)}</p>
       )}
-      <Button type="submit" className="w-full" disabled={mutation.isPending}>
+      <Button
+        type="submit"
+        size="lg"
+        className="w-full text-base mt-2"
+        disabled={mutation.isPending}
+      >
         {mutation.isPending ? "Cargando..." : "Continuar"}
       </Button>
     </form>
@@ -96,7 +102,7 @@ function EmailSentView({
         <p className="font-semibold text-zinc-900 dark:text-zinc-50">
           Revisa tu correo
         </p>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="text-base text-zinc-500 dark:text-zinc-400">
           Hemos enviado un enlace de acceso a{" "}
           <span className="font-medium text-zinc-700 dark:text-zinc-300">
             {email}
@@ -110,7 +116,8 @@ function EmailSentView({
 
       <Button
         variant="outline"
-        className="w-full"
+        size="lg"
+        className="w-full text-base"
         disabled={cooldown > 0 || mutation.isPending}
         onClick={handleResend}
       >
@@ -124,7 +131,7 @@ function EmailSentView({
       <button
         type="button"
         onClick={onChangeEmail}
-        className="text-sm text-zinc-400 underline hover:text-zinc-700 dark:hover:text-zinc-200"
+        className="text-sm text-zinc-600 underline hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200"
       >
         Cambiar email
       </button>
@@ -142,12 +149,12 @@ export default function AuthForm() {
   };
 
   return (
-    <div className="flex flex-col gap-6">
-      <p className="text-center text-zinc-600 dark:text-zinc-400">
-        Inicia sesión o regístrate en el sistema para usar la herramienta
+    <div className="flex w-full max-w-md flex-col gap-8">
+      <p className="text-xl text-center text-zinc-700 dark:text-zinc-300">
+        <b>Inicia sesión</b> o <b>regístrate</b> en el sistema para usar la herramienta
       </p>
 
-      <div className="flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="flex flex-col gap-5 rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
         {view === "form" ? (
           <>
             <EmailForm onSuccess={handleSuccess} />
@@ -159,13 +166,13 @@ export default function AuthForm() {
           />
         )}
 
-        <p className="text-center text-xs text-zinc-400">
+        <p className="text-center text-sm text-zinc-500 dark:text-zinc-400">
           Al continuar, reconoces las{" "}
           <Link
             href="/politics"
             className="underline hover:text-zinc-700 dark:hover:text-zinc-200"
           >
-            políticas de Korrijo
+            políticas de <i>Korrijo</i>
           </Link>
         </p>
       </div>
