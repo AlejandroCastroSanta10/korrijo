@@ -1,20 +1,213 @@
 "use client";
 
-import { useCurrentUser } from "@/lib/hooks/auth";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Loader2, TriangleAlert } from "lucide-react";
+import { toast } from "sonner";
+import NewSessionForm, {
+  type NewSessionValues,
+} from "@/components/sessions/new-session-form";
+import RubricReview from "@/components/sessions/rubric-review";
+import RecentSessionCard from "@/components/sessions/recent-session-card";
+import { Button } from "@/components/ui/button";
+import { ApiError } from "@/lib/api";
+import {
+  useCreateSession,
+  useUploadDocument,
+  useValidateRubric,
+  type DocumentKind,
+  type RubricItem,
+} from "@/lib/hooks/sessions";
 
-// Será la página de creación de una sesión de corrección
-export default function NewPage() {
-  const { data: user } = useCurrentUser();
+type Phase = "form" | "uploading" | "review";
+
+interface UploadJob {
+  kind: DocumentKind;
+  file: File;
+}
+
+function messageFrom(err: unknown): string {
+  if (err instanceof ApiError) return err.message;
+  return "No se pudo conectar con el servidor. Inténtalo de nuevo.";
+}
+
+function buildJobs(v: NewSessionValues): UploadJob[] {
+  return [
+    ...v.contextFiles.map((file) => ({ kind: "context" as const, file })),
+    { kind: "model_exam" as const, file: v.modelFiles[0] },
+    { kind: "rubric" as const, file: v.rubricFiles[0] },
+  ];
+}
+
+function jobLabel(kind: DocumentKind): string {
+  switch (kind) {
+    case "context":
+      return "Subiendo material de contexto...";
+    case "model_exam":
+      return "Subiendo el examen modelo...";
+    case "rubric":
+      return "Analizando la rúbrica con IA (puede tardar un poco)...";
+  }
+}
+
+export default function NewSessionPage() {
+  const router = useRouter();
+  const create = useCreateSession();
+  const upload = useUploadDocument();
+  const validate = useValidateRubric();
+
+  const [phase, setPhase] = useState<Phase>("form");
+  const [values, setValues] = useState<NewSessionValues | null>(null);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [jobs, setJobs] = useState<UploadJob[]>([]);
+  const [doneCount, setDoneCount] = useState(0);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [rubricItems, setRubricItems] = useState<RubricItem[]>([]);
+  const [rubricWarning, setRubricWarning] = useState<string | null>(null);
+
+  // Crea la sesión (si no existe) y sube los documentos pendientes en orden.
+  async function runFlow(
+    vals: NewSessionValues,
+    pending: UploadJob[],
+    existingId: string | null,
+    startIndex: number,
+  ) {
+    setUploadError(null);
+    let id = existingId;
+    try {
+      if (!id) {
+        const created = await create.mutateAsync({
+          name: vals.name,
+          max_score: vals.maxScore,
+          context_instructions: vals.contextInstructions?.trim() || null,
+          model_exam_instructions: vals.modelInstructions?.trim() || null,
+        });
+        id = created.id;
+        setSessionId(id);
+      }
+
+      for (let i = startIndex; i < pending.length; i++) {
+        const job = pending[i];
+        const res = await upload.mutateAsync({
+          sessionId: id,
+          kind: job.kind,
+          file: job.file,
+        });
+        setDoneCount(i + 1);
+        if (job.kind === "rubric") {
+          setRubricItems(res.rubric?.items ?? []);
+          setRubricWarning(res.rubric?.warning ?? null);
+        }
+      }
+
+      setPhase("review");
+    } catch (err) {
+      setUploadError(messageFrom(err));
+    }
+  }
+
+  const handleFormSubmit = (vals: NewSessionValues) => {
+    const pending = buildJobs(vals);
+    setValues(vals);
+    setJobs(pending);
+    setDoneCount(0);
+    setSessionId(null);
+    setPhase("uploading");
+    void runFlow(vals, pending, null, 0);
+  };
+
+  const handleRetry = () => {
+    if (!values) return;
+    void runFlow(values, jobs, sessionId, doneCount);
+  };
+
+  const handleStartOver = () => {
+    setValues(null);
+    setSessionId(null);
+    setJobs([]);
+    setDoneCount(0);
+    setUploadError(null);
+    setRubricItems([]);
+    setRubricWarning(null);
+    setPhase("form");
+  };
+
+  const handleConfirmRubric = (items: RubricItem[]) => {
+    if (!sessionId) return;
+    validate.mutate(
+      { sessionId, items },
+      {
+        onSuccess: () => {
+          toast.success("Sesión lista para corregir exámenes.");
+          router.push(`/app/session/${sessionId}`);
+        },
+      },
+    );
+  };
 
   return (
-    <section className="flex flex-1 flex-col gap-4 px-6 py-16 max-w-7xl mx-auto w-full">
-      <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
-        Bienvenido a la parte privada de Korrijo
-        {user?.email ? `, ${user.email}` : ""}
-      </h1>
-      <p className="text-zinc-500 dark:text-zinc-400">
-        Esta área se irá completando en próximas versiones.
-      </p>
+    <section className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-8 px-6 py-12">
+      {phase === "form" && (
+        <>
+          <RecentSessionCard />
+          <div className="flex flex-col gap-1">
+            <h1 className="text-3xl font-bold text-foreground">
+              Nueva sesión de corrección
+            </h1>
+            <p className="text-base text-muted-foreground">
+              Desde aquí puedes crear una <b>sesión de corrección</b> para corregir
+              instancias de un examen. Pero antes, necesitamos que nos proporciones
+              algunos <b>datos</b> y <b>ficheros</b>:
+            </p>
+          </div>
+          <NewSessionForm onSubmit={handleFormSubmit} />
+        </>
+      )}
+
+      {phase === "uploading" && (
+        <div className="flex flex-1 flex-col items-center justify-center gap-6 py-16 text-center">
+          {uploadError ? (
+            <>
+              <TriangleAlert className="size-10 text-destructive" />
+              <div className="flex flex-col gap-1">
+                <p className="font-semibold text-foreground">
+                  Algo ha fallado al preparar la sesión
+                </p>
+                <p className="text-sm text-muted-foreground">{uploadError}</p>
+              </div>
+              <div className="flex gap-3">
+                <Button variant="outline" onClick={handleStartOver}>
+                  Empezar de nuevo
+                </Button>
+                <Button onClick={handleRetry}>Reintentar</Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <Loader2 className="size-10 animate-spin text-primary" />
+              <p className="font-medium text-foreground">
+                {doneCount < jobs.length
+                  ? jobLabel(jobs[doneCount].kind)
+                  : "Preparando tu sesión..."}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Documento {Math.min(doneCount + 1, jobs.length)} de {jobs.length}
+              </p>
+            </>
+          )}
+        </div>
+      )}
+
+      {phase === "review" && values && (
+        <RubricReview
+          maxScore={values.maxScore}
+          initialItems={rubricItems}
+          initialWarning={rubricWarning}
+          onConfirm={handleConfirmRubric}
+          confirming={validate.isPending}
+          error={validate.isError ? messageFrom(validate.error) : null}
+        />
+      )}
     </section>
   );
 }
