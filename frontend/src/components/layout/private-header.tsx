@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { CircleUser, History, Plus } from "lucide-react";
+import { CircleUser, History, Plus, Settings } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -75,6 +75,15 @@ export default function PrivateHeader() {
             <DropdownMenuLabel className="font-normal text-zinc-500 dark:text-zinc-400">
               {user?.name ?? (user?.email ?? "—")}
             </DropdownMenuLabel>
+
+            <DropdownMenuSeparator />
+
+            <DropdownMenuItem asChild>
+              <Link href="/app/settings">
+                <Settings className="size-4" />
+                Configuración
+              </Link>
+            </DropdownMenuItem>
 
             <DropdownMenuSeparator />
 

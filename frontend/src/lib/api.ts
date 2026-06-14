@@ -36,7 +36,13 @@ export const api = {
     apiFetch<T>(path, { method: "POST", body: JSON.stringify(body) }),
   postForm: <T>(path: string, form: FormData) =>
     apiFetch<T>(path, { method: "POST", body: form }),
-  del: <T>(path: string) => apiFetch<T>(path, { method: "DELETE" }),
+  del: <T>(path: string, body?: unknown) =>
+    apiFetch<T>(path, {
+      method: "DELETE",
+      ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
+    }),
+  patch: <T>(path: string, body: unknown) =>
+    apiFetch<T>(path, { method: "PATCH", body: JSON.stringify(body) }),
 };
 
 export async function fetchHealth(): Promise<{ status: string }> {
