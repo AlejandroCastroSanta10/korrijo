@@ -41,3 +41,13 @@ export const api = {
 export async function fetchHealth(): Promise<{ status: string }> {
   return api.get("/health");
 }
+
+/** Para descarga de PDFs. */
+export async function fetchBlob(path: string): Promise<Blob> {
+  const res = await fetch(`${API_URL}${path}`, { credentials: "include" });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new ApiError(res.status, body?.detail ?? `Error ${res.status}`);
+  }
+  return res.blob();
+}

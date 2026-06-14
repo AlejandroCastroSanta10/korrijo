@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 
 // --- Tipos espejo de los schemas del backend (app/schemas/session.py) ---
@@ -41,6 +41,25 @@ export interface ExamRead {
   total_score: number | null;
   error_message: string | null;
   created_at: string;
+}
+
+export interface RubricItemResult {
+  item_name: string;
+  assigned_score: number;
+  max_score: number;
+  comment: string;
+}
+
+export interface GradingResultRead {
+  total_score: number;
+  rubric_filled: RubricItemResult[];
+  feedback_report: string;
+  created_at: string;
+}
+
+export interface ExamDetail extends ExamRead {
+  // result solo viene relleno cuando el examen está "completed".
+  result: GradingResultRead | null;
 }
 
 export interface SessionRead {
@@ -117,5 +136,55 @@ export function useRecentSession() {
   return useQuery({
     queryKey: ["sessions", "recent"],
     queryFn: () => api.get<SessionRead | null>("/api/sessions/recent"),
+  });
+}
+
+// --- Fase 2: corrección de exámenes ---
+
+// Coherente con el backend.
+export const EXAM_ALLOWED_EXTENSIONS = [".pdf", ".jpg", ".jpeg", ".png"];
+export const MAX_EXAM_BYTES = 5 * 1024 * 1024; // 5 MB por examen
+export const MAX_EXAMS_PER_UPLOAD = 3;
+// Intervalo de polling mientras haya exámenes sin terminar.
+export const POLL_INTERVAL_MS = 5000;
+
+const isExamActive = (status: ExamStatus) =>
+  status === "pending" || status === "processing";
+
+export function useSession(id: string) {
+  return useQuery({
+    queryKey: ["sessions", id],
+    queryFn: () => api.get<SessionDetail>(`/api/sessions/${id}`),
+    // Polling: refresca mientras algún examen siga en curso; se detiene solo.
+    refetchInterval: (query) =>
+      query.state.data?.exams.some((e) => isExamActive(e.status))
+        ? POLL_INTERVAL_MS
+        : false,
+  });
+}
+
+export function useExamDetail(sessionId: string, examId: string | null) {
+  return useQuery({
+    queryKey: ["sessions", sessionId, "exams", examId],
+    queryFn: () =>
+      api.get<ExamDetail>(`/api/sessions/${sessionId}/exams/${examId}`),
+    enabled: !!examId,
+  });
+}
+
+export function useUploadExams(sessionId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (files: File[]) => {
+      const form = new FormData();
+      files.forEach((file) => form.append("files", file));
+      return api.postForm<ExamRead[]>(
+        `/api/sessions/${sessionId}/exams`,
+        form,
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["sessions", sessionId] });
+    },
   });
 }
