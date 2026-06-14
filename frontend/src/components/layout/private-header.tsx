@@ -49,14 +49,14 @@ export default function PrivateHeader() {
         <nav className="hidden items-center gap-6 sm:flex">
           <Link
             href="/app/new"
-            className="flex items-center gap-2 text-base font-medium text-zinc-600 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
+            className="flex items-center gap-2 text-base font-medium text-foreground/80 transition-colors hover:text-foreground"
           >
             <Plus className="size-5" />
             Nueva sesión de corrección
           </Link>
           <Link
             href="/app/history"
-            className="flex items-center gap-2 text-base font-medium text-zinc-600 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
+            className="flex items-center gap-2 text-base font-medium text-foreground/80 transition-colors hover:text-foreground"
           >
             <History className="size-5" />
             Historial de sesiones
