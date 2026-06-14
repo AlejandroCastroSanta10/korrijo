@@ -139,6 +139,27 @@ export function useRecentSession() {
   });
 }
 
+// Máximo de sesiones activas por usuario. Coherente con el backend
+export const MAX_ACTIVE_SESSIONS = 5;
+
+export function useSessions() {
+  return useQuery({
+    queryKey: ["sessions", "list"],
+    queryFn: () => api.get<SessionRead[]>("/api/sessions"),
+  });
+}
+
+export function useDeleteSession() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => api.del<void>(`/api/sessions/${id}`),
+    // Refresca el listado, la sesión reciente y cualquier vista de sesión.
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["sessions"] });
+    },
+  });
+}
+
 // --- Fase 2: corrección de exámenes ---
 
 // Coherente con el backend.
