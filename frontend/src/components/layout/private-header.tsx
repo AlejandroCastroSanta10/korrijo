@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { CircleUser } from "lucide-react";
+import { CircleUser, History, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -47,10 +47,27 @@ export default function PrivateHeader() {
           <i className="text-3xl">Korrijo</i>
         </Link>
 
+        <nav className="hidden items-center gap-6 sm:flex">
+          <Link
+            href="/app/new"
+            className="flex items-center gap-2 text-sm font-medium text-zinc-600 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
+          >
+            <Plus className="size-5" />
+            Nueva sesión de corrección
+          </Link>
+          <Link
+            href="/app/history"
+            className="flex items-center gap-2 text-sm font-medium text-zinc-600 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
+          >
+            <History className="size-5" />
+            Historial de sesiones
+          </Link>
+        </nav>
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" aria-label="Menú de usuario">
-              <CircleUser className="size-7" />
+              <CircleUser className="size-8" />
             </Button>
           </DropdownMenuTrigger>
 

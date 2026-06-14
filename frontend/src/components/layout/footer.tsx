@@ -29,7 +29,7 @@ export default function Footer({ homeHref = "/login" }: { homeHref?: string }) {
           ))}
         </nav>
 
-        <p className="text-sm text-zinc-400 dark:text-zinc-500">
+        <p className="dark:text-zinc-500">
           © 2026 Alejandro Castro Santa
         </p>
       </div>
