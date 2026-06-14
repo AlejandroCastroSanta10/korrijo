@@ -8,11 +8,12 @@ export class ApiError extends Error {
 }
 
 async function apiFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
+  const isForm = init.body instanceof FormData;
   const res = await fetch(`${API_URL}${path}`, {
     ...init,
     credentials: "include",
     headers: {
-      "Content-Type": "application/json",
+      ...(isForm ? {} : { "Content-Type": "application/json" }),
       ...init.headers,
     },
   });
@@ -33,6 +34,8 @@ export const api = {
   get: <T>(path: string) => apiFetch<T>(path),
   post: <T>(path: string, body: unknown) =>
     apiFetch<T>(path, { method: "POST", body: JSON.stringify(body) }),
+  postForm: <T>(path: string, form: FormData) =>
+    apiFetch<T>(path, { method: "POST", body: form }),
 };
 
 export async function fetchHealth(): Promise<{ status: string }> {
