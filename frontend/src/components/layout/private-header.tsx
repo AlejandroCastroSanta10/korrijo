@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { CircleUser, History, Plus, Settings } from "lucide-react";
+import { CircleHelp, CircleUser, Globe, History, Plus, Settings } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,16 +10,15 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useCurrentUser, useLogout } from "@/lib/hooks/auth";
-
-const appLinks = [
-  { label: "Sobre el creador", href: "/creator" },
-  { label: "Términos y políticas", href: "/politics" },
-  { label: "Contacto", href: "/contact" },
-];
 
 export default function PrivateHeader() {
   const router = useRouter();
@@ -50,14 +49,14 @@ export default function PrivateHeader() {
         <nav className="hidden items-center gap-6 sm:flex">
           <Link
             href="/app/new"
-            className="flex items-center gap-2 text-sm font-medium text-zinc-600 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
+            className="flex items-center gap-2 text-base font-medium text-zinc-600 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
           >
             <Plus className="size-5" />
             Nueva sesión de corrección
           </Link>
           <Link
             href="/app/history"
-            className="flex items-center gap-2 text-sm font-medium text-zinc-600 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
+            className="flex items-center gap-2 text-base font-medium text-zinc-600 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
           >
             <History className="size-5" />
             Historial de sesiones
@@ -71,9 +70,14 @@ export default function PrivateHeader() {
             </Button>
           </DropdownMenuTrigger>
 
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel className="font-normal text-zinc-500 dark:text-zinc-400">
-              {user?.name ?? (user?.email ?? "—")}
+          <DropdownMenuContent align="end" className="w-64">
+            <DropdownMenuLabel className="flex flex-col gap-0.5">
+              {user?.name && (
+                <span className="font-medium text-xl text-foreground">{user.name}</span>
+              )}
+              <span className="font-normal text-base">
+                {user?.email ?? "—"}
+              </span>
             </DropdownMenuLabel>
 
             <DropdownMenuSeparator />
@@ -85,13 +89,30 @@ export default function PrivateHeader() {
               </Link>
             </DropdownMenuItem>
 
-            <DropdownMenuSeparator />
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>
+                <Globe className="size-4" />
+                Idioma
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent>
+                {/* El cambio de idioma real llegará en v1.0.0 (placeholder). */}
+                <DropdownMenuRadioGroup value="es">
+                  <DropdownMenuRadioItem value="es">
+                    Español
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="en" disabled>
+                    English (próximamente)
+                  </DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
 
-            {appLinks.map(({ label, href }) => (
-              <DropdownMenuItem key={href} asChild>
-                <Link href={href}>{label}</Link>
-              </DropdownMenuItem>
-            ))}
+            <DropdownMenuItem asChild>
+              <Link href="/contact">
+                <CircleHelp className="size-4" />
+                Ayuda
+              </Link>
+            </DropdownMenuItem>
 
             <DropdownMenuSeparator />
 
