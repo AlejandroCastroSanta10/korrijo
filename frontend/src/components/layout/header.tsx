@@ -32,7 +32,7 @@ export default function Header() {
         </nav>
 
         <Button asChild size="lg" className="text-base">
-          <a href="/login#auth">¡Prueba Korrijo ahora!</a>
+          <a href="/login#auth">¡Prueba <i>Korrijo</i> ahora!</a>
         </Button>
       </div>
     </header>

@@ -1,4 +1,5 @@
-import { Play, ClipboardList, Upload, Check } from "lucide-react";
+import { ClipboardList, Upload, Check } from "lucide-react";
+import Image from "next/image";
 import AuthForm from "@/components/auth/auth-form";
 import {
   Accordion,
@@ -70,18 +71,29 @@ export default function LandingPage() {
         <h1 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-5xl">
           <span className="block">Céntrate en enseñar.</span>
           <span className="block text-primary">
-            <i>Korrijo</i> se encarga del resto.
+            Agiliza las correcciones de exámenes.
           </span>
         </h1>
 
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[4fr_5fr]">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[2fr_5fr]">
           <div className="flex flex-col justify-center items-center">
             <AuthForm />
           </div>
 
-          {/* TODO: sustituir por vídeo demo en v0.2.0 */}
-          <div className="flex items-center justify-center rounded-2xl border border-zinc-200 bg-zinc-100 min-h-[500px] dark:border-zinc-700 dark:bg-zinc-800">
-            <Play className="size-16 text-zinc-400" />
+          <div className="flex flex-col gap-4">
+            <div className="relative min-h-[460px] overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800 lg:min-h-[560px]">
+              <Image
+                src="/images/korrijo-landing-image.png"
+                alt="Imagen de una sesión de corrección de Korrijo"
+                fill
+                priority
+                sizes="(min-width: 1024px) 71vw, 100vw"
+                className="object-cover"
+              />
+            </div>
+            <p className="text-center text-lg italic text-zinc-600 dark:text-zinc-400">
+              Sube tus exámenes. Obtén calificaciones orientativas y feedback tras las correcciones ;)
+            </p>
           </div>
         </div>
       </section>
