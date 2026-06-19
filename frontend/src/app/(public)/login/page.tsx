@@ -66,7 +66,7 @@ export default function LandingPage() {
       {/* Sección 1: auth */}
       <section
         id="auth"
-        className="flex flex-1 flex-col gap-12 px-6 py-16 max-w-7xl mx-auto w-full scroll-mt-20"
+        className="flex flex-col gap-12 px-6 py-16 max-w-7xl mx-auto w-full scroll-mt-20"
       >
         <h1 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-5xl">
           <span className="block">Céntrate en enseñar.</span>
