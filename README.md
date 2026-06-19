@@ -8,7 +8,7 @@ Korrijo **NO** pretende sustituir el criterio del profesor. Su objetivo es propo
 
 > Este proyecto es la herramienta construida para el **TFG** de Ingeniería Informática (especialidad Ingeniería del Software) de Alejandro Castro Santa.
 
-> Versión actual: **v0.3.0**
+> Versión actual: **v0.4.0**
 
 ---
 

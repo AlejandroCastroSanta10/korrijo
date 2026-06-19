@@ -14,7 +14,7 @@ class Settings(BaseSettings):
 
     # App metadata
     app_name: str = "API de Korrijo"
-    app_version: str = "0.3.0"
+    app_version: str = "0.4.0"
 
     # CORS
     cors_origins: list[str] = ["http://localhost:3000"]

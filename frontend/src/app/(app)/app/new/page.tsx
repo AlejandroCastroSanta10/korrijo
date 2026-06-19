@@ -46,7 +46,7 @@ function jobLabel(kind: DocumentKind): string {
     case "model_exam":
       return "Subiendo el examen modelo...";
     case "rubric":
-      return "Analizando la rúbrica con IA (puede tardar un poco)...";
+      return "Analizando con IA la rúbrica proporcionada (puede tardar un poco)...";
   }
 }
 
@@ -189,9 +189,6 @@ export default function NewSessionPage() {
                 {doneCount < jobs.length
                   ? jobLabel(jobs[doneCount].kind)
                   : "Preparando tu sesión..."}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                Documento {Math.min(doneCount + 1, jobs.length)} de {jobs.length}
               </p>
             </>
           )}
