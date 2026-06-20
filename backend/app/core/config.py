@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     # SMTP
     smtp_host: str = "localhost"
     smtp_port: int = 1025
-    smtp_from: str = "noreply@korrijo.local"
+    smtp_from: str = "noreply@korrijo.com"
 
     # Magic link
     magic_link_expiration_minutes: int = 15

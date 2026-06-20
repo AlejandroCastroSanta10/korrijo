@@ -23,11 +23,11 @@ _HTML_TEMPLATE = """\
 <html lang="es">
 <body>
   <p>Hola,</p>
-  <p>Haz clic en el siguiente enlace para iniciar sesión en Korrijo:</p>
+  <p>Haz clic en el siguiente enlace para iniciar sesión en <i>Korrijo</i>:</p>
   <p><a href="{link}">{link}</a></p>
   <p>Este enlace es válido durante <strong>{expiration_minutes} minutos</strong>.</p>
 
-  <p>Si no has sido tú quien ha solicitado iniciar sesión en Korrijo, ignora este mensaje.</p>
+  <p>Si no has sido tú quien ha solicitado iniciar sesión en <i>Korrijo</i>, ignora este mensaje.</p>
 </body>
 </html>
 """

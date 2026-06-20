@@ -62,7 +62,7 @@ function EmailForm({ onSuccess }: { onSuccess: (email: string) => void }) {
         id="auth-email"
         type="email"
         placeholder="Introduce tu correo electrónico"
-        className="h-14 text-2xl md:text-lg"
+        className="h-12 text-xl md:text-medium"
         aria-invalid={!!errors.email}
         {...register("email")}
       />
@@ -126,10 +126,6 @@ function EmailSentView({
         </p>
       </div>
 
-      {mutation.error && (
-        <p className="text-xs text-red-500">{getErrorMessage(mutation.error)}</p>
-      )}
-
       <Button
         variant="outline"
         size="lg"
@@ -174,6 +170,15 @@ export default function AuthForm() {
         {view === "form" ? (
           <>
             <EmailForm onSuccess={handleSuccess} />
+            <p className="text-center text-sm text-zinc-500 dark:text-zinc-400">
+              Al continuar, reconoces las{" "}
+              <Link
+                href="/politics"
+                className="underline hover:text-zinc-700 dark:hover:text-zinc-200"
+              >
+                políticas de <i>Korrijo</i>
+              </Link>
+            </p>
           </>
         ) : (
           <EmailSentView
@@ -181,16 +186,6 @@ export default function AuthForm() {
             onChangeEmail={() => setView("form")}
           />
         )}
-
-        <p className="text-center text-sm text-zinc-500 dark:text-zinc-400">
-          Al continuar, reconoces las{" "}
-          <Link
-            href="/politics"
-            className="underline hover:text-zinc-700 dark:hover:text-zinc-200"
-          >
-            políticas de <i>Korrijo</i>
-          </Link>
-        </p>
       </div>
     </div>
   );

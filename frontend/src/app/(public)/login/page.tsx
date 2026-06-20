@@ -14,7 +14,7 @@ const steps = [
     number: 1,
     description: (
       <>
-        Al crear una <b>sesión de corrección</b> debes subir:
+        Para crear una <b>sesión de corrección</b> debes subir:
         <ul className="mx-auto mt-3 w-fit list-disc space-y-1 pl-5 text-left">
           <li>Documentos con <b>contexto</b>, por ejemplo apuntes o diapositivas (opcionales)</li>
           <li><b>Examen resuelto</b> a modo de modelo (obligatorio)</li>
@@ -27,14 +27,15 @@ const steps = [
     icon: Upload,
     number: 2,
     description: (
-      <p>Posteriormente ya podrás adjuntar los <b>exámenes</b> que quieras que se corrijan automáticamente</p>
+      <p>En una segunda fase ya podrás adjuntar los <b>exámenes</b> que quieras que se corrijan automáticamente</p>
     )
   },
   {
     icon: Check,
     number: 3,
     description: (
-      <p>Para cada examen <i>Korrijo</i> proporciona un informe con feedback sobre la corrección y la rúbrica rellenada con una calificación propuesta</p>
+      <p>Para cada examen corregido exitosamente <i>Korrijo</i> proporciona un informe con <i>feedback</i> para el profesor y 
+      la rúbrica rellenada con una calificación orientativa propuesta</p>
     )
   },
 ];
@@ -44,19 +45,19 @@ const faqs = [
     id: "tipos-examen",
     question: "¿Qué tipos de examen puedo corregir?",
     answer:
-      "De momento solo sirve para exámenes de preguntas de desarrollo o cortas, es decir, aquellas en las que el alumno tiene que escribir un texto con uno o varios párrafos como respuesta.",
+      "De momento la herramienta solo sirve para exámenes con respuestas manuscritas que estén formados íntegramente por preguntas de desarrollo y/o cortas, es decir, aquellas en las que el alumno tiene que escribir un texto con uno o varios párrafos como respuesta.",
   },
   {
     id: "nota-definitiva",
-    question: "¿La nota que da Korrijo es definitiva?",
+    question: "¿La calificaciones que proporciona la aplicación son de fiar?",
     answer:
-      "No. Korrijo propone una calificación basada en la rúbrica, pero la decisión final siempre es del profesor. Las correcciones pueden contener errores al estar generadas por IA.",
+      "Las nota nota que se propone para un examen es orientativa y calculada con herramientas de IA a partir de la documentación inicial (rúbrica, examen modelo, etc.). La evaluación final siempre corresponde al profesor. La idea es que la retroalimentación que se le proporciona al docente le permita agilizar las correcciones, pero en ningún caso sustituir su criterio.",
   },
   {
     id: "formato-examenes",
-    question: "¿En qué formato debo subir los exámenes?",
+    question: "¿Qué formato deben tener los exámenes que puede procesar la herramienta?",
     answer:
-      "Los exámenes deben subirse en formato PDF o imagen. Cada archivo debe contener un único examen manuscrito escaneado o fotografiado con buena resolución.",
+      "Las pruebas evaluativas deben subirse escaneadas en formato PDF o imagen (.png, .jpg, .jpeg). Cada archivo debe contener un único examen. En cada examen debe aparecer en la parte de arriba un título de examen y, opcionalmente, nombre y apellidos, grupo, fecha y DNI. Abajo, cada pregunta junto al espacio para que el alumno responda.",
   },
 ];
 
@@ -92,7 +93,7 @@ export default function LandingPage() {
               />
             </div>
             <p className="text-center text-lg italic text-zinc-600 dark:text-zinc-400">
-              Sube tus exámenes. Obtén calificaciones orientativas y feedback tras las correcciones ;)
+              Sube tus exámenes. Obtén calificaciones orientativas y feedback tras las correcciones.
             </p>
           </div>
         </div>
@@ -110,7 +111,7 @@ export default function LandingPage() {
             </h2>
             <p className="max-w-2xl text-lg text-zinc-700 dark:text-zinc-300">
               <i>Korrijo</i> es un sistema para <b>profesores</b> que facilita la corrección
-              de <b>pruebas evaluativas manuscritas</b> gracias a herramientas de IA.
+              de <b>pruebas evaluativas manuscritas</b> gracias al uso de herramientas de IA.
             </p>
           </div>
 
