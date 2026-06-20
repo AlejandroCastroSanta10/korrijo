@@ -11,14 +11,27 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 
 const schema = z.object({
-  nombre: z.string().min(1, "El nombre es obligatorio"),
-  apellidos: z.string().optional(),
+  nombre: z
+    .string()
+    .min(1, "El nombre es obligatorio")
+    .max(80, "El nombre no puede superar los 80 caracteres"),
+  apellidos: z
+    .string()
+    .max(120, "Los apellidos no pueden superar los 120 caracteres")
+    .optional(),
   email: z
     .string()
     .min(1, "El email es obligatorio")
-    .email("Introduce un email válido"),
-  asunto: z.string().min(1, "El asunto es obligatorio"),
-  mensaje: z.string().min(1, "El mensaje es obligatorio"),
+    .email("Introduce un email válido")
+    .max(254, "El email no puede superar los 254 caracteres"),
+  asunto: z
+    .string()
+    .min(1, "El asunto es obligatorio")
+    .max(150, "El asunto no puede superar los 150 caracteres"),
+  mensaje: z
+    .string()
+    .min(1, "El mensaje es obligatorio")
+    .max(2000, "El mensaje no puede superar los 2000 caracteres"),
 });
 
 type ContactFormValues = z.infer<typeof schema>;
@@ -36,11 +49,14 @@ export default function ContactForm() {
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors, isValid, isSubmitting },
   } = useForm<ContactFormValues>({
     resolver: zodResolver(schema),
     mode: "onTouched",
   });
+
+  const mensajeLength = watch("mensaje")?.length ?? 0;
 
   async function onSubmit(data: ContactFormValues) {
     try {
@@ -77,6 +93,7 @@ export default function ContactForm() {
             id="nombre"
             type="text"
             placeholder="Juan"
+            maxLength={80}
             className={fieldClass}
             {...register("nombre")}
           />
@@ -93,6 +110,7 @@ export default function ContactForm() {
             id="apellidos"
             type="text"
             placeholder="Pérez Castillo"
+            maxLength={120}
             className={fieldClass}
             {...register("apellidos")}
           />
@@ -108,6 +126,7 @@ export default function ContactForm() {
           id="email"
           type="email"
           placeholder="jpc1980@gmail.com"
+          maxLength={254}
           className={fieldClass}
           {...register("email")}
         />
@@ -123,6 +142,7 @@ export default function ContactForm() {
           id="asunto"
           type="text"
           placeholder="¿Sobre qué tienes dudas o quieres escribirme?"
+          maxLength={150}
           className={fieldClass}
           {...register("asunto")}
         />
@@ -138,10 +158,16 @@ export default function ContactForm() {
           id="mensaje"
           placeholder="Escribe tu mensaje aquí..."
           rows={7}
+          maxLength={2000}
           className="text-base md:text-base"
           {...register("mensaje")}
         />
-        <FieldError message={errors.mensaje?.message} />
+        <div className="flex items-center justify-between gap-2">
+          <FieldError message={errors.mensaje?.message} />
+          <span className="ml-auto text-sm text-muted-foreground tabular-nums">
+            {mensajeLength}/2000
+          </span>
+        </div>
       </div>
 
       <Button

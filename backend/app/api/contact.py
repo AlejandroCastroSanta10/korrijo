@@ -25,11 +25,11 @@ def _check_rate_limit(ip: str) -> None:
 
 
 class ContactMessageBody(BaseModel):
-    name: str = Field(min_length=1)
-    last_name: str | None = None
-    email: EmailStr
-    subject: str = Field(min_length=1)
-    message: str = Field(min_length=1)
+    name: str = Field(min_length=1, max_length=80)
+    last_name: str | None = Field(default=None, max_length=120)
+    email: EmailStr = Field(max_length=254)
+    subject: str = Field(min_length=1, max_length=150)
+    message: str = Field(min_length=1, max_length=2000)
 
 
 @router.post("/contact", status_code=status.HTTP_202_ACCEPTED)
