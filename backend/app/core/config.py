@@ -26,6 +26,8 @@ class Settings(BaseSettings):
     smtp_host: str = "localhost"
     smtp_port: int = 1025
     smtp_from: str = "noreply@korrijo.com"
+    # Email donde se reciben los mensajes del formulario de contacto.
+    contact_recipient_email: str = "acs@gmail.com"
 
     # Magic link
     magic_link_expiration_minutes: int = 15

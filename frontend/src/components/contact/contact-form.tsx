@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
+import { api, ApiError } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -22,6 +23,9 @@ const schema = z.object({
 
 type ContactFormValues = z.infer<typeof schema>;
 
+const labelClass = "text-base text-zinc-900 dark:text-zinc-50";
+const fieldClass = "h-11 text-base md:text-base";
+
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
   return <p className="text-sm text-destructive">{message}</p>;
@@ -32,29 +36,45 @@ export default function ContactForm() {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isValid },
+    formState: { errors, isValid, isSubmitting },
   } = useForm<ContactFormValues>({
     resolver: zodResolver(schema),
     mode: "onTouched",
   });
 
-  function onSubmit(_data: ContactFormValues) {
-    toast.info("Funcionalidad pendiente. El envío real estará disponible próximamente.");
-    reset();
+  async function onSubmit(data: ContactFormValues) {
+    try {
+      await api.post("/contact", {
+        name: data.nombre,
+        last_name: data.apellidos || null,
+        email: data.email,
+        subject: data.asunto,
+        message: data.mensaje,
+      });
+      toast.success("Mensaje enviado correctamente.");
+      reset();
+    } catch (error) {
+      const message =
+        error instanceof ApiError
+          ? "No se pudo enviar el mensaje. Inténtalo de nuevo."
+          : "No se pudo conectar con el servidor. Inténtalo más tarde.";
+      toast.error(message);
+    }
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-6">
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+    <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-8">
+      <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
         {/* Nombre */}
         <div className="flex flex-col gap-2">
-          <Label htmlFor="nombre">
+          <Label htmlFor="nombre" className={labelClass}>
             Nombre <span className="text-destructive">*</span>
           </Label>
           <Input
             id="nombre"
             type="text"
-            placeholder="Tu nombre"
+            placeholder="Juan"
+            className={fieldClass}
             {...register("nombre")}
           />
           <FieldError message={errors.nombre?.message} />
@@ -62,14 +82,15 @@ export default function ContactForm() {
 
         {/* Apellidos */}
         <div className="flex flex-col gap-2">
-          <Label htmlFor="apellidos">
+          <Label htmlFor="apellidos" className={labelClass}>
             Apellidos{" "}
-            <span className="text-zinc-400 text-xs font-normal">(opcional)</span>
+            <span className="text-muted-foreground text-sm font-normal">(opcional)</span>
           </Label>
           <Input
             id="apellidos"
             type="text"
-            placeholder="Tus apellidos"
+            placeholder="Pérez Castillo"
+            className={fieldClass}
             {...register("apellidos")}
           />
         </div>
@@ -77,13 +98,14 @@ export default function ContactForm() {
 
       {/* Email */}
       <div className="flex flex-col gap-2">
-        <Label htmlFor="email">
+        <Label htmlFor="email" className={labelClass}>
           Email <span className="text-destructive">*</span>
         </Label>
         <Input
           id="email"
           type="email"
-          placeholder="tu@email.com"
+          placeholder="jpc1980@gmail.com"
+          className={fieldClass}
           {...register("email")}
         />
         <FieldError message={errors.email?.message} />
@@ -91,13 +113,14 @@ export default function ContactForm() {
 
       {/* Asunto */}
       <div className="flex flex-col gap-2">
-        <Label htmlFor="asunto">
+        <Label htmlFor="asunto" className={labelClass}>
           Asunto <span className="text-destructive">*</span>
         </Label>
         <Input
           id="asunto"
           type="text"
           placeholder="¿Sobre qué tienes dudas o quieres escribirme?"
+          className={fieldClass}
           {...register("asunto")}
         />
         <FieldError message={errors.asunto?.message} />
@@ -105,20 +128,26 @@ export default function ContactForm() {
 
       {/* Mensaje */}
       <div className="flex flex-col gap-2">
-        <Label htmlFor="mensaje">
+        <Label htmlFor="mensaje" className={labelClass}>
           Mensaje <span className="text-destructive">*</span>
         </Label>
         <Textarea
           id="mensaje"
           placeholder="Escribe tu mensaje aquí..."
-          rows={6}
+          rows={7}
+          className="text-base md:text-base"
           {...register("mensaje")}
         />
         <FieldError message={errors.mensaje?.message} />
       </div>
 
-      <Button type="submit" className="w-full sm:w-fit" disabled={!isValid}>
-        Enviar
+      <Button
+        type="submit"
+        size="lg"
+        className="w-full sm:w-fit"
+        disabled={!isValid || isSubmitting}
+      >
+        {isSubmitting ? "Enviando..." : "Enviar"}
       </Button>
     </form>
   );
