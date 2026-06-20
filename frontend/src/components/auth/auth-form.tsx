@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { useRequestMagicLink } from "@/lib/hooks/auth";
 import { ApiError } from "@/lib/api";
 import { toast } from "sonner";
+import { MailCheck } from "lucide-react";
 
 const RESEND_COOLDOWN = 30;
 
@@ -21,7 +22,7 @@ type FormData = z.infer<typeof schema>;
 function getErrorMessage(error: Error): string {
   if (error instanceof ApiError) {
     if (error.status === 429) {
-      return "Has enviado demasiadas solicitudes a ese email. Espera unos minutos antes de volver a hacerlo.";
+      return "Hemos enviado demasiadas solicitudes a ese email. Espera unos minutos para volver a hacerlo.";
     }
     return error.message;
   }
@@ -37,6 +38,18 @@ function EmailForm({ onSuccess }: { onSuccess: (email: string) => void }) {
 
   const mutation = useRequestMagicLink();
 
+  // Enfocamos el campo del correo para invitar al usuario a introducirlo (cuando llegamoa a auth). 
+  useEffect(() => {
+    const focusEmail = () => {
+      if (window.location.hash === "#auth") {
+        document.getElementById("auth-email")?.focus();
+      }
+    };
+    focusEmail();
+    window.addEventListener("hashchange", focusEmail);
+    return () => window.removeEventListener("hashchange", focusEmail);
+  }, []);
+
   const onSubmit = (data: FormData) => {
     mutation.mutate(data.email, {
       onSuccess: () => onSuccess(data.email),
@@ -46,17 +59,18 @@ function EmailForm({ onSuccess }: { onSuccess: (email: string) => void }) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
       <Input
+        id="auth-email"
         type="email"
         placeholder="Introduce tu correo electrónico"
-        className="h-14 text-2xl md:text-lg"
+        className="h-12 text-xl md:text-medium"
         aria-invalid={!!errors.email}
         {...register("email")}
       />
       {errors.email && (
-        <p className="text-xs text-red-500">{errors.email.message}</p>
+        <p className="text-medium text-red-500">{errors.email.message}</p>
       )}
       {mutation.error && (
-        <p className="text-xs text-red-500">{getErrorMessage(mutation.error)}</p>
+        <p className="text-medium text-red-500">{getErrorMessage(mutation.error)}</p>
       )}
       <Button
         type="submit"
@@ -97,22 +111,20 @@ function EmailSentView({
   };
 
   return (
-    <div className="flex flex-col gap-4 text-center">
-      <div className="flex flex-col gap-1">
-        <p className="font-semibold text-zinc-900 dark:text-zinc-50">
-          Revisa tu correo
-        </p>
-        <p className="text-base text-zinc-500 dark:text-zinc-400">
-          Hemos enviado un enlace de acceso a{" "}
-          <span className="font-medium text-zinc-700 dark:text-zinc-300">
-            {email}
-          </span>
-        </p>
+    <div className="flex flex-col items-center gap-5 text-center">
+      <div className="flex size-14 items-center justify-center rounded-full bg-primary/10">
+        <MailCheck className="size-7 text-primary" />
       </div>
 
-      {mutation.error && (
-        <p className="text-xs text-red-500">{getErrorMessage(mutation.error)}</p>
-      )}
+      <div className="flex flex-col gap-2">
+        <p className="text-xl font-bold text-zinc-900 dark:text-zinc-50">
+          Revisa tu correo
+        </p>
+        <p className="text-base text-zinc-700 dark:text-zinc-300">
+          Hemos enviado un enlace de acceso a{" "}
+          <span className="font-semibold text-primary">{email}</span>
+        </p>
+      </div>
 
       <Button
         variant="outline"
@@ -133,7 +145,7 @@ function EmailSentView({
         onClick={onChangeEmail}
         className="text-sm text-zinc-600 underline hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200"
       >
-        Cambiar email
+        Cambiar de email
       </button>
     </div>
   );
@@ -158,6 +170,15 @@ export default function AuthForm() {
         {view === "form" ? (
           <>
             <EmailForm onSuccess={handleSuccess} />
+            <p className="text-center text-sm text-zinc-500 dark:text-zinc-400">
+              Al continuar, reconoces las{" "}
+              <Link
+                href="/politics"
+                className="underline hover:text-zinc-700 dark:hover:text-zinc-200"
+              >
+                políticas de <i>Korrijo</i>
+              </Link>
+            </p>
           </>
         ) : (
           <EmailSentView
@@ -165,16 +186,6 @@ export default function AuthForm() {
             onChangeEmail={() => setView("form")}
           />
         )}
-
-        <p className="text-center text-sm text-zinc-500 dark:text-zinc-400">
-          Al continuar, reconoces las{" "}
-          <Link
-            href="/politics"
-            className="underline hover:text-zinc-700 dark:hover:text-zinc-200"
-          >
-            políticas de <i>Korrijo</i>
-          </Link>
-        </p>
       </div>
     </div>
   );
