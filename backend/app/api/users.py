@@ -25,7 +25,7 @@ async def update_me(
     current_user: CurrentUserDep,
     session: SessionDep,
 ) -> User:
-    current_user.name = body.name
+    current_user.name = body.name or None
     await session.commit()
     await session.refresh(current_user)
     return current_user

@@ -46,17 +46,17 @@ export default function PrivateHeader() {
           <i className="text-3xl">Korrijo</i>
         </Link>
 
-        <nav className="hidden items-center gap-6 sm:flex">
+        <nav className="hidden items-center gap-15 sm:flex">
           <Link
             href="/app/new"
-            className="flex items-center gap-2 text-base font-medium text-foreground/80 transition-colors hover:text-foreground"
+            className="flex items-center gap-2 text-lg font-medium text-zinc-900 underline-offset-8 hover:underline dark:text-zinc-50"
           >
             <Plus className="size-5" />
             Nueva sesión de corrección
           </Link>
           <Link
             href="/app/history"
-            className="flex items-center gap-2 text-base font-medium text-foreground/80 transition-colors hover:text-foreground"
+            className="flex items-center gap-2 text-lg font-medium text-zinc-900 underline-offset-8 hover:underline dark:text-zinc-50"
           >
             <History className="size-5" />
             Historial de sesiones

@@ -151,12 +151,11 @@ export default function NewSessionPage() {
         <>
           <RecentSessionCard />
           <div className="flex flex-col gap-1">
-            <h1 className="text-3xl font-bold text-foreground">
-              Nueva sesión de corrección
+            <h1 className="text-4xl font-bold text-foreground">
+              Crear una nueva sesión de corrección
             </h1>
-            <p className="text-base text-muted-foreground">
-              Desde aquí puedes crear una <b>sesión de corrección</b> para corregir
-              instancias de un examen. Pero antes, necesitamos que nos proporciones
+            <p className="text-lg mt-8">
+              Desde aquí puedes crear una <b>sesión de corrección</b> para que <i>Korrijo</i> evalúe instancias de un examen. Pero antes necesitamos que nos proporciones
               algunos <b>datos</b> y <b>ficheros</b>:
             </p>
           </div>

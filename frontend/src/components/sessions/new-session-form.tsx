@@ -67,7 +67,7 @@ export type NewSessionValues = z.infer<typeof schema>;
 
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
-  return <p className="text-xs text-destructive">{message}</p>;
+  return <p className="text-sm text-destructive">{message}</p>;
 }
 
 function InfoHint({ text }: { text: string }) {
@@ -79,7 +79,7 @@ function InfoHint({ text }: { text: string }) {
           aria-label="Más información"
           className="text-muted-foreground transition-colors hover:text-foreground"
         >
-          <Info className="size-4" />
+          <Info className="size-5" />
         </button>
       </TooltipTrigger>
       <TooltipContent>{text}</TooltipContent>
@@ -98,8 +98,8 @@ function Badge({
     <span
       className={
         tone === "required"
-          ? "text-xs font-semibold uppercase text-destructive"
-          : "text-xs font-semibold uppercase text-amber-600 dark:text-amber-500"
+          ? "text-sm font-semibold uppercase text-destructive"
+          : "text-sm font-semibold uppercase text-amber-600 dark:text-amber-500"
       }
     >
       {children}
@@ -142,12 +142,12 @@ export default function NewSessionForm({
     >
       {/* Nombre de sesión */}
       <div className="flex flex-col gap-2">
-        <Label htmlFor="name" className="text-base">
+        <Label htmlFor="name" className="text-xl">
           Nombre de la sesión
         </Label>
         <Input
           id="name"
-          className="h-11 text-base"
+          className="h-12 text-lg md:text-lg"
           placeholder="Examen Historia T1 - La Prehistoria (1º BACH C)"
           aria-invalid={!!errors.name}
           disabled={disabled}
@@ -182,14 +182,15 @@ export default function NewSessionForm({
             )}
           />
           <div className="flex flex-col gap-2">
-            <Label htmlFor="contextInstructions" className="text-base">
+            <Label htmlFor="contextInstructions" className="text-lg">
               Indicaciones adicionales{" "}
-              <span className="text-xs font-normal text-muted-foreground">
+              <span className="text-sm font-normal text-muted-foreground">
                 (opcional)
               </span>
             </Label>
             <Textarea
               id="contextInstructions"
+              className="text-base md:text-base"
               rows={4}
               placeholder={
                 'Ej.: "En el fichero de presentación no tengas en cuenta las diapositivas 25-35, están obsoletas."'
@@ -227,14 +228,15 @@ export default function NewSessionForm({
             )}
           />
           <div className="flex flex-col gap-2">
-            <Label htmlFor="modelInstructions" className="text-base">
+            <Label htmlFor="modelInstructions" className="text-lg">
               Indicaciones adicionales{" "}
-              <span className="text-xs font-normal text-muted-foreground">
+              <span className="text-sm font-normal text-muted-foreground">
                 (opcional)
               </span>
             </Label>
             <Textarea
               id="modelInstructions"
+              className="text-base md:text-base"
               rows={4}
               placeholder={
                 'Ej.: "Si en la pregunta 2 los alumnos le dan el enfoque X también se debe dar por bueno."'
@@ -276,7 +278,7 @@ export default function NewSessionForm({
             <FieldError message={errors.rubricFiles?.message} />
           </div>
           <div className="flex flex-col gap-2">
-            <Label htmlFor="maxScore" className="text-base">
+            <Label htmlFor="maxScore" className="text-lg">
               Puntuación máxima
             </Label>
             <Input
@@ -284,7 +286,7 @@ export default function NewSessionForm({
               type="number"
               min={0.1}
               step={0.1}
-              className="h-11 w-32 text-base"
+              className="h-12 w-32 text-lg md:text-lg"
               aria-invalid={!!errors.maxScore}
               disabled={disabled}
               {...register("maxScore", { valueAsNumber: true })}
@@ -295,7 +297,7 @@ export default function NewSessionForm({
       </section>
 
       <div className="flex items-center justify-end gap-4">
-        <Button type="submit" size="lg" className="text-base" disabled={disabled}>
+        <Button type="submit" size="lg" className="text-lg" disabled={disabled}>
           Crear sesión de corrección
         </Button>
       </div>

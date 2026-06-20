@@ -3,7 +3,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, StringConstraints
 
-NameStr = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=200)]
+NameStr = Annotated[str, StringConstraints(strip_whitespace=True, max_length=75)]
 
 
 class UserRead(BaseModel):
@@ -15,7 +15,7 @@ class UserRead(BaseModel):
 
 
 class UserUpdate(BaseModel):
-    name: NameStr
+    name: NameStr | None = None
 
 
 class AccountDeleteRequest(BaseModel):

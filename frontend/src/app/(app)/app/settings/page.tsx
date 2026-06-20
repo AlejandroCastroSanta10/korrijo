@@ -22,11 +22,11 @@ import { useCurrentUser } from "@/lib/hooks/auth";
 import { useDeleteAccount, useUpdateProfile } from "@/lib/hooks/user";
 
 const profileSchema = z.object({
+  // Vacío está permitido: equivale a quitar el nombre.
   name: z
     .string()
     .trim()
-    .min(1, "El nombre no puede estar vacío.")
-    .max(200, "El nombre es demasiado largo (máximo 200 caracteres)."),
+    .max(75, "El nombre es demasiado largo (máximo 75 caracteres)."),
 });
 
 type ProfileValues = z.infer<typeof profileSchema>;
@@ -59,48 +59,34 @@ function ProfileSection({
   return (
     <section className="flex flex-col gap-5 mt-4">
       <h2 className="text-2xl font-semibold text-foreground">
-        Tu información personal
+        Modificar tu información personal
       </h2>
       <form
         onSubmit={handleSubmit(onSubmit)}
         noValidate
-        className="flex max-w-md flex-col gap-5"
+        className="flex max-w-2xl flex-col gap-5"
       >
         <div className="flex flex-col gap-2">
-          <Label htmlFor="name" className="text-base">
+          <Label htmlFor="name" className="text-lg">
             Nombre
           </Label>
           <Input
             id="name"
-            className="h-11 text-base"
+            className="h-12 text-xl md:text-lg"
             aria-invalid={!!errors.name}
             disabled={updateProfile.isPending}
             {...register("name")}
           />
           {errors.name && (
-            <p className="text-xs text-destructive">{errors.name.message}</p>
+            <p className="text-sm text-destructive">{errors.name.message}</p>
           )}
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="email" className="text-base">
-            Email{" "}
-            <span className="text-xs font-normal text-muted-foreground">
-              (no editable)
-            </span>
-          </Label>
-          <Input
-            id="email"
-            className="h-11 text-base"
-            value={email}
-            readOnly
-            disabled
-          />
         </div>
 
         <div>
           <Button
             type="submit"
+            size="lg"
+            className="text-base"
             disabled={!isDirty || updateProfile.isPending}
           >
             {updateProfile.isPending && (
@@ -146,15 +132,16 @@ function DangerZone({ email }: { email: string }) {
       <h2 className="text-2xl font-semibold text-foreground"><i>Danger zone</i></h2>
       <div className="flex flex-col gap-4 rounded-2xl border border-destructive/40 bg-destructive/5 p-5 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-col gap-1">
-          <span className="font-semibold">Eliminar cuenta</span>
-          <span className="text-sm">
+          <span className="text-lg font-semibold">Eliminar tu cuenta <i>Korrijo</i></span>
+          <span className="text-base">
             Se borrarán para siempre todos tus datos y sesiones. Esta acción no
             se puede deshacer.
           </span>
         </div>
         <Button
           variant="destructive"
-          className="shrink-0"
+          size="lg"
+          className="shrink-0 text-base"
           onClick={() => setOpen(true)}
         >
           Quiero borrar mi cuenta
@@ -162,36 +149,42 @@ function DangerZone({ email }: { email: string }) {
       </div>
 
       <Dialog open={open} onOpenChange={(o) => !o && closeDialog()}>
-        <DialogContent className="gap-6 p-8 sm:max-w-2xl">
-          <DialogHeader className="gap-3">
-            <DialogTitle className="flex items-center gap-2 text-2xl text-destructive">
-              <TriangleAlert className="size-6" />
-              ¿Seguro/a que quieres eliminar tu cuenta <i>Korrijo</i>? 
+        <DialogContent className="gap-0 p-10 sm:max-w-3xl">
+          <DialogHeader className="items-center gap-4 pr-0 text-center">
+            <div className="flex size-16 items-center justify-center rounded-full bg-destructive/10 ring-8 ring-destructive/5">
+              <TriangleAlert className="size-8 text-destructive" />
+            </div>
+            <DialogTitle className="text-3xl text-foreground">
+              Eliminar tu cuenta <i>Korrijo</i>
             </DialogTitle>
-            <DialogDescription className="text-base leading-relaxed">
-              Esta acción es <b>irreversible</b>: se eliminarán tu cuenta y todas
-              tus sesiones de corrección. Para continuar, escribe{" "}
-              <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-sm text-foreground">
-                {expected}
-              </code>{" "}
-              en el campo de abajo.
+            <DialogDescription className="max-w-xl text-lg leading-relaxed text-muted-foreground">
+              Esta acción es <b className="text-foreground">irreversible</b>: se
+              eliminarán tu cuenta y todas tus sesiones de corrección.
             </DialogDescription>
           </DialogHeader>
 
-          <div className="flex flex-col gap-2">
+          <div className="mt-8 flex flex-col gap-3 rounded-2xl border border-input bg-muted/50 p-5">
+            <p className="text-base">
+              Si estás segur@, escribe{" "}
+              <code className="rounded  px-1.5 py-0.5 font-mono text-sm font-semibold text-foreground">
+                {expected}
+              </code>{" "}
+              en este campo:
+            </p>
             <Input
               autoFocus
-              className="h-11 text-base"
-              placeholder={expected}
+              className="h-12 bg-background text-lg"
               value={confirmation}
               disabled={deleteAccount.isPending}
               onChange={(e) => setConfirmation(e.target.value)}
             />
           </div>
 
-          <div className="flex justify-end gap-3">
+          <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-center">
             <Button
               variant="outline"
+              size="lg"
+              className="text-base sm:min-w-40"
               onClick={closeDialog}
               disabled={deleteAccount.isPending}
             >
@@ -199,6 +192,8 @@ function DangerZone({ email }: { email: string }) {
             </Button>
             <Button
               variant="destructive"
+              size="lg"
+              className="text-base sm:min-w-40"
               onClick={handleDelete}
               disabled={!canDelete}
             >
@@ -227,7 +222,7 @@ export default function SettingsPage() {
 
   return (
     <section className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-6 py-12">
-      <h1 className="text-3xl font-bold text-foreground sm:text-4xl">
+      <h1 className="text-4xl font-bold text-foreground sm:text-4xl">
         Configuración
       </h1>
 

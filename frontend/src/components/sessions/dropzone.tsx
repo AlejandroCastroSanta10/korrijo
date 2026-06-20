@@ -79,9 +79,9 @@ export default function Dropzone({
           disabled && "pointer-events-none opacity-50",
         )}
       >
-        <Upload className="size-9 text-muted-foreground" strokeWidth={1.5} />
-        <span className="text-base font-medium text-foreground">{label}</span>
-        <span className="text-sm text-muted-foreground">
+        <Upload className="size-10 text-muted-foreground" strokeWidth={1.5} />
+        <span className="text-lg font-medium text-foreground">{label}</span>
+        <span className="text-base text-muted-foreground">
           O haz clic para seleccionar
         </span>
       </button>
@@ -107,11 +107,11 @@ export default function Dropzone({
               className="flex items-center justify-between gap-3 rounded-xl border border-input bg-input/30 px-3 py-2"
             >
               <div className="flex min-w-0 items-center gap-2">
-                <FileText className="size-4 shrink-0 text-muted-foreground" />
-                <span className="truncate text-sm text-foreground">
+                <FileText className="size-5 shrink-0 text-muted-foreground" />
+                <span className="truncate text-base text-foreground">
                   {file.name}
                 </span>
-                <span className="shrink-0 text-xs text-muted-foreground">
+                <span className="shrink-0 text-sm text-muted-foreground">
                   {formatBytes(file.size)}
                 </span>
               </div>
