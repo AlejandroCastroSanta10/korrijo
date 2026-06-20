@@ -89,24 +89,6 @@ export default function PrivateHeader() {
               </Link>
             </DropdownMenuItem>
 
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger>
-                <Globe className="size-4" />
-                Idioma
-              </DropdownMenuSubTrigger>
-              <DropdownMenuSubContent>
-                {/* El cambio de idioma real llegará en v1.0.0 (placeholder). */}
-                <DropdownMenuRadioGroup value="es">
-                  <DropdownMenuRadioItem value="es">
-                    Español
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="en" disabled>
-                    English (próximamente)
-                  </DropdownMenuRadioItem>
-                </DropdownMenuRadioGroup>
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
-
             <DropdownMenuItem asChild>
               <Link href="/contact">
                 <CircleHelp className="size-4" />

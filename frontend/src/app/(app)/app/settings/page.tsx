@@ -114,29 +114,6 @@ function ProfileSection({
   );
 }
 
-function AppearanceSection() {
-  return (
-    <section className="flex flex-col gap-5">
-      <h2 className="text-2xl font-semibold text-foreground">Apariencia</h2>
-      <div className="flex items-center justify-between gap-4">
-        <span className="text-base text-foreground">Tema oscuro</span>
-        <div className="flex items-center gap-3">
-          <span className="text-xs font-medium uppercase text-muted-foreground">
-            Próximamente
-          </span>
-          {/* Toggle puramente visual: el modo oscuro no es funcional todavía. */}
-          <div
-            aria-hidden
-            className="flex h-6 w-11 items-center rounded-full bg-input px-0.5 opacity-50"
-          >
-            <div className="size-5 rounded-full bg-background shadow" />
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function DangerZone({ email }: { email: string }) {
   const router = useRouter();
   const deleteAccount = useDeleteAccount();
@@ -255,8 +232,6 @@ export default function SettingsPage() {
       </h1>
 
       <ProfileSection defaultName={user.name ?? ""} email={user.email} />
-      <Separator />
-      <AppearanceSection />
       <Separator />
       <DangerZone email={user.email} />
     </section>
