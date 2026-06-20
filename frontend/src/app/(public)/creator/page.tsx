@@ -21,7 +21,7 @@ export default function CreatorPage() {
   return (
     <div className="mx-auto max-w-3xl px-6 py-16 flex flex-col gap-16">
       <h1 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-5xl">
-        Sobre el creador
+        Sobre el creador de la herramienta
       </h1>
 
       {/* ¿Quién soy? */}
@@ -29,12 +29,18 @@ export default function CreatorPage() {
         <h2 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">
           ¿Quién soy?
         </h2>
-        <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed">
-          Soy Alejandro Castro, estudiante de Ingeniería Informática con
-          especialización en Ingeniería del Software. Me interesa especialmente
+        <p className="text-zinc-900 dark:text-zinc-50 leading-relaxed">
+          Soy Alejandro Castro, estudiante de 4º curso de Ingeniería Informática en
+          la Universidad de Alicante. Me interesa especialmente
           el desarrollo de aplicaciones web y la aplicación práctica de la
           inteligencia artificial para resolver problemas reales.
+          Desde que era pequeño he tenido mucho interés por todo lo relacionado con la informática
+          y me considero una persona trabajadora, perfeccionista y muy ambiciosa.
         </p>
+
+        <div className="mx-auto mt-4 flex size-48 items-center justify-center overflow-hidden rounded-full border bg-muted">
+          <img src="/images/creator.png" alt="Alejandro Castro" className="size-full object-cover" />
+        </div>
       </section>
 
       {/* ¿Por qué creé Korrijo? */}
@@ -42,55 +48,48 @@ export default function CreatorPage() {
         <h2 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">
           ¿Por qué creé <i>Korrijo</i>?
         </h2>
-        <div className="flex flex-col gap-4 text-zinc-600 dark:text-zinc-400 leading-relaxed">
+        <div className="flex flex-col gap-4 text-zinc-900 dark:text-zinc-50 leading-relaxed">
           <p>
-            La idea nació de una conversación con un familiar que trabaja como
-            profesor de secundaria. Me contó que dedicaba tardes enteras a
-            corregir exámenes manuscritos: leer letra a letra, contrastar
-            respuestas con la rúbrica, calcular notas, escribir comentarios
-            individuales... Una tarea necesaria pero enormemente repetitiva, que
-            le dejaba poco tiempo para lo que realmente importa: preparar clases,
-            atender a sus alumnos y descansar.
+            La idea nació de una conversación con una familiar que trabaja como
+            profesora de secundaria. Me contó que dedicaba tardes enteras a
+            corregir exámenes manuscritos de respuestas en las que el alumno tiene que
+            escribir uno o varios párrafos. Ella tiene que leer letra a letra cada respuesta, contrastarlas
+            con su rúbrica, calcular notas, escribir comentarios
+            individuales, etc. Se trata de una tarea que es enormemente repetitiva y agotadora, y que,  
+            además, le deja poco tiempo para lo que realmente importa: preparar sus clases,
+            atender mejor a sus alumnos y descansar.
           </p>
           <p>
             Cuando empecé a investigar soluciones existentes, me di cuenta de
             que las herramientas de corrección automática o bien se limitan a
             exámenes tipo test, o bien requieren que los alumnos entreguen en
-            formato digital. No había nada diseñado específicamente para el
-            caso más común en educación secundaria y universidad: el examen
-            manuscrito de preguntas de desarrollo.
+            formato digital. No había nada, o prácticamente nada, diseñado específicamente 
+            para un caso muy común de prueba evaluativa: el examen
+            manuscrito de preguntas de desarrollo y/o cortas.
           </p>
           <p>
-            Decidí entonces construir <i>Korrijo</i> como proyecto de fin de
-            carrera: una herramienta que, a partir de una rúbrica y un examen
-            modelo, fuera capaz de corregir automáticamente cualquier examen
-            manuscrito escaneado o fotografiado, proporcionando una calificación
-            propuesta y un informe de feedback para cada alumno. Mi objetivo no
-            es sustituir al profesor, sino liberarle de la parte más mecánica
-            del trabajo para que pueda centrarse en enseñar.
+            Decidí entonces construir <i>Korrijo</i> como herramienta para mi TFG.
           </p>
         </div>
       </section>
 
-      {/* ¿Qué es Korrijo hoy? */}
+      {/* ¿Qué es Korrijo actualmente? */}
       <section className="flex flex-col gap-4">
         <h2 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">
-          ¿Qué es <i>Korrijo</i> hoy?
+          ¿Qué es <i>Korrijo</i> actualmente?
         </h2>
-        <div className="flex flex-col gap-4 text-zinc-600 dark:text-zinc-400 leading-relaxed">
+        <div className="flex flex-col gap-4 text-zinc-900 dark:text-zinc-50 leading-relaxed">
           <p>
-            <i>Korrijo</i> es actualmente un proyecto académico en fase de MVP
-            (producto mínimo viable). El objetivo de esta primera versión es
+            <i>Korrijo</i> es actualmente un proyecto en fase de MVP
+            (producto mínimo viable). El objetivo de esta primera versión funcional es
             demostrar la viabilidad técnica del sistema: subir documentos de
             contexto, un examen modelo y una rúbrica, y obtener correcciones
-            automáticas con calificación propuesta e informe de feedback para
+            automáticas con calificación propuesta e informes de <i>feedback</i> para
             cada examen.
           </p>
           <p>
-            La herramienta está en desarrollo activo. Las funcionalidades de
-            autenticación, integración con proveedores de IA y la interfaz de
-            gestión de sesiones de corrección se irán incorporando de forma
-            progresiva.
+            La herramienta se encuentra en desarrollo y se espera que se pueda mejorar
+            en un futuro.
           </p>
         </div>
       </section>
