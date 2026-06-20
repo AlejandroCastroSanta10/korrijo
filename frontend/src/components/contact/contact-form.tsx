@@ -54,10 +54,13 @@ export default function ContactForm() {
       toast.success("Mensaje enviado correctamente.");
       reset();
     } catch (error) {
-      const message =
-        error instanceof ApiError
-          ? "No se pudo enviar el mensaje. Inténtalo de nuevo."
-          : "No se pudo conectar con el servidor. Inténtalo más tarde.";
+      let message = "No se pudo conectar con el servidor. Inténtalo más tarde.";
+      if (error instanceof ApiError) {
+        message =
+          error.status === 429
+            ? "Has enviado demasiados mensajes. Espera un poco si quieres enviar más."
+            : "No se pudo enviar el mensaje. Inténtalo de nuevo.";
+      }
       toast.error(message);
     }
   }

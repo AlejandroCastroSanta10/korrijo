@@ -28,6 +28,9 @@ class Settings(BaseSettings):
     smtp_from: str = "noreply@korrijo.com"
     # Email donde se reciben los mensajes del formulario de contacto.
     contact_recipient_email: str = "acs@gmail.com"
+    # Rate limiting del formulario de contacto (por IP).
+    contact_rate_limit_max: int = 3
+    contact_rate_limit_window_minutes: int = 10
 
     # Magic link
     magic_link_expiration_minutes: int = 15
