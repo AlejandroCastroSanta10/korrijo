@@ -32,6 +32,7 @@ def get_llm_provider() -> LLMProvider:
     return OllamaLLMProvider(
         num_ctx=settings.pipeline_llm_num_ctx,
         timeout=settings.pipeline_llm_timeout,
+        think=settings.pipeline_llm_think,
     )
 
 

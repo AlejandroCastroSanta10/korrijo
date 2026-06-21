@@ -167,18 +167,24 @@ export default function NewSessionPage() {
         <div className="flex flex-1 flex-col items-center justify-center gap-6 py-16 text-center">
           {uploadError ? (
             <>
-              <TriangleAlert className="size-10 text-destructive" />
-              <div className="flex flex-col gap-1">
-                <p className="font-semibold text-foreground">
-                  Algo ha fallado al preparar la sesión
+              <TriangleAlert className="size-16 text-destructive" />
+              <div className="flex flex-col gap-2">
+                <p className="text-2xl text-foreground">
+                  Algo ha fallado al procesar la rúbrica proporcionada...
                 </p>
-                <p className="text-sm text-muted-foreground">{uploadError}</p>
               </div>
-              <div className="flex gap-3">
-                <Button variant="outline" onClick={handleStartOver}>
+              <div className="flex gap-4">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="text-lg"
+                  onClick={handleStartOver}
+                >
                   Empezar de nuevo
                 </Button>
-                <Button onClick={handleRetry}>Reintentar</Button>
+                <Button size="lg" className="text-lg" onClick={handleRetry}>
+                  Reintentar
+                </Button>
               </div>
             </>
           ) : (

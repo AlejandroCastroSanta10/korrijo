@@ -65,6 +65,8 @@ class Settings(BaseSettings):
     # Timeout (segundos) de la llamada al proveedor de inferencia.
     pipeline_llm_timeout: float = 300.0
     pipeline_vlm_timeout: float = 200.0
+    # Razonamiento del LLM textual al estructurar la rúbrica.
+    pipeline_llm_think: bool = False
 
 
 settings = Settings()
