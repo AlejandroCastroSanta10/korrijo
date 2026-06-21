@@ -21,7 +21,7 @@ const TEXT_EXT = [".pdf", ".md", ".txt"]; // contexto y examen modelo
 const RUBRIC_EXT = [".pdf", ".xlsx", ".csv", ".md"]; // rúbrica
 const MAX_CONTEXT_TOTAL = 7 * 1024 * 1024; // 7 MB en total (contexto)
 const MAX_DOC = 3 * 1024 * 1024; // 3 MB (examen modelo y rúbrica)
-const MAX_INSTRUCTIONS = 500; // caracteres por campo de indicaciones
+const MAX_INSTRUCTIONS = 250; // caracteres por campo de indicaciones
 
 const extOk = (f: File, exts: string[]) =>
   exts.some((ext) => f.name.toLowerCase().endsWith(ext));

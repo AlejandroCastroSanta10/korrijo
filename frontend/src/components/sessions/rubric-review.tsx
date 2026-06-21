@@ -48,7 +48,6 @@ interface RubricReviewProps {
 export default function RubricReview({
   maxScore,
   initialItems,
-  initialWarning,
   onConfirm,
   confirming = false,
   error,
@@ -97,13 +96,6 @@ export default function RubricReview({
           esta sesión de corrección.
         </p>
       </div>
-
-      {initialWarning && (
-        <p className="flex items-start gap-2 rounded-xl bg-amber-500/10 px-3 py-2 text-sm text-amber-700 dark:text-amber-400">
-          <TriangleAlert className="mt-0.5 size-4 shrink-0" />
-          <span>{initialWarning}</span>
-        </p>
-      )}
 
       <ul className="flex flex-col gap-4 mt-6">
         {fields.map((field, index) => (
