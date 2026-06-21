@@ -82,7 +82,7 @@ export default function Dropzone({
         <Upload className="size-10 text-muted-foreground" strokeWidth={1.5} />
         <span className="text-lg font-medium text-foreground">{label}</span>
         <span className="text-base text-muted-foreground">
-          O haz clic para seleccionar
+          O haz click aquí para seleccionar
         </span>
       </button>
 

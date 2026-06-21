@@ -48,8 +48,8 @@ class Settings(BaseSettings):
     max_active_sessions_per_user: int = 5
 
     # Tamaño máximo de los documentos iniciales subidos a una sesión (en bytes).
-    max_context_upload_bytes: int = 10 * 1024 * 1024  # 10 MB (contexto)
-    max_document_upload_bytes: int = 5 * 1024 * 1024  # 5 MB (examen modelo y rúbrica)
+    max_context_upload_bytes: int = 7 * 1024 * 1024  # 7 MB (contexto)
+    max_document_upload_bytes: int = 3 * 1024 * 1024  # 3 MB (examen modelo y rúbrica)
 
     # Exámenes a corregir (fase 2): escaneados/imágenes.
     max_exam_upload_bytes: int = 5 * 1024 * 1024  # 5 MB por examen

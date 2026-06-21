@@ -82,16 +82,16 @@ export default function PrivateHeader() {
 
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem asChild>
+            <DropdownMenuItem asChild className="text-base">
               <Link href="/app/settings">
-                <Settings className="size-4" />
+                <Settings className="size-5" />
                 Configuración
               </Link>
             </DropdownMenuItem>
 
-            <DropdownMenuItem asChild>
+            <DropdownMenuItem asChild className="text-base">
               <Link href="/contact">
-                <CircleHelp className="size-4" />
+                <CircleHelp className="size-5" />
                 Ayuda
               </Link>
             </DropdownMenuItem>
@@ -101,7 +101,7 @@ export default function PrivateHeader() {
             <DropdownMenuItem
               onClick={handleLogout}
               disabled={logout.isPending}
-              className="text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400"
+              className="text-base text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400"
             >
               {logout.isPending ? "Cerrando sesión..." : "Cerrar sesión"}
             </DropdownMenuItem>

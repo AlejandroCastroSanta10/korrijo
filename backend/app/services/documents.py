@@ -13,8 +13,20 @@ from app.core.config import settings
 from app.db.models.session_document import DocumentKind
 from app.pipeline.extractors import extract
 
-# Extensiones admitidas, alineadas con lo que soportan los extractores del pipeline.
-ALLOWED_EXTENSIONS = {".pdf", ".xlsx", ".txt", ".md", ".csv"}
+# Extensiones admitidas por tipo de documento (subconjunto de lo que soportan los
+# extractores del pipeline). El contexto y el examen modelo son texto narrativo; la
+# rúbrica puede venir además como hoja de cálculo (.xlsx/.csv).
+_TEXT_EXTENSIONS = {".pdf", ".txt", ".md"}
+ALLOWED_EXTENSIONS_BY_KIND: dict[DocumentKind, set[str]] = {
+    DocumentKind.CONTEXT: _TEXT_EXTENSIONS,
+    DocumentKind.MODEL_EXAM: _TEXT_EXTENSIONS,
+    DocumentKind.RUBRIC: {".pdf", ".xlsx", ".csv", ".md"},
+}
+
+
+def allowed_extensions_for(kind: DocumentKind) -> set[str]:
+    """Extensiones admitidas según el tipo de documento."""
+    return ALLOWED_EXTENSIONS_BY_KIND[kind]
 
 
 def size_limit_for(kind: DocumentKind) -> int:

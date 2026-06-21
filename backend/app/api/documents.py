@@ -22,7 +22,7 @@ from app.schemas.session import (
     SessionDocumentDetail,
 )
 from app.services.documents import (
-    ALLOWED_EXTENSIONS,
+    allowed_extensions_for,
     extract_document_text,
     size_limit_for,
 )
@@ -83,12 +83,13 @@ async def _build_rubric_structured(
 
 def _validate_upload(filename: str, content: bytes, kind: DocumentKind) -> None:
     """Valida la extensión y el tamaño del fichero; lanza 422 si no cumplen."""
-    if Path(filename).suffix.lower() not in ALLOWED_EXTENSIONS:
+    allowed = allowed_extensions_for(kind)
+    if Path(filename).suffix.lower() not in allowed:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=(
                 f"Formato no admitido para '{filename}'. "
-                f"Admitidos: {', '.join(sorted(ALLOWED_EXTENSIONS))}."
+                f"Admitidos: {', '.join(sorted(allowed))}."
             ),
         )
     limit = size_limit_for(kind)
