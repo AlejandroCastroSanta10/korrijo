@@ -49,6 +49,35 @@ async def test_delete_missing_key_is_noop(storage: LocalFileStorage):
 
 
 @pytest.mark.asyncio
+async def test_delete_prunes_empty_session_and_user_dirs(tmp_path: Path):
+    root = tmp_path / "storage"
+    storage = LocalFileStorage(root)
+    await storage.save(b"x", "u/s/f.pdf")
+
+    await storage.delete("u/s/f.pdf")
+
+    # La carpeta de la sesión y la del usuario quedan vacías: deben eliminarse.
+    assert not (root / "u" / "s").exists()
+    assert not (root / "u").exists()
+    # La raíz del almacenamiento se conserva.
+    assert root.exists()
+
+
+@pytest.mark.asyncio
+async def test_delete_keeps_dir_with_remaining_files(tmp_path: Path):
+    root = tmp_path / "storage"
+    storage = LocalFileStorage(root)
+    await storage.save(b"x", "u/s/a.pdf")
+    await storage.save(b"y", "u/s/b.pdf")
+
+    await storage.delete("u/s/a.pdf")
+
+    # Aún queda otro fichero en la sesión: la carpeta no se poda.
+    assert (root / "u" / "s").is_dir()
+    assert await storage.exists("u/s/b.pdf")
+
+
+@pytest.mark.asyncio
 async def test_save_rejects_path_traversal_key(storage: LocalFileStorage):
     with pytest.raises(InvalidKey):
         await storage.save(b"x", "u/s/../../../etc/passwd")

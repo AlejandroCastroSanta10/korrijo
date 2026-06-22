@@ -39,10 +39,29 @@ class LocalFileStorage(FileStorage):
 
     async def delete(self, key: str) -> None:
         path = self._resolve(key)
+
+        def _remove() -> None:
+            path.unlink(missing_ok=True)
+            self._prune_empty_dirs(path.parent)
+
         try:
-            await asyncio.to_thread(path.unlink, missing_ok=True)
+            await asyncio.to_thread(_remove)
         except OSError as exc:
             raise StorageError(f"no se pudo borrar '{key}': {exc}") from exc
+
+    def _prune_empty_dirs(self, start: Path) -> None:
+        """Elimina directorios vacíos hacia arriba, hasta la raíz (sin incluirla).
+
+        Al borrar el último fichero de una sesión, su carpeta (y la del usuario,
+        si queda vacía) no debe permanecer huérfana en el almacenamiento.
+        """
+        directory = start
+        while directory != self._root and directory.is_relative_to(self._root):
+            try:
+                directory.rmdir()  # solo tiene éxito si está vacío
+            except OSError:
+                break  # no está vacío (o no existe): se detiene la poda
+            directory = directory.parent
 
     async def exists(self, key: str) -> bool:
         path = self._resolve(key)

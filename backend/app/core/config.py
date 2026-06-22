@@ -45,11 +45,11 @@ class Settings(BaseSettings):
     storage_root: Path = _BACKEND_DIR / "storage"
 
     # Máximo de sesiones activas por usuario.
-    max_active_sessions_per_user: int = 5
+    max_active_sessions_per_user: int = 4
 
     # Tamaño máximo de los documentos iniciales subidos a una sesión (en bytes).
-    max_context_upload_bytes: int = 10 * 1024 * 1024  # 10 MB (contexto)
-    max_document_upload_bytes: int = 5 * 1024 * 1024  # 5 MB (examen modelo y rúbrica)
+    max_context_upload_bytes: int = 7 * 1024 * 1024  # 7 MB (contexto)
+    max_document_upload_bytes: int = 3 * 1024 * 1024  # 3 MB (examen modelo y rúbrica)
 
     # Exámenes a corregir (fase 2): escaneados/imágenes.
     max_exam_upload_bytes: int = 5 * 1024 * 1024  # 5 MB por examen
@@ -65,6 +65,8 @@ class Settings(BaseSettings):
     # Timeout (segundos) de la llamada al proveedor de inferencia.
     pipeline_llm_timeout: float = 300.0
     pipeline_vlm_timeout: float = 200.0
+    # Razonamiento del LLM textual al estructurar la rúbrica.
+    pipeline_llm_think: bool = False
 
 
 settings = Settings()

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Loader2, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
@@ -10,11 +11,13 @@ import NewSessionForm, {
 import RubricReview from "@/components/sessions/rubric-review";
 import RecentSessionCard from "@/components/sessions/recent-session-card";
 import { Button } from "@/components/ui/button";
-import { ApiError } from "@/lib/api";
+import { ApiError, api } from "@/lib/api";
 import {
   useCreateSession,
   useUploadDocument,
   useValidateRubric,
+  useSessions,
+  MAX_ACTIVE_SESSIONS,
   type DocumentKind,
   type RubricItem,
 } from "@/lib/hooks/sessions";
@@ -55,6 +58,12 @@ export default function NewSessionPage() {
   const create = useCreateSession();
   const upload = useUploadDocument();
   const validate = useValidateRubric();
+  const { data: sessions, isLoading: sessionsLoading } = useSessions();
+
+  // El backend cuenta como activas las sesiones que no están archivadas.
+  const activeCount =
+    sessions?.filter((s) => s.status !== "archived").length ?? 0;
+  const atLimit = activeCount >= MAX_ACTIVE_SESSIONS;
 
   const [phase, setPhase] = useState<Phase>("form");
   const [values, setValues] = useState<NewSessionValues | null>(null);
@@ -64,6 +73,20 @@ export default function NewSessionPage() {
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [rubricItems, setRubricItems] = useState<RubricItem[]>([]);
   const [rubricWarning, setRubricWarning] = useState<string | null>(null);
+
+  // Id del draft creado pero con la rúbrica aún sin confirmar. Si se abandona el
+  // flujo se borra del sistema cuanto antes.
+  const draftIdRef = useRef<string | null>(null);
+
+  const discardDraft = () => {
+    if (draftIdRef.current) {
+      void api.del(`/api/sessions/${draftIdRef.current}`).catch(() => {});
+      draftIdRef.current = null;
+    }
+  };
+
+  // Al desmontar la página (navegar fuera) se descarta el draft no confirmado.
+  useEffect(() => discardDraft, []);
 
   // Crea la sesión (si no existe) y sube los documentos pendientes en orden.
   async function runFlow(
@@ -84,6 +107,7 @@ export default function NewSessionPage() {
         });
         id = created.id;
         setSessionId(id);
+        draftIdRef.current = id;
       }
 
       for (let i = startIndex; i < pending.length; i++) {
@@ -122,6 +146,7 @@ export default function NewSessionPage() {
   };
 
   const handleStartOver = () => {
+    discardDraft();
     setValues(null);
     setSessionId(null);
     setJobs([]);
@@ -138,7 +163,9 @@ export default function NewSessionPage() {
       { sessionId, items },
       {
         onSuccess: () => {
-          toast.success("Sesión lista para corregir exámenes.");
+          // Ya es 'ready': deja de ser un draft, no debe borrarse al navegar.
+          draftIdRef.current = null;
+          toast.success("Sesión de corrección creada correctamente");
           router.push(`/app/session/${sessionId}`);
         },
       },
@@ -151,16 +178,41 @@ export default function NewSessionPage() {
         <>
           <RecentSessionCard />
           <div className="flex flex-col gap-1">
-            <h1 className="text-3xl font-bold text-foreground">
-              Nueva sesión de corrección
+            <h1 className="text-4xl font-bold text-foreground">
+              Crear una nueva sesión de corrección
             </h1>
-            <p className="text-base text-muted-foreground">
-              Desde aquí puedes crear una <b>sesión de corrección</b> para corregir
-              instancias de un examen. Pero antes, necesitamos que nos proporciones
-              algunos <b>datos</b> y <b>ficheros</b>:
-            </p>
+            {!atLimit && !sessionsLoading && (
+              <p className="text-lg mt-8">
+                Desde aquí puedes crear una <b>sesión de corrección</b> para que <i>Korrijo</i> evalúe instancias de un examen. Pero antes necesitamos que nos proporciones
+                algunos <b>datos</b> y <b>ficheros</b>:
+              </p>
+            )}
           </div>
-          <NewSessionForm onSubmit={handleFormSubmit} />
+
+          {sessionsLoading ? (
+            <div className="flex flex-1 items-center justify-center py-24">
+              <Loader2 className="size-10 animate-spin text-primary" />
+            </div>
+          ) : atLimit ? (
+            <div className="flex flex-col items-center gap-8 px-6 py-16 text-center">
+              <TriangleAlert className="size-20 text-amber-500" />
+              <div className="flex flex-col gap-4">
+                <p className="text-3xl font-semibold text-foreground">
+                  Has alcanzado el límite de {MAX_ACTIVE_SESSIONS} sesiones de
+                  corrección
+                </p>
+                <p className="text-xl text-foreground">
+                  Si quieres crear una nueva, primero tendrás que borrar alguna
+                  de las que ya tienes.
+                </p>
+              </div>
+              <Button asChild size="lg" className="text-lg">
+                <Link href="/app/history">Ir a mis sesiones</Link>
+              </Button>
+            </div>
+          ) : (
+            <NewSessionForm onSubmit={handleFormSubmit} />
+          )}
         </>
       )}
 
@@ -168,24 +220,37 @@ export default function NewSessionPage() {
         <div className="flex flex-1 flex-col items-center justify-center gap-6 py-16 text-center">
           {uploadError ? (
             <>
-              <TriangleAlert className="size-10 text-destructive" />
-              <div className="flex flex-col gap-1">
-                <p className="font-semibold text-foreground">
-                  Algo ha fallado al preparar la sesión
+              <TriangleAlert className="size-16 text-destructive" />
+              <div className="flex flex-col gap-2">
+                <p className="text-2xl text-foreground">
+                  Algo ha fallado al procesar la rúbrica proporcionada...
                 </p>
-                <p className="text-sm text-muted-foreground">{uploadError}</p>
               </div>
-              <div className="flex gap-3">
-                <Button variant="outline" onClick={handleStartOver}>
+              <div className="flex gap-4">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="text-lg"
+                  onClick={handleStartOver}
+                >
                   Empezar de nuevo
                 </Button>
-                <Button onClick={handleRetry}>Reintentar</Button>
+                <Button size="lg" className="text-lg" onClick={handleRetry}>
+                  Reintentar
+                </Button>
               </div>
             </>
           ) : (
             <>
               <Loader2 className="size-10 animate-spin text-primary" />
-              <p className="font-medium text-foreground">
+              <p
+                className={`font-medium ${
+                  doneCount < jobs.length &&
+                  jobs[doneCount].kind === "rubric"
+                    ? "text-xl"
+                    : "text-lg"
+                }`}
+              >
                 {doneCount < jobs.length
                   ? jobLabel(jobs[doneCount].kind)
                   : "Preparando tu sesión..."}

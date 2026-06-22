@@ -9,7 +9,7 @@ const footerLinks = [
 export default function Footer({ homeHref = "/login" }: { homeHref?: string }) {
   return (
     <footer className="border-t border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
-      <div className="flex w-full flex-col items-center gap-4 px-8 py-10 sm:grid sm:grid-cols-3 sm:items-center">
+      <div className="flex w-full flex-col items-center gap-4 px-8 py-6 sm:grid sm:grid-cols-3 sm:items-center">
         <Link
           href={homeHref}
           className="flex items-center gap-2 font-bold text-zinc-900 dark:text-zinc-50 sm:justify-self-start"

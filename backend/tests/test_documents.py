@@ -134,7 +134,7 @@ async def test_upload_rubric_returns_structure_without_warning_when_sum_matches(
     llm.response = _rubric_json(("Definición", 6.0, "Concepto"), ("Ejemplo", 4.0, "Caso"))
     _login(client, user)
 
-    resp = await _upload(client, grading_session.id, "rubric", "rubrica.txt", b"Criterios...")
+    resp = await _upload(client, grading_session.id, "rubric", "rubrica.md", b"Criterios...")
 
     assert resp.status_code == 201
     rubric = resp.json()["rubric"]
@@ -152,7 +152,7 @@ async def test_upload_rubric_warns_when_items_do_not_sum_max_score(
     llm.response = _rubric_json(("Definición", 6.0, ""), ("Ejemplo", 2.0, ""))  # suma 8
     _login(client, user)
 
-    resp = await _upload(client, grading_session.id, "rubric", "rubrica.txt", b"Criterios...")
+    resp = await _upload(client, grading_session.id, "rubric", "rubrica.md", b"Criterios...")
 
     assert resp.status_code == 201
     assert resp.json()["rubric"]["warning"] is not None
@@ -187,7 +187,7 @@ async def test_upload_graceful_when_rubric_cannot_be_structured(
     llm.response = "esto no es JSON"
     _login(client, user)
 
-    resp = await _upload(client, grading_session.id, "rubric", "rubrica.txt", b"Criterios...")
+    resp = await _upload(client, grading_session.id, "rubric", "rubrica.md", b"Criterios...")
 
     assert resp.status_code == 201
     rubric = resp.json()["rubric"]
@@ -285,8 +285,8 @@ async def test_upload_rubric_replaces_previous(
     grading_session = await _make_session(session, user)
     _login(client, user)
 
-    await _upload(client, grading_session.id, "rubric", "primera.txt", b"vieja")
-    await _upload(client, grading_session.id, "rubric", "segunda.txt", b"nueva")
+    await _upload(client, grading_session.id, "rubric", "primera.md", b"vieja")
+    await _upload(client, grading_session.id, "rubric", "segunda.md", b"nueva")
 
     rubrics = (
         await session.execute(
@@ -300,8 +300,8 @@ async def test_upload_rubric_replaces_previous(
     ).scalar_one()
     assert rubrics == 1
 
-    old_key = FileStorage.key_for(user.id, grading_session.id, "primera.txt")
-    new_key = FileStorage.key_for(user.id, grading_session.id, "segunda.txt")
+    old_key = FileStorage.key_for(user.id, grading_session.id, "primera.md")
+    new_key = FileStorage.key_for(user.id, grading_session.id, "segunda.md")
     assert not await storage.exists(old_key)
     assert await storage.exists(new_key)
 

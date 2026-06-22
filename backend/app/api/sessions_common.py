@@ -59,6 +59,11 @@ def _counters(grading_session: GradingSession) -> dict:
 
 
 def to_session_read(grading_session: GradingSession) -> SessionRead:
+    last_exam_at = (
+        max(exam.created_at for exam in grading_session.exams)
+        if grading_session.exams
+        else None
+    )
     return SessionRead(
         id=grading_session.id,
         name=grading_session.name,
@@ -68,6 +73,7 @@ def to_session_read(grading_session: GradingSession) -> SessionRead:
         model_exam_instructions=grading_session.model_exam_instructions,
         created_at=grading_session.created_at,
         updated_at=grading_session.updated_at,
+        last_exam_at=last_exam_at,
         **_counters(grading_session),
     )
 

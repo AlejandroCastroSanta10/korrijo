@@ -71,6 +71,7 @@ export interface SessionRead {
   model_exam_instructions: string | null;
   created_at: string;
   updated_at: string;
+  last_exam_at: string | null;
   graded_count: number;
   passed_count: number;
   failed_count: number;
@@ -140,7 +141,7 @@ export function useRecentSession() {
 }
 
 // Máximo de sesiones activas por usuario. Coherente con el backend
-export const MAX_ACTIVE_SESSIONS = 5;
+export const MAX_ACTIVE_SESSIONS = 4;
 
 export function useSessions() {
   return useQuery({

@@ -60,11 +60,12 @@ async def parse_rubric(
             (OllamaUnavailableError, ProviderTimeoutError...) suben tal cual.
     """
     prompt = f"{RUBRIC_PARSE_PROMPT}\n\n=== RÚBRICA ===\n{rubric_text.strip()}"
+    schema = _ParsedRubric.model_json_schema()
 
     last_error: Exception | None = None
     attempts = max_retries + 1
     for attempt in range(1, attempts + 1):
-        raw = await llm_provider.generate(prompt)
+        raw = await llm_provider.generate(prompt, schema)
         try:
             payload = parse_json_object(raw)
             parsed = _ParsedRubric.model_validate(payload)

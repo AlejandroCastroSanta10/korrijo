@@ -13,8 +13,8 @@ from app.pipeline.rubric import RubricItem
 class SessionCreate(BaseModel):
     name: str = Field(min_length=1, max_length=200)
     max_score: float = Field(default=10.0, gt=0)
-    context_instructions: str | None = None
-    model_exam_instructions: str | None = None
+    context_instructions: str | None = Field(default=None, max_length=250)
+    model_exam_instructions: str | None = Field(default=None, max_length=250)
 
 
 class SessionDocumentRead(BaseModel):
@@ -85,6 +85,7 @@ class SessionRead(BaseModel):
     model_exam_instructions: str | None
     created_at: datetime
     updated_at: datetime
+    last_exam_at: datetime | None
     graded_count: int
     passed_count: int
     failed_count: int

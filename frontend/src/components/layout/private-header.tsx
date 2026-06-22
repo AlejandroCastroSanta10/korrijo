@@ -46,17 +46,17 @@ export default function PrivateHeader() {
           <i className="text-3xl">Korrijo</i>
         </Link>
 
-        <nav className="hidden items-center gap-6 sm:flex">
+        <nav className="hidden items-center gap-15 sm:flex">
           <Link
             href="/app/new"
-            className="flex items-center gap-2 text-base font-medium text-foreground/80 transition-colors hover:text-foreground"
+            className="flex items-center gap-2 text-lg font-medium text-zinc-900 underline-offset-8 hover:underline dark:text-zinc-50"
           >
             <Plus className="size-5" />
             Nueva sesión de corrección
           </Link>
           <Link
             href="/app/history"
-            className="flex items-center gap-2 text-base font-medium text-foreground/80 transition-colors hover:text-foreground"
+            className="flex items-center gap-2 text-lg font-medium text-zinc-900 underline-offset-8 hover:underline dark:text-zinc-50"
           >
             <History className="size-5" />
             Historial de sesiones
@@ -82,34 +82,16 @@ export default function PrivateHeader() {
 
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem asChild>
+            <DropdownMenuItem asChild className="text-base">
               <Link href="/app/settings">
-                <Settings className="size-4" />
+                <Settings className="size-5" />
                 Configuración
               </Link>
             </DropdownMenuItem>
 
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger>
-                <Globe className="size-4" />
-                Idioma
-              </DropdownMenuSubTrigger>
-              <DropdownMenuSubContent>
-                {/* El cambio de idioma real llegará en v1.0.0 (placeholder). */}
-                <DropdownMenuRadioGroup value="es">
-                  <DropdownMenuRadioItem value="es">
-                    Español
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="en" disabled>
-                    English (próximamente)
-                  </DropdownMenuRadioItem>
-                </DropdownMenuRadioGroup>
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
-
-            <DropdownMenuItem asChild>
+            <DropdownMenuItem asChild className="text-base">
               <Link href="/contact">
-                <CircleHelp className="size-4" />
+                <CircleHelp className="size-5" />
                 Ayuda
               </Link>
             </DropdownMenuItem>
@@ -119,7 +101,7 @@ export default function PrivateHeader() {
             <DropdownMenuItem
               onClick={handleLogout}
               disabled={logout.isPending}
-              className="text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400"
+              className="text-base text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400"
             >
               {logout.isPending ? "Cerrando sesión..." : "Cerrar sesión"}
             </DropdownMenuItem>

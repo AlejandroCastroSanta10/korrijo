@@ -4,6 +4,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, Query, status
 from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.api.deps import CurrentUserDep, SessionDep, StorageDep
@@ -17,6 +18,7 @@ from app.core.config import settings
 from app.db.models.exam import Exam
 from app.db.models.grading_session import GradingSession, SessionStatus
 from app.schemas.session import SessionCreate, SessionDetail, SessionRead
+from app.services.storage import FileStorage
 from app.services.storage.base import StorageError
 
 logger = logging.getLogger(__name__)
@@ -24,19 +26,81 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/sessions", tags=["sessions"])
 
 
+# Funciones auxiliares:
+
+def _last_exam_subquery():
+    """Devuelve la fecha del último examen subido en cada sesión.
+
+    Sirve para ordenar las sesiones por la actividad más reciente del profesor
+    (subir un examen), con independencia del estado de procesamiento del examen.
+    """
+    return (
+        select(Exam.session_id, func.max(Exam.created_at).label("last_exam_at"))
+        .group_by(Exam.session_id)
+        .subquery()
+    )
+
+
+async def _purge_storage(storage: FileStorage, keys: list[str]) -> None:
+    """Borra del almacenamiento las claves dadas, tolerando fallos individuales."""
+    for key in keys:
+        try:
+            await storage.delete(key)
+        except StorageError as exc:
+            logger.warning("No se pudo borrar el fichero '%s': %s", key, exc)
+
+
+async def _delete_user_drafts(
+    session: AsyncSession, storage: FileStorage, user_id: UUID
+) -> None:
+    """Elimina (BD + ficheros) los drafts abandonados de un usuario.
+
+    Un draft es una sesión creada pero con la rúbrica sin confirmar; si el
+    usuario no completa el proceso queda a medias y no debe permanecer.
+    """
+    result = await session.execute(
+        select(GradingSession)
+        .options(
+            selectinload(GradingSession.documents),
+            selectinload(GradingSession.exams),
+        )
+        .where(
+            GradingSession.user_id == user_id,
+            GradingSession.status == SessionStatus.DRAFT,
+        )
+    )
+    drafts = result.scalars().all()
+    if not drafts:
+        return
+
+    keys: list[str] = []
+    for draft in drafts:
+        keys += [doc.storage_path for doc in draft.documents]
+        keys += [exam.storage_path for exam in draft.exams]
+        await session.delete(draft)
+    await session.commit()
+    await _purge_storage(storage, keys)
+
+
+# Endpoints:
+
 @router.post("", status_code=status.HTTP_201_CREATED, response_model=SessionDetail)
 async def create_session(
     body: SessionCreate,
     current_user: CurrentUserDep,
     session: SessionDep,
+    storage: StorageDep,
 ) -> SessionDetail:
+    # Red de seguridad: borra cualquier draft abandonado del usuario antes de crear la nueva sesión.
+    await _delete_user_drafts(session, storage, current_user.id)
+
     active = (
         await session.execute(
             select(func.count())
             .select_from(GradingSession)
             .where(
                 GradingSession.user_id == current_user.id,
-                GradingSession.status != SessionStatus.ARCHIVED,
+                GradingSession.status == SessionStatus.READY,
             )
         )
     ).scalar_one()
@@ -70,11 +134,23 @@ async def list_sessions(
     limit: Annotated[int, Query(ge=1, le=100)] = 50,
     offset: Annotated[int, Query(ge=0)] = 0,
 ) -> list[SessionRead]:
+    # Orden en dos niveles: primero las sesiones con exámenes (por último examen
+    # subido, desc); después las que no tienen ninguno (por fecha de creación,
+    # desc). Así una sesión vacía recién creada no adelanta a una trabajada.
+    last_exam = _last_exam_subquery()
     result = await session.execute(
         select(GradingSession)
+        .outerjoin(last_exam, last_exam.c.session_id == GradingSession.id)
         .options(selectinload(GradingSession.exams).selectinload(Exam.result))
-        .where(GradingSession.user_id == current_user.id)
-        .order_by(GradingSession.created_at.desc())
+        .where(
+            GradingSession.user_id == current_user.id,
+            GradingSession.status != SessionStatus.DRAFT,
+        )
+        .order_by(
+            last_exam.c.last_exam_at.is_(None),  # con exámenes primero
+            last_exam.c.last_exam_at.desc(),  # entre activas: actividad reciente
+            GradingSession.created_at.desc(),  # entre vacías: creación reciente
+        )
         .limit(limit)
         .offset(offset)
     )
@@ -86,11 +162,18 @@ async def recent_session(
     current_user: CurrentUserDep,
     session: SessionDep,
 ) -> SessionRead | None:
+    # La sesión más reciente es aquella con el último examen subido más reciente.
+    # Si el profesor no ha subido ningún examen en ninguna sesión, no hay reciente.
+    last_exam = _last_exam_subquery()
     result = await session.execute(
         select(GradingSession)
+        .join(last_exam, last_exam.c.session_id == GradingSession.id)
         .options(selectinload(GradingSession.exams).selectinload(Exam.result))
-        .where(GradingSession.user_id == current_user.id)
-        .order_by(GradingSession.updated_at.desc())
+        .where(
+            GradingSession.user_id == current_user.id,
+            GradingSession.status != SessionStatus.DRAFT,
+        )
+        .order_by(last_exam.c.last_exam_at.desc())
         .limit(1)
     )
     grading_session = result.scalar_one_or_none()
@@ -123,13 +206,4 @@ async def delete_session(
     await session.delete(grading_session)
     await session.commit()
 
-    for key in keys:
-        try:
-            await storage.delete(key)
-        except StorageError as exc:
-            logger.warning(
-                "No se pudo borrar el fichero '%s' de la sesión %s: %s",
-                key,
-                session_id,
-                exc,
-            )
+    await _purge_storage(storage, keys)
