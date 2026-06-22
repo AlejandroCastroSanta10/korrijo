@@ -108,6 +108,11 @@ async def test_deleting_session_cascades_to_children(session: AsyncSession):
     grading_session = await _make_full_session(session, user)
     session_id = grading_session.id
 
+    # Ids de los exámenes de ESTA sesión, para comprobar luego sus resultados.
+    exam_ids = (
+        await session.execute(select(Exam.id).where(Exam.session_id == session_id))
+    ).scalars().all()
+
     await session.delete(grading_session)
     await session.commit()
 
@@ -119,7 +124,12 @@ async def test_deleting_session_cascades_to_children(session: AsyncSession):
         ).scalar_one()
         assert count == 0
 
+    # Acotado a los exámenes de esta sesión (la BD puede tener otros datos).
     results = (
-        await session.execute(select(func.count()).select_from(GradingResult))
+        await session.execute(
+            select(func.count())
+            .select_from(GradingResult)
+            .where(GradingResult.exam_id.in_(exam_ids))
+        )
     ).scalar_one()
     assert results == 0

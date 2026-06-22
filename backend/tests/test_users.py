@@ -67,13 +67,17 @@ async def test_update_me_trims_whitespace(client: AsyncClient, session: AsyncSes
 
 
 @pytest.mark.asyncio
-async def test_update_me_rejects_empty_name(client: AsyncClient, session: AsyncSession):
-    user = await _make_user(session, "prof@example.com")
+async def test_update_me_blank_name_clears_it(client: AsyncClient, session: AsyncSession):
+    # Un nombre vacío (o solo espacios) está permitido: equivale a quitar el nombre.
+    user = await _make_user(session, "prof@example.com", name="Antiguo")
     _login(client, user)
 
     resp = await client.patch("/api/users/me", json={"name": "   "})
 
-    assert resp.status_code == 422
+    assert resp.status_code == 200
+    assert resp.json()["name"] is None
+    await session.refresh(user)
+    assert user.name is None
 
 
 @pytest.mark.asyncio

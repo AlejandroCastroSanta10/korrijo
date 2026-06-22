@@ -10,7 +10,7 @@ router = APIRouter(tags=["contact"])
 
 _email_service = SmtpEmailService()
 
-# Rate limiting en memoria por IP. 
+# Rate limiting en memoria por IP.
 _recent_by_ip: dict[str, list[float]] = {}
 
 

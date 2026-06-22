@@ -88,8 +88,8 @@ async def test_create_beyond_limit_returns_422(
     user = await _make_user(session, "prof@example.com")
     session.add_all(
         [
-            GradingSession(user_id=user.id, name="S1"),
-            GradingSession(user_id=user.id, name="S2"),
+            GradingSession(user_id=user.id, name="S1", status=SessionStatus.READY),
+            GradingSession(user_id=user.id, name="S2", status=SessionStatus.READY),
         ]
     )
     await session.commit()
@@ -108,7 +108,7 @@ async def test_archived_sessions_do_not_count_toward_limit(
     user = await _make_user(session, "prof@example.com")
     session.add_all(
         [
-            GradingSession(user_id=user.id, name="Activa"),
+            GradingSession(user_id=user.id, name="Activa", status=SessionStatus.READY),
             GradingSession(user_id=user.id, name="Archivada", status=SessionStatus.ARCHIVED),
         ]
     )
@@ -134,9 +134,16 @@ async def test_list_returns_only_current_user_ordered_desc(
     now = datetime.now(UTC)
     session.add_all(
         [
-            GradingSession(user_id=user_a.id, name="A1", created_at=now - timedelta(hours=2)),
-            GradingSession(user_id=user_a.id, name="A2", created_at=now),
-            GradingSession(user_id=user_b.id, name="B1", created_at=now),
+            GradingSession(
+                user_id=user_a.id, name="A1", status=SessionStatus.READY,
+                created_at=now - timedelta(hours=2),
+            ),
+            GradingSession(
+                user_id=user_a.id, name="A2", status=SessionStatus.READY, created_at=now
+            ),
+            GradingSession(
+                user_id=user_b.id, name="B1", status=SessionStatus.READY, created_at=now
+            ),
         ]
     )
     await session.commit()
@@ -170,8 +177,13 @@ async def test_recent_returns_latest_modified(client: AsyncClient, session: Asyn
     now = datetime.now(UTC)
     session.add_all(
         [
-            GradingSession(user_id=user.id, name="Antigua", updated_at=now - timedelta(hours=1)),
-            GradingSession(user_id=user.id, name="Reciente", updated_at=now),
+            GradingSession(
+                user_id=user.id, name="Antigua", status=SessionStatus.READY,
+                updated_at=now - timedelta(hours=1),
+            ),
+            GradingSession(
+                user_id=user.id, name="Reciente", status=SessionStatus.READY, updated_at=now
+            ),
         ]
     )
     await session.commit()
@@ -180,6 +192,108 @@ async def test_recent_returns_latest_modified(client: AsyncClient, session: Asyn
     resp = await client.get("/api/sessions/recent")
 
     assert resp.json()["name"] == "Reciente"
+
+
+# --------------------------------------------------------------------------- #
+# Drafts abandonados (sesiones a medias, sin rúbrica confirmada)
+# --------------------------------------------------------------------------- #
+
+@pytest.mark.asyncio
+async def test_list_excludes_drafts(client: AsyncClient, session: AsyncSession):
+    user = await _make_user(session, "a@example.com")
+    session.add_all(
+        [
+            GradingSession(user_id=user.id, name="Lista", status=SessionStatus.READY),
+            GradingSession(user_id=user.id, name="Borrador", status=SessionStatus.DRAFT),
+        ]
+    )
+    await session.commit()
+    _login(client, user)
+
+    resp = await client.get("/api/sessions")
+
+    assert resp.status_code == 200
+    assert [s["name"] for s in resp.json()] == ["Lista"]
+
+
+@pytest.mark.asyncio
+async def test_recent_ignores_drafts(client: AsyncClient, session: AsyncSession):
+    user = await _make_user(session, "a@example.com")
+    now = datetime.now(UTC)
+    session.add_all(
+        [
+            GradingSession(
+                user_id=user.id, name="Lista", status=SessionStatus.READY,
+                updated_at=now - timedelta(hours=1),
+            ),
+            # Draft más reciente: no debe ser la "sesión reciente".
+            GradingSession(
+                user_id=user.id, name="Borrador", status=SessionStatus.DRAFT, updated_at=now
+            ),
+        ]
+    )
+    await session.commit()
+    _login(client, user)
+
+    resp = await client.get("/api/sessions/recent")
+
+    assert resp.json()["name"] == "Lista"
+
+
+@pytest.mark.asyncio
+async def test_drafts_do_not_count_toward_limit(
+    client: AsyncClient, session: AsyncSession, storage: LocalFileStorage, monkeypatch
+):
+    monkeypatch.setattr(settings, "max_active_sessions_per_user", 1)
+    user = await _make_user(session, "a@example.com")
+    # Un único draft abandonado: no cuenta para el límite (antes sí lo hacía).
+    session.add(GradingSession(user_id=user.id, name="Borrador", status=SessionStatus.DRAFT))
+    await session.commit()
+    _login(client, user)
+
+    resp = await client.post("/api/sessions", json=_payload(name="Nueva"))
+
+    assert resp.status_code == 201
+
+
+@pytest.mark.asyncio
+async def test_create_deletes_abandoned_drafts(
+    client: AsyncClient, session: AsyncSession, storage: LocalFileStorage
+):
+    user = await _make_user(session, "a@example.com")
+    draft = GradingSession(user_id=user.id, name="Borrador", status=SessionStatus.DRAFT)
+    session.add(draft)
+    await session.commit()
+    await session.refresh(draft)
+
+    doc_key = FileStorage.key_for(user.id, draft.id, "rubrica.pdf")
+    await storage.save(b"rubrica", doc_key)
+    session.add(
+        SessionDocument(
+            session_id=draft.id,
+            kind=DocumentKind.RUBRIC,
+            filename="rubrica.pdf",
+            storage_path=doc_key,
+            size_bytes=7,
+            mime_type="application/pdf",
+        )
+    )
+    await session.commit()
+    _login(client, user)
+
+    resp = await client.post("/api/sessions", json=_payload(name="Nueva"))
+
+    assert resp.status_code == 201
+    # El draft anterior (y su fichero) ya no existen.
+    remaining = (
+        await session.execute(
+            select(func.count())
+            .select_from(GradingSession)
+            .where(GradingSession.id == draft.id)
+        )
+    ).scalar_one()
+    assert remaining == 0
+    assert not await storage.exists(doc_key)
 
 
 # --------------------------------------------------------------------------- #

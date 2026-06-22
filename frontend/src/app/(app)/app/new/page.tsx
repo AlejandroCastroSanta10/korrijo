@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Loader2, TriangleAlert } from "lucide-react";
@@ -11,7 +11,7 @@ import NewSessionForm, {
 import RubricReview from "@/components/sessions/rubric-review";
 import RecentSessionCard from "@/components/sessions/recent-session-card";
 import { Button } from "@/components/ui/button";
-import { ApiError } from "@/lib/api";
+import { ApiError, api } from "@/lib/api";
 import {
   useCreateSession,
   useUploadDocument,
@@ -74,6 +74,20 @@ export default function NewSessionPage() {
   const [rubricItems, setRubricItems] = useState<RubricItem[]>([]);
   const [rubricWarning, setRubricWarning] = useState<string | null>(null);
 
+  // Id del draft creado pero con la rúbrica aún sin confirmar. Si se abandona el
+  // flujo se borra del sistema cuanto antes.
+  const draftIdRef = useRef<string | null>(null);
+
+  const discardDraft = () => {
+    if (draftIdRef.current) {
+      void api.del(`/api/sessions/${draftIdRef.current}`).catch(() => {});
+      draftIdRef.current = null;
+    }
+  };
+
+  // Al desmontar la página (navegar fuera) se descarta el draft no confirmado.
+  useEffect(() => discardDraft, []);
+
   // Crea la sesión (si no existe) y sube los documentos pendientes en orden.
   async function runFlow(
     vals: NewSessionValues,
@@ -93,6 +107,7 @@ export default function NewSessionPage() {
         });
         id = created.id;
         setSessionId(id);
+        draftIdRef.current = id;
       }
 
       for (let i = startIndex; i < pending.length; i++) {
@@ -131,6 +146,7 @@ export default function NewSessionPage() {
   };
 
   const handleStartOver = () => {
+    discardDraft();
     setValues(null);
     setSessionId(null);
     setJobs([]);
@@ -147,6 +163,8 @@ export default function NewSessionPage() {
       { sessionId, items },
       {
         onSuccess: () => {
+          // Ya es 'ready': deja de ser un draft, no debe borrarse al navegar.
+          draftIdRef.current = null;
           toast.success("Sesión lista para corregir exámenes.");
           router.push(`/app/session/${sessionId}`);
         },
