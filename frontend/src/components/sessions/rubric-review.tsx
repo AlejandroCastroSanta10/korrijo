@@ -1,10 +1,18 @@
 "use client";
 
+import { useState } from "react";
 import { useForm, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Plus, Trash2, TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -69,6 +77,8 @@ export default function RubricReview({
 
   const { fields, append, remove } = useFieldArray({ control, name: "items" });
 
+  const [toRemove, setToRemove] = useState<number | null>(null);
+
   // Total en vivo para avisar si no cuadra con la puntuación máxima.
   const items = useWatch({ control, name: "items" }) ?? [];
   const total = items.reduce((acc, it) => acc + (Number(it.max_score) || 0), 0);
@@ -80,7 +90,19 @@ export default function RubricReview({
   // Ni si algún ítem tiene una puntuación de 0 (o no válida).
   const zeroScore = items.some((it) => !(Number(it.max_score) > 0));
 
+  // Etiqueta del ítem que se va a quitar.
+  const removingLabel =
+    toRemove !== null
+      ? items[toRemove]?.name?.trim() || `el ítem ${toRemove + 1}`
+      : "";
+
+  const confirmRemove = () => {
+    if (toRemove !== null) remove(toRemove);
+    setToRemove(null);
+  };
+
   return (
+    <>
     <form
       onSubmit={handleSubmit((data) => onConfirm(data.items))}
       noValidate
@@ -93,7 +115,8 @@ export default function RubricReview({
         <p className="text-lg mt-6">
           Esto es lo que el sistema ha extraído de tu rúbrica. Revísalo y corrige lo que necesites
           antes de continuar. <i>Korrijo</i> usará estos ítems para puntuar los exámenes de
-          esta sesión de corrección.
+          esta sesión de corrección. La descripción de <i>ítem</i> indica aspectos que tiene que tener el
+          sistema en cuenta a la hora de puntuar ese <i>ítem</i>. 
         </p>
       </div>
 
@@ -113,7 +136,7 @@ export default function RubricReview({
                 size="icon"
                 aria-label={`Quitar ítem ${index + 1}`}
                 disabled={confirming}
-                onClick={() => remove(index)}
+                onClick={() => setToRemove(index)}
                 className="text-muted-foreground hover:text-destructive"
               >
                 <Trash2 className="size-5" />
@@ -238,5 +261,43 @@ export default function RubricReview({
         </Button>
       </div>
     </form>
+
+      <Dialog
+        open={toRemove !== null}
+        onOpenChange={(open) => !open && setToRemove(null)}
+      >
+        <DialogContent className="gap-7 p-10 sm:max-w-2xl">
+          <DialogHeader className="gap-3">
+            <DialogTitle className="text-3xl">¿Quitar este ítem?</DialogTitle>
+            <DialogDescription className="text-lg leading-relaxed mt-2">
+              Vas a quitar <b>{removingLabel}</b> de la rúbrica de corrección. Se perderá lo que
+              hayas escrito en él, aunque podrás volver a añadirlo manualmente.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="flex justify-end gap-3 pt-2">
+            <Button
+              type="button"
+              size="lg"
+              variant="outline"
+              className="text-base sm:min-w-40"
+              onClick={() => setToRemove(null)}
+            >
+              Cancelar
+            </Button>
+            <Button
+              type="button"
+              size="lg"
+              variant="destructive"
+              className="text-base sm:min-w-40"
+              onClick={confirmRemove}
+            >
+              <Trash2 className="size-4" />
+              Quitar ítem
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
