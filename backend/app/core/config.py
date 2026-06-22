@@ -45,7 +45,7 @@ class Settings(BaseSettings):
     storage_root: Path = _BACKEND_DIR / "storage"
 
     # Máximo de sesiones activas por usuario.
-    max_active_sessions_per_user: int = 5
+    max_active_sessions_per_user: int = 4
 
     # Tamaño máximo de los documentos iniciales subidos a una sesión (en bytes).
     max_context_upload_bytes: int = 7 * 1024 * 1024  # 7 MB (contexto)

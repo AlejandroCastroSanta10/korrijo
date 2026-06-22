@@ -114,7 +114,7 @@ export default function RubricReview({
         </h2>
         <p className="text-lg mt-6">
           Esto es lo que el sistema ha extraído de tu rúbrica. Revísalo y corrige lo que necesites
-          antes de continuar. <i>Korrijo</i> usará estos ítems para puntuar los exámenes de
+          antes de continuar. <i>Korrijo</i> usará estos <i>ítems</i> para puntuar los exámenes de
           esta sesión de corrección. La descripción de <i>ítem</i> indica aspectos que tiene que tener el
           sistema en cuenta a la hora de puntuar ese <i>ítem</i>. 
         </p>
@@ -257,7 +257,7 @@ export default function RubricReview({
           className="text-lg mt-4"
           disabled={confirming || mismatch || incomplete || zeroScore}
         >
-          {confirming ? "Cargando..." : "Confirmar y continuar"}
+          {confirming ? "Cargando..." : "Confirmar y crear sesión de corrección"}
         </Button>
       </div>
     </form>

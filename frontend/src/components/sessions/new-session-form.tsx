@@ -346,7 +346,7 @@ export default function NewSessionForm({
           className="h-11 px-12 text-xl"
           disabled={disabled}
         >
-          Crear sesión de corrección
+          Continuar
         </Button>
       </div>
     </form>

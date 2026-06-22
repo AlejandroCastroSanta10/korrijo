@@ -140,7 +140,7 @@ export function useRecentSession() {
 }
 
 // Máximo de sesiones activas por usuario. Coherente con el backend
-export const MAX_ACTIVE_SESSIONS = 5;
+export const MAX_ACTIVE_SESSIONS = 4;
 
 export function useSessions() {
   return useQuery({
