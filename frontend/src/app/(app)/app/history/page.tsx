@@ -108,7 +108,7 @@ export default function HistoryPage() {
       )}
 
       {isError && (
-        <p className="flex items-center gap-2 py-8 text-sm text-destructive">
+        <p className="flex items-center gap-2 py-8 text-lg text-destructive">
           <TriangleAlert className="size-4" />
           No se pudo cargar el historial de sesiones.
         </p>
