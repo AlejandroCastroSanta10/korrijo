@@ -20,10 +20,12 @@ import {
 } from "@/lib/hooks/sessions";
 
 const formatDate = (iso: string) =>
-  new Date(iso).toLocaleDateString("es-ES", {
+  new Date(iso).toLocaleString("es-ES", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 
 function SessionCard({
@@ -33,12 +35,10 @@ function SessionCard({
   session: SessionRead;
   onDelete: (session: SessionRead) => void;
 }) {
-  const avg =
-    session.average_score != null
-      ? ` · Nota media de la sesión: ${session.average_score.toLocaleString("es", {
-          maximumFractionDigits: 2,
-        })}`
-      : "";
+  // Si hay exámenes subidos, mostramos la última actividad; si no, la creación.
+  const dateLine = session.last_exam_at
+    ? `Última actividad: ${formatDate(session.last_exam_at)}`
+    : `Creada el ${formatDate(session.created_at)}`;
 
   return (
     <div className="flex items-center justify-between gap-4 rounded-2xl border border-input bg-card px-7 py-6">
@@ -46,10 +46,12 @@ function SessionCard({
         <span className="truncate text-xl font-semibold text-foreground">
           {session.name}
         </span>
+        <span className="text-base">{dateLine}</span>
         <span className="text-base">
-          Creada el {formatDate(session.created_at)} · {session.graded_count}{" "}
-          {session.graded_count === 1 ? "examen corregido" : "exámenes corregidos"}
-          {avg}
+          {session.graded_count}{" "}
+          {session.graded_count === 1
+            ? "examen corregido"
+            : "exámenes corregidos"}
         </span>
       </div>
       <div className="flex shrink-0 items-center gap-2">
@@ -82,7 +84,7 @@ export default function HistoryPage() {
     if (!toDelete) return;
     deleteSession.mutate(toDelete.id, {
       onSuccess: () => {
-        toast.success("Sesión borrada.");
+        toast.success("Sesión de corrección borrada correctamente");
         setToDelete(null);
       },
       onError: () => {

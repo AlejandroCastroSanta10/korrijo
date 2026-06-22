@@ -28,6 +28,19 @@ router = APIRouter(prefix="/api/sessions", tags=["sessions"])
 
 # Funciones auxiliares:
 
+def _last_exam_subquery():
+    """Devuelve la fecha del último examen subido en cada sesión.
+
+    Sirve para ordenar las sesiones por la actividad más reciente del profesor
+    (subir un examen), con independencia del estado de procesamiento del examen.
+    """
+    return (
+        select(Exam.session_id, func.max(Exam.created_at).label("last_exam_at"))
+        .group_by(Exam.session_id)
+        .subquery()
+    )
+
+
 async def _purge_storage(storage: FileStorage, keys: list[str]) -> None:
     """Borra del almacenamiento las claves dadas, tolerando fallos individuales."""
     for key in keys:
@@ -121,14 +134,23 @@ async def list_sessions(
     limit: Annotated[int, Query(ge=1, le=100)] = 50,
     offset: Annotated[int, Query(ge=0)] = 0,
 ) -> list[SessionRead]:
+    # Orden en dos niveles: primero las sesiones con exámenes (por último examen
+    # subido, desc); después las que no tienen ninguno (por fecha de creación,
+    # desc). Así una sesión vacía recién creada no adelanta a una trabajada.
+    last_exam = _last_exam_subquery()
     result = await session.execute(
         select(GradingSession)
+        .outerjoin(last_exam, last_exam.c.session_id == GradingSession.id)
         .options(selectinload(GradingSession.exams).selectinload(Exam.result))
         .where(
             GradingSession.user_id == current_user.id,
             GradingSession.status != SessionStatus.DRAFT,
         )
-        .order_by(GradingSession.created_at.desc())
+        .order_by(
+            last_exam.c.last_exam_at.is_(None),  # con exámenes primero
+            last_exam.c.last_exam_at.desc(),  # entre activas: actividad reciente
+            GradingSession.created_at.desc(),  # entre vacías: creación reciente
+        )
         .limit(limit)
         .offset(offset)
     )
@@ -140,14 +162,18 @@ async def recent_session(
     current_user: CurrentUserDep,
     session: SessionDep,
 ) -> SessionRead | None:
+    # La sesión más reciente es aquella con el último examen subido más reciente.
+    # Si el profesor no ha subido ningún examen en ninguna sesión, no hay reciente.
+    last_exam = _last_exam_subquery()
     result = await session.execute(
         select(GradingSession)
+        .join(last_exam, last_exam.c.session_id == GradingSession.id)
         .options(selectinload(GradingSession.exams).selectinload(Exam.result))
         .where(
             GradingSession.user_id == current_user.id,
             GradingSession.status != SessionStatus.DRAFT,
         )
-        .order_by(GradingSession.updated_at.desc())
+        .order_by(last_exam.c.last_exam_at.desc())
         .limit(1)
     )
     grading_session = result.scalar_one_or_none()

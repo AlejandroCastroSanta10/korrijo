@@ -165,7 +165,7 @@ export default function NewSessionPage() {
         onSuccess: () => {
           // Ya es 'ready': deja de ser un draft, no debe borrarse al navegar.
           draftIdRef.current = null;
-          toast.success("Sesión lista para corregir exámenes.");
+          toast.success("Sesión de corrección creada correctamente");
           router.push(`/app/session/${sessionId}`);
         },
       },

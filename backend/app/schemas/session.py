@@ -85,6 +85,7 @@ class SessionRead(BaseModel):
     model_exam_instructions: str | None
     created_at: datetime
     updated_at: datetime
+    last_exam_at: datetime | None
     graded_count: int
     passed_count: int
     failed_count: int

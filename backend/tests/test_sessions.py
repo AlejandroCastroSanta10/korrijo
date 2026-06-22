@@ -33,6 +33,15 @@ def _payload(**overrides) -> dict:
     return {"name": "Examen Historia T1", "max_score": 10, **overrides}
 
 
+def _exam(session_id, created_at) -> Exam:
+    return Exam(
+        session_id=session_id,
+        filename="examen.pdf",
+        storage_path=f"{session_id}/examen.pdf",
+        created_at=created_at,
+    )
+
+
 @pytest.fixture
 def storage(tmp_path):
     """Sobrescribe get_file_storage por un storage local en tmp_path."""
@@ -156,6 +165,37 @@ async def test_list_returns_only_current_user_ordered_desc(
     assert names == ["A2", "A1"]  # solo las de A, más reciente primero
 
 
+@pytest.mark.asyncio
+async def test_list_orders_active_before_empty(
+    client: AsyncClient, session: AsyncSession
+):
+    user = await _make_user(session, "a@example.com")
+    now = datetime.now(UTC)
+    # 'Activa' tiene un examen de hace 2 días; aun así debe ir ANTES que una
+    # sesión vacía recién creada. Las vacías se ordenan por fecha de creación.
+    activa = GradingSession(
+        user_id=user.id, name="Activa", status=SessionStatus.READY,
+        created_at=now - timedelta(days=5),
+    )
+    vacia_nueva = GradingSession(
+        user_id=user.id, name="VaciaNueva", status=SessionStatus.READY, created_at=now,
+    )
+    vacia_vieja = GradingSession(
+        user_id=user.id, name="VaciaVieja", status=SessionStatus.READY,
+        created_at=now - timedelta(days=1),
+    )
+    session.add_all([activa, vacia_nueva, vacia_vieja])
+    await session.commit()
+    session.add(_exam(activa.id, now - timedelta(days=2)))
+    await session.commit()
+    _login(client, user)
+
+    resp = await client.get("/api/sessions")
+
+    assert resp.status_code == 200
+    assert [s["name"] for s in resp.json()] == ["Activa", "VaciaNueva", "VaciaVieja"]
+
+
 # --------------------------------------------------------------------------- #
 # GET /api/sessions/recent
 # --------------------------------------------------------------------------- #
@@ -172,18 +212,23 @@ async def test_recent_returns_null_when_no_sessions(client: AsyncClient, session
 
 
 @pytest.mark.asyncio
-async def test_recent_returns_latest_modified(client: AsyncClient, session: AsyncSession):
+async def test_recent_is_session_with_latest_exam(client: AsyncClient, session: AsyncSession):
     user = await _make_user(session, "a@example.com")
     now = datetime.now(UTC)
+    # 'Reciente' se creó antes, pero su último examen es el más nuevo: gana.
+    s_recent = GradingSession(
+        user_id=user.id, name="Reciente", status=SessionStatus.READY,
+        created_at=now - timedelta(days=1),
+    )
+    s_old = GradingSession(
+        user_id=user.id, name="Antigua", status=SessionStatus.READY, created_at=now
+    )
+    session.add_all([s_recent, s_old])
+    await session.commit()
     session.add_all(
         [
-            GradingSession(
-                user_id=user.id, name="Antigua", status=SessionStatus.READY,
-                updated_at=now - timedelta(hours=1),
-            ),
-            GradingSession(
-                user_id=user.id, name="Reciente", status=SessionStatus.READY, updated_at=now
-            ),
+            _exam(s_old.id, now - timedelta(hours=2)),
+            _exam(s_recent.id, now),  # examen más reciente
         ]
     )
     await session.commit()
@@ -192,6 +237,27 @@ async def test_recent_returns_latest_modified(client: AsyncClient, session: Asyn
     resp = await client.get("/api/sessions/recent")
 
     assert resp.json()["name"] == "Reciente"
+
+
+@pytest.mark.asyncio
+async def test_recent_is_none_when_no_exams_uploaded(
+    client: AsyncClient, session: AsyncSession
+):
+    user = await _make_user(session, "a@example.com")
+    # Hay sesiones, pero ninguna con exámenes subidos: no hay sesión reciente.
+    session.add_all(
+        [
+            GradingSession(user_id=user.id, name="S1", status=SessionStatus.READY),
+            GradingSession(user_id=user.id, name="S2", status=SessionStatus.READY),
+        ]
+    )
+    await session.commit()
+    _login(client, user)
+
+    resp = await client.get("/api/sessions/recent")
+
+    assert resp.status_code == 200
+    assert resp.json() is None
 
 
 # --------------------------------------------------------------------------- #
@@ -220,18 +286,16 @@ async def test_list_excludes_drafts(client: AsyncClient, session: AsyncSession):
 async def test_recent_ignores_drafts(client: AsyncClient, session: AsyncSession):
     user = await _make_user(session, "a@example.com")
     now = datetime.now(UTC)
+    # 'Lista' (ready, con examen) debe ganar; un draft nunca tiene exámenes.
+    s_ready = GradingSession(user_id=user.id, name="Lista", status=SessionStatus.READY)
     session.add_all(
         [
-            GradingSession(
-                user_id=user.id, name="Lista", status=SessionStatus.READY,
-                updated_at=now - timedelta(hours=1),
-            ),
-            # Draft más reciente: no debe ser la "sesión reciente".
-            GradingSession(
-                user_id=user.id, name="Borrador", status=SessionStatus.DRAFT, updated_at=now
-            ),
+            s_ready,
+            GradingSession(user_id=user.id, name="Borrador", status=SessionStatus.DRAFT),
         ]
     )
+    await session.commit()
+    session.add(_exam(s_ready.id, now))
     await session.commit()
     _login(client, user)
 

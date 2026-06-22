@@ -71,6 +71,7 @@ export interface SessionRead {
   model_exam_instructions: string | null;
   created_at: string;
   updated_at: string;
+  last_exam_at: string | null;
   graded_count: number;
   passed_count: number;
   failed_count: number;

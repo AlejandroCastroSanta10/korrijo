@@ -15,7 +15,7 @@ export default function RecentSessionCard() {
         <Clock className="size-6 shrink-0 text-primary" />
         <div className="flex min-w-0 flex-col gap-0.5">
           <span className="text-sm font-semibold uppercase tracking-wide text-primary">
-            Sesión más reciente
+            Sesión en la que has trabajado más recientemente:
           </span>
           <span className="truncate text-lg font-semibold text-foreground">
             {recent.name}
