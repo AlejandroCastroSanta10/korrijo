@@ -111,7 +111,7 @@ async def test_rubric_pdf_is_valid_and_contains_items(
     assert pdf.startswith(b"%PDF")
     text = _pdf_text(pdf)
     assert "Definición" in text
-    assert "7.5 / 10" in text  # total destacado
+    assert "7,5 / 10" in text  # total destacado, con coma decimal (es-ES)
 
 
 @pytest.mark.asyncio

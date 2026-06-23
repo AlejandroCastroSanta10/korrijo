@@ -40,13 +40,13 @@ function RubricTable({
         {result.rubric_filled.map((item, i) => (
           <li
             key={i}
-            className="flex flex-col gap-1 rounded-xl border border-input bg-input/20 p-3"
+            className="flex flex-col gap-1.5 rounded-xl border border-input bg-input/20 p-4"
           >
             <div className="flex items-start justify-between gap-3">
-              <span className="font-medium text-foreground">
+              <span className="text-lg font-medium text-foreground">
                 {item.item_name}
               </span>
-              <span className="shrink-0 font-semibold text-foreground">
+              <span className="shrink-0 text-lg font-semibold text-foreground">
                 {item.assigned_score.toLocaleString("es", {
                   maximumFractionDigits: 2,
                 })}{" "}
@@ -54,14 +54,16 @@ function RubricTable({
               </span>
             </div>
             {item.comment && (
-              <p className="text-sm text-muted-foreground">{item.comment}</p>
+              <i className="text-base text-foreground">{item.comment}</i>
             )}
           </li>
         ))}
       </ul>
-      <div className="flex items-center justify-between rounded-xl bg-muted px-4 py-3">
-        <span className="font-semibold text-foreground">Nota propuesta</span>
-        <span className="text-lg font-bold text-foreground">
+      <div className="mt-3 flex items-center justify-between rounded-xl border-2 border-primary/50 bg-primary/10 px-5 py-4 ring-1 ring-primary/10">
+        <span className="text-lg font-semibold text-foreground">
+          Nota propuesta
+        </span>
+        <span className="text-2xl font-bold text-primary">
           {result.total_score.toLocaleString("es", {
             maximumFractionDigits: 2,
           })}{" "}
@@ -106,35 +108,39 @@ export default function ExamResultDialog({
 
   return (
     <Dialog open={!!examId} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          {exam && <DialogDescription>{exam.filename}</DialogDescription>}
+      <DialogContent className="gap-6 p-8 sm:max-w-3xl">
+        <DialogHeader className="gap-2">
+          <DialogTitle className="text-3xl">{title}</DialogTitle>
+          {exam && (
+            <DialogDescription className="text-lg">
+              <i>{exam.filename}</i>
+            </DialogDescription>
+          )}
         </DialogHeader>
 
         <div className="-mx-1 flex-1 overflow-y-auto px-1">
           {isLoading && (
             <div className="flex justify-center py-12">
-              <Loader2 className="size-8 animate-spin text-primary" />
+              <Loader2 className="size-10 animate-spin text-primary" />
             </div>
           )}
 
           {isError && (
-            <p className="flex items-center gap-2 py-8 text-sm text-destructive">
-              <TriangleAlert className="size-4" />
+            <p className="flex items-center gap-2 py-8 text-base text-destructive">
+              <TriangleAlert className="size-5" />
               No se pudo cargar el resultado.
             </p>
           )}
 
           {exam && !exam.result && !isLoading && (
-            <p className="py-8 text-sm text-muted-foreground">
+            <p className="py-8 text-base text-muted-foreground">
               Este examen aún no tiene resultado disponible.
             </p>
           )}
 
           {exam?.result &&
             (isFeedback ? (
-              <p className="text-sm whitespace-pre-wrap text-foreground">
+              <p className="text-lg leading-relaxed whitespace-pre-wrap text-foreground">
                 {exam.result.feedback_report}
               </p>
             ) : (
@@ -144,11 +150,16 @@ export default function ExamResultDialog({
 
         {exam?.result && (
           <div className="flex justify-end border-t border-border pt-4">
-            <Button onClick={handleDownload} disabled={downloading}>
+            <Button
+              size="lg"
+              className="text-base"
+              onClick={handleDownload}
+              disabled={downloading}
+            >
               {downloading ? (
-                <Loader2 className="size-4 animate-spin" />
+                <Loader2 className="size-5 animate-spin" />
               ) : (
-                <Download className="size-4" />
+                <Download className="size-5" />
               )}
               Descargar PDF
             </Button>
