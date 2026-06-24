@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Loader2, TriangleAlert } from "lucide-react";
+import { ArrowLeft, FileQuestion, Loader2, TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ExamUpload from "@/components/sessions/exam-upload";
 import ExamList from "@/components/sessions/exam-list";
@@ -57,16 +57,32 @@ export default function SessionPage() {
 
   if (isError || !session) {
     const notFound = error instanceof ApiError && error.status === 404;
+    const Icon = notFound ? FileQuestion : TriangleAlert;
     return (
-      <div className="flex flex-1 flex-col items-center justify-center gap-4 py-24 text-center">
-        <TriangleAlert className="size-10 text-destructive" />
-        <p className="font-semibold text-foreground">
-          {notFound
-            ? "No encontramos esta sesión"
-            : "No se pudo cargar la sesión"}
-        </p>
-        <Button asChild variant="outline">
-          <Link href="/app/new">Volver al inicio</Link>
+      <div className="flex flex-1 flex-col items-center justify-center gap-6 px-6 py-24 text-center">
+        <Icon
+          className={`size-20 ${
+            notFound ? "text-muted-foreground/40" : "text-destructive/70"
+          }`}
+          strokeWidth={1.5}
+        />
+        <div className="flex flex-col gap-3">
+          <h2 className="text-3xl text-foreground">
+            {notFound
+              ? "No encontramos esta sesión"
+              : "No se pudo cargar la sesión"}
+          </h2>
+          <p className="max-w-xl text-lg">
+            {notFound
+              ? "Puede que se haya borrado o que el enlace no sea correcto."
+              : "Ha ocurrido un problema al cargar esta sesión de corrección. Vuelve a intentarlo en unos instantes."}
+          </p>
+        </div>
+        <Button asChild size="lg" className="mt-2 text-base">
+          <Link href="/app/new">
+            <ArrowLeft className="size-5" />
+            Volver al inicio
+          </Link>
         </Button>
       </div>
     );
@@ -96,7 +112,17 @@ export default function SessionPage() {
         <Stat value={session.graded_count} label="Exámenes corregidos" />
         <Stat value={session.passed_count} label="Aprobados" tone="passed" />
         <Stat value={session.failed_count} label="Suspensos" tone="failed" />
-        <Stat value={avg} label="Nota media" />
+        <Stat
+          value={avg}
+          label="Nota media"
+          tone={
+            session.average_score == null
+              ? "default"
+              : session.average_score >= session.max_score / 2
+                ? "passed"
+                : "failed"
+          }
+        />
       </div>
 
       {session.status !== "ready" && (

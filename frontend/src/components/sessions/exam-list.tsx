@@ -129,7 +129,7 @@ export default function ExamList({
   }
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-3 mb-20">
       <h2 className="text-xl font-semibold text-foreground mb-4">
         Subidos ({exams.length})
       </h2>
