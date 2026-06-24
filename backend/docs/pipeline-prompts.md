@@ -113,6 +113,42 @@ El prompt final adoptado vive como constante `TRANSCRIPTION_PROMPT` en
 `app/pipeline/transcription.py` (única fuente de verdad; este documento explica
 el porqué, no lo duplica).
 
+## v3 — Refinamiento de fidelidad OCR (versión adoptada)
+
+La transcripción es el cuello de botella de calidad del sistema: si la respuesta
+manuscrita del alumno se extrae mal, la corrección posterior arranca de datos
+erróneos. Se refuerza el prompt v2 **sin tocar el esquema** (`metadata` + `answers`
+con `question_number` entero), enfocándolo en fidelidad:
+
+- **Cifras, unidades, símbolos y fórmulas exactos.** En muchos exámenes la rúbrica
+  puntúa valores concretos ("120/80 mmHg", "≥140/90", "30:2"); un dígito o símbolo
+  cambiado falsea la corrección. Se pide copiarlos con precisión.
+- **No inventar + marcador `[ilegible]`.** v2 decía "transcribe lo que puedas". v3
+  prohíbe explícitamente sustituir lo ilegible por una palabra plausible
+  (alucinación) y pide marcarlo inline como `[ilegible]` y anotarlo en `notes`.
+- **Solo lo manuscrito, no el enunciado impreso.** Evita que `answer_text` se
+  contamine con el texto preimpreso de la pregunta; el enunciado solo sirve para
+  saber a qué pregunta corresponde cada respuesta.
+- **Texto intercalado.** Incorporar lo escrito en márgenes, entre líneas o señalado
+  con flechas, en el punto donde el alumno lo intercala.
+- **Numeración robusta.** Respuestas sin numerar → correlativas por orden de
+  lectura; apartados (1a, 1b...) → una sola respuesta conservando las marcas (el
+  esquema mantiene `question_number` entero).
+- **Dibujos/esquemas** → descripción breve en `notes`, nunca inventados en
+  `answer_text`.
+
+- **Tachados, ambos casos.** v2 solo cubría "tacha y reescribe". v3 amplía: no
+  transcribir nunca lo tachado; si reescribe, quedarse con lo reescrito; si tacha
+  sin reescribir, omitirlo; y ante ambigüedad, transcribir la mejor lectura de lo
+  válido y anotarlo en `notes` (en vez de inventar).
+
+Se mantiene la ausencia de `format`. En
+cambio, se **retira la directiva `/no_think` del prompt**: como se comprobó en v2,
+no es ella la que desactiva el razonamiento (lo hace `think=False` en
+`OllamaVLMProvider`), así que aportaba ruido sin efecto real. **Pendiente de
+revalidar** empíricamente contra `examen_prueba.jpeg` con el test de integración
+(ver abajo); anotar aquí el resultado tras ejecutarlo.
+
 ### Parsing robusto en lugar de confiar en salida limpia
 
 Como no se usa `format`, la salida del modelo puede traer ruido. El parser
