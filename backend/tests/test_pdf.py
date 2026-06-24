@@ -1,9 +1,9 @@
 import uuid
 from io import BytesIO
 
+import pdfplumber
 import pytest
 from httpx import AsyncClient
-from pypdf import PdfReader
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
@@ -23,8 +23,8 @@ from app.services.session import sign_session
 # --------------------------------------------------------------------------- #
 
 def _pdf_text(content: bytes) -> str:
-    reader = PdfReader(BytesIO(content))
-    return "\n".join(page.extract_text() for page in reader.pages)
+    with pdfplumber.open(BytesIO(content)) as pdf:
+        return "\n".join(page.extract_text() or "" for page in pdf.pages)
 
 
 async def _make_user(session: AsyncSession, email: str) -> User:

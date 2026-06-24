@@ -9,7 +9,7 @@ aiosmtplib
 itsdangerous
 email-validator
 ollama
-pypdf
+pdfplumber
 openpyxl
 pdf2image
 Pillow
