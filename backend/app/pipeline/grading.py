@@ -151,10 +151,12 @@ async def grade_exam(
         teacher_instructions,
     )
 
+    schema = GradingResult.model_json_schema()
+
     last_error: Exception | None = None
     attempts = max_retries + 1
     for attempt in range(1, attempts + 1):
-        raw = await llm_provider.generate(prompt)
+        raw = await llm_provider.generate(prompt, schema)
         try:
             payload = parse_json_object(raw)
             result = GradingResult.model_validate(payload)

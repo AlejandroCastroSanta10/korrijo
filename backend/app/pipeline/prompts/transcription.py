@@ -13,9 +13,9 @@ Fidelidad (lo más importante):
 - Copia con precisión números, unidades, símbolos y fórmulas (p. ej.
   "120/80 mmHg", "≥140/90", "30:2", "H2O"). Un dígito o un símbolo cambiado
   altera la corrección posterior.
-- No inventes ni completes contenido que no esté escrito. Si una palabra o un
-  fragmento es ilegible, escríbelo como "[ilegible]" en el punto donde aparece y
-  señálalo en "notes"; nunca lo sustituyas por una palabra plausible.
+- No inventes ni completes contenido que no esté escrito. Si una palabra cuesta de
+  leer, transcribe tu mejor lectura por el trazo y el contexto; no pongas
+  "[ilegible]" ni dejes huecos, y anótalo en "notes" si la lectura es dudosa.
 - Transcribe SOLO lo manuscrito del alumno. NO transcribas el enunciado impreso
   de las preguntas ni otro texto preimpreso del examen; úsalos únicamente para
   saber a qué pregunta corresponde cada respuesta.
@@ -31,16 +31,17 @@ Respuestas:
   Si una pregunta tiene apartados (1a, 1b...), únelos en una sola respuesta
   conservando las marcas de apartado.
 - Lee en el orden natural e incluye también lo escrito en márgenes, entre líneas
-  o señalado con flechas, colocándolo donde el alumno lo intercala.
-- Si el alumno tacha algo, NO lo transcribas: refleja solo lo que dejó como
-  válido. Si tacha y reescribe cerca, quédate con la versión reescrita (la no
-  tachada). Si tacha sin reescribir, omite lo tachado. Si no queda claro qué
-  quería dejar, transcribe tu mejor lectura de lo válido y anótalo en "notes".
+  o señalado con flechas, colocándolo donde el alumno lo intercala. Si la respuesta
+  va en columnas, lee cada columna entera antes de pasar a la siguiente.
+- Si el alumno tacha algo (lo raya o garabatea encima), NO lo transcribas: refleja
+  solo lo válido; si tacha y reescribe cerca, quédate con la versión reescrita.
+  Subrayar o recuadrar NO es tachar. Si no queda claro qué quería dejar, transcribe
+  tu mejor lectura de lo válido y anótalo en "notes".
 
 Casos límite (márcalos en el campo "notes" de la respuesta):
 - Pregunta sin responder o en blanco: "answer_text" vacío ("") y notes "en blanco".
-- Respuesta parcialmente ilegible: transcribe lo legible con "[ilegible]" y notes
-  "parcialmente ilegible".
+- Respuesta difícil de leer: transcribe tu mejor lectura completa y notes
+  "lectura dudosa".
 - Respuesta partida entre varias páginas: únela en un solo "answer_text" y notes
   "continúa entre páginas".
 - La respuesta incluye un dibujo o esquema que no se puede transcribir:
@@ -60,4 +61,6 @@ Devuelve ÚNICAMENTE un objeto JSON con esta forma exacta, sin texto alrededor:
     { "question_number": 1, "answer_text": "<respuesta literal>", "notes": < o null> }
   ]
 }
+
+/no_think
 """

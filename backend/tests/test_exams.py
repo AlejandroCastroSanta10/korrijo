@@ -50,7 +50,9 @@ class FakeVLM:
         self.response = response
         self.error = error
 
-    async def transcribe(self, images: list[bytes], prompt: str) -> str:
+    async def transcribe(
+        self, images: list[bytes], prompt: str, schema: dict | None = None
+    ) -> str:
         if self.error is not None:
             raise self.error
         return self.response

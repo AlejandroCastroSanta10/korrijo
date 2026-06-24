@@ -51,7 +51,9 @@ class FakeVLM:
         self.response = response
         self.calls = 0
 
-    async def transcribe(self, images: list[bytes], prompt: str) -> str:
+    async def transcribe(
+        self, images: list[bytes], prompt: str, schema: dict | None = None
+    ) -> str:
         self.calls += 1
         return self.response
 
@@ -65,7 +67,9 @@ class FlakyVLM:
         self.fail_on = fail_on
         self.calls = 0
 
-    async def transcribe(self, images: list[bytes], prompt: str) -> str:
+    async def transcribe(
+        self, images: list[bytes], prompt: str, schema: dict | None = None
+    ) -> str:
         self.calls += 1
         if self.calls in self.fail_on:
             raise OllamaUnavailableError("Ollama caído")
@@ -214,7 +218,7 @@ async def test_correct_exam_error_del_vlm_es_transcripcion():
     class BoomVLM:
         model = "boom-vlm"
 
-        async def transcribe(self, images, prompt):
+        async def transcribe(self, images, prompt, schema=None):
             raise OllamaUnavailableError("Ollama caído")
 
     with pytest.raises(PipelineError) as exc_info:

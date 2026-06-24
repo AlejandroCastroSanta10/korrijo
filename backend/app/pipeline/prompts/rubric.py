@@ -18,7 +18,7 @@ porque en las rúbricas proporcionadas siempre aparecerán:
 
 2. "max_score": la puntuación MÁXIMA del ítem, siempre en puntos (no en %).
    Usa el punto como separador decimal: "0,5 p" -> 0.5. Si el ítem define
-   niveles (columnas/categorías con puntos o % con respecto a la puntuación máxima del ítem), 
+   niveles (columnas/categorías con puntos o % con respecto a la puntuación máxima del ítem),
    "max_score" es el valor en puntos del nivel más alto.
 
 3. "description": cómo se puntúa el ítem. La rúbrica puede expresarlo de dos formas;

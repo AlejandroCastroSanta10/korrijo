@@ -9,7 +9,7 @@ Para añadir un nuevo proveedor de visión:
         def __init__(self, model: str, ...): ...
 
         async def transcribe(
-            self, images: list[bytes], prompt: str
+            self, images: list[bytes], prompt: str, schema: dict
         ) -> str:
             # Subir imágenes al servicio, devolver la transcripción.
             ...
@@ -26,14 +26,19 @@ class VLMProvider(ABC):
     """
 
     @abstractmethod
-    async def transcribe(self, images: list[bytes], prompt: str) -> str:
+    async def transcribe(
+        self, images: list[bytes], prompt: str, schema: dict
+    ) -> str:
         """Transcribe las imágenes según las instrucciones del prompt.
 
         Parámetros:
             images: lista de imágenes en bytes. Una imagen
                 por página de examen.
             prompt: instrucciones para el modelo.
+            schema: JSON Schema de la estructura que debe devolver el modelo.
+                La transcripción SIEMPRE se fuerza a esta forma (salida
+                estructurada); no es opcional.
 
         Devuelve:
-            La respuesta del modelo como string.
+            La respuesta del modelo como string (JSON conforme a schema).
         """
