@@ -49,12 +49,34 @@ export async function fetchHealth(): Promise<{ status: string }> {
   return api.get("/health");
 }
 
-/** Para descarga de PDFs. */
-export async function fetchBlob(path: string): Promise<Blob> {
+/** Extrae el filename del Content-Disposition (prioriza filename* UTF-8). */
+function filenameFromContentDisposition(header: string | null): string | null {
+  if (!header) return null;
+  const encoded = header.match(/filename\*=UTF-8''([^;]+)/i);
+  if (encoded) {
+    try {
+      return decodeURIComponent(encoded[1]);
+    } catch {
+      return null;
+    }
+  }
+  const plain = header.match(/filename="?([^";]+)"?/i);
+  return plain ? plain[1] : null;
+}
+
+/** Para descarga de PDFs: devuelve el blob y el nombre que propone el servidor. */
+export async function fetchBlob(
+  path: string,
+): Promise<{ blob: Blob; filename: string | null }> {
   const res = await fetch(`${API_URL}${path}`, { credentials: "include" });
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
     throw new ApiError(res.status, body?.detail ?? `Error ${res.status}`);
   }
-  return res.blob();
+  return {
+    blob: await res.blob(),
+    filename: filenameFromContentDisposition(
+      res.headers.get("content-disposition"),
+    ),
+  };
 }

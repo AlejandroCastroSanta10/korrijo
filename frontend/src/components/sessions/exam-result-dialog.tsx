@@ -92,11 +92,11 @@ export default function ExamResultDialog({
     setDownloading(true);
     try {
       const file = isFeedback ? "feedback.pdf" : "rubric.pdf";
-      const blob = await fetchBlob(
+      const { blob, filename } = await fetchBlob(
         `/api/sessions/${sessionId}/exams/${examId}/${file}`,
       );
       const prefix = isFeedback ? "informe" : "rubrica";
-      downloadBlob(blob, `${prefix}_${stem(exam.filename)}.pdf`);
+      downloadBlob(blob, filename ?? `${prefix}_${stem(exam.filename)}.pdf`);
     } catch (err) {
       toast.error(
         err instanceof ApiError ? err.message : "No se pudo descargar el PDF.",

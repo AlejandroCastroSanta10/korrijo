@@ -1,5 +1,6 @@
 import uuid
 from io import BytesIO
+from types import SimpleNamespace
 
 import pdfplumber
 import pytest
@@ -14,7 +15,8 @@ from app.db.models.user import User
 from app.services.pdf_generator import (
     generate_feedback_report_pdf,
     generate_filled_rubric_pdf,
-    student_name,
+    student_display_name,
+    student_dni,
 )
 from app.services.session import sign_session
 
@@ -76,7 +78,10 @@ async def _make_completed_exam(
                 feedback_report=overrides.pop(
                     "feedback_report", "Buen trabajo.\nMejora los ejemplos del segundo apartado."
                 ),
-                transcription={"answers": []},
+                transcription={
+                    "metadata": {"nombre": "Alejandro", "apellidos": "Castro"},
+                    "answers": [],
+                },
                 pipeline_metadata={},
             )
         )
@@ -93,9 +98,29 @@ def _login(client: AsyncClient, user: User) -> None:
 # Servicio de generación
 # --------------------------------------------------------------------------- #
 
-def test_student_name_from_filename():
-    assert student_name("Examen_Alejandro Castro.pdf") == "Alejandro Castro"
-    assert student_name("isabel.pdf") == "isabel"
+def test_student_display_name_uses_extracted_metadata():
+    result = SimpleNamespace(
+        transcription={"metadata": {"nombre": "María", "apellidos": "López"}}
+    )
+    assert student_display_name(result) == "María López"
+
+
+def test_student_display_name_anonymous_when_missing():
+    assert (
+        student_display_name(SimpleNamespace(transcription={"answers": []}))
+        == "Anónimo"
+    )
+    assert student_display_name(SimpleNamespace(transcription=None)) == "Anónimo"
+
+
+def test_student_dni_uses_extracted_metadata():
+    result = SimpleNamespace(transcription={"metadata": {"dni": "12345678A"}})
+    assert student_dni(result) == "12345678A"
+
+
+def test_student_dni_unknown_when_missing():
+    assert student_dni(SimpleNamespace(transcription={"answers": []})) == "Desconocido"
+    assert student_dni(SimpleNamespace(transcription=None)) == "Desconocido"
 
 
 @pytest.mark.asyncio
@@ -106,11 +131,13 @@ async def test_rubric_pdf_is_valid_and_contains_items(
     gs = await _make_session(session, user)
     exam = await _make_completed_exam(session, gs)
 
-    pdf = generate_filled_rubric_pdf(exam.result, gs, exam.filename)
+    pdf = generate_filled_rubric_pdf(exam.result, gs)
 
     assert pdf.startswith(b"%PDF")
     text = _pdf_text(pdf)
     assert "Definición" in text
+    assert "Alejandro Castro" in text  # nombre extraído por el modelo
+    assert "Desconocido" in text  # DNI no presente en metadata -> fallback
     assert "7,5 / 10" in text  # total destacado, con coma decimal (es-ES)
 
 
@@ -120,7 +147,7 @@ async def test_feedback_pdf_contains_disclaimer_and_report(session: AsyncSession
     gs = await _make_session(session, user)
     exam = await _make_completed_exam(session, gs)
 
-    pdf = generate_feedback_report_pdf(exam.result, gs, exam.filename)
+    pdf = generate_feedback_report_pdf(exam.result, gs)
 
     assert pdf.startswith(b"%PDF")
     text = _pdf_text(pdf).lower()
@@ -144,7 +171,7 @@ async def test_download_rubric_pdf(client: AsyncClient, session: AsyncSession):
     assert resp.status_code == 200
     assert resp.headers["content-type"] == "application/pdf"
     assert "attachment" in resp.headers["content-disposition"]
-    assert "Examen_AlejandroCastro" in resp.headers["content-disposition"]
+    assert "Alejandro_Castro" in resp.headers["content-disposition"]
     assert resp.content.startswith(b"%PDF")
 
 
@@ -160,7 +187,7 @@ async def test_download_feedback_pdf_has_disclaimer(
     resp = await client.get(f"/api/sessions/{gs.id}/exams/{exam.id}/feedback.pdf")
 
     assert resp.status_code == 200
-    assert "informe_Examen_AlejandroCastro" in resp.headers["content-disposition"]
+    assert "Alejandro_Castro" in resp.headers["content-disposition"]
     assert "orientativa" in _pdf_text(resp.content).lower()
 
 

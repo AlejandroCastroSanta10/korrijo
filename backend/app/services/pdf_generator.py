@@ -12,7 +12,6 @@ Estética de marca Korrijo.
 """
 
 from io import BytesIO
-from pathlib import Path
 
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_LEFT, TA_RIGHT
@@ -70,6 +69,12 @@ def _styles() -> dict:
     base.add(ParagraphStyle("KMeta", parent=base["Normal"], fontSize=10, textColor=BRAND_MUTED))
     base.add(
         ParagraphStyle(
+            "KIdentity", parent=base["Normal"], fontSize=13, leading=18,
+            textColor=BRAND_DARK,
+        )
+    )
+    base.add(
+        ParagraphStyle(
             "KSection",
             parent=base["Heading2"],
             fontSize=13,
@@ -113,15 +118,31 @@ def _styles() -> dict:
 # Funciones auxiliares
 # --------------------------------------------------------------------------- #
 
-def student_name(filename: str) -> str:
-    """Nombre del alumno a partir del filename del examen.
+_ANONYMOUS_STUDENT = "Anónimo"
 
-    'Examen_Alejandro Castro.pdf' -> 'Alejandro Castro'.
+
+def student_display_name(grading_result: GradingResult) -> str:
+    """Nombre del alumno/a para los documentos.
+
+    Es el que el modelo extrajo de la cabecera del examen
+    (transcription.metadata: nombre + apellidos). Si el modelo no lo capturó,
+    se usa "Anónimo".
     """
-    stem = Path(filename).stem
-    _, sep, tail = stem.partition("_")
-    candidate = tail if sep else stem
-    return candidate.replace("_", " ").strip() or stem
+    metadata = (grading_result.transcription or {}).get("metadata") or {}
+    nombre = (metadata.get("nombre") or "").strip()
+    apellidos = (metadata.get("apellidos") or "").strip()
+    full = " ".join(part for part in (nombre, apellidos) if part)
+    return full or _ANONYMOUS_STUDENT
+
+
+_UNKNOWN_DNI = "Desconocido"
+
+
+def student_dni(grading_result: GradingResult) -> str:
+    """DNI del alumno/a extraído por el modelo; "Desconocido" si no aparece."""
+    metadata = (grading_result.transcription or {}).get("metadata") or {}
+    dni = (metadata.get("dni") or "").strip()
+    return dni or _UNKNOWN_DNI
 
 
 def _format_date(value) -> str:
@@ -176,18 +197,45 @@ def _draw_furniture(canvas, doc, doc_label: str) -> None:
 def _title_block(
     session: GradingSession,
     grading_result: GradingResult,
-    exam_filename: str,
     styles: dict,
 ) -> list:
-    """Bloque de título: sesión, alumno/a y fecha, con regla inferior."""
-    meta = [f"Alumno/a: {student_name(exam_filename)}"]
+    """Bloque de título: sesión + caja destacada con alumno/a y DNI."""
+    name = student_display_name(grading_result)
+    dni = student_dni(grading_result)
+    identity = Table(
+        [
+            [Paragraph(
+                f'<font color="#71717A">Alumno/a:</font>&nbsp;&nbsp;<b>{name}</b>',
+                styles["KIdentity"],
+            )],
+            [Paragraph(
+                f'<font color="#71717A">DNI:</font>&nbsp;&nbsp;<b>{dni}</b>',
+                styles["KIdentity"],
+            )],
+        ],
+        colWidths=[17 * cm],
+    )
+    identity.setStyle(
+        TableStyle(
+            [
+                ("BACKGROUND", (0, 0), (-1, -1), BRAND_FILL),
+                ("BOX", (0, 0), (-1, -1), 0.75, BRAND_BORDER),
+                ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                ("TOPPADDING", (0, 0), (-1, -1), 5),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+                ("LEFTPADDING", (0, 0), (-1, -1), 14),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 14),
+            ]
+        )
+    )
     return [
         Paragraph(session.name, styles["KTitle"]),
-        Paragraph("    ·    ".join(meta), styles["KMeta"]),
         HRFlowable(
             width="100%", thickness=1.2, color=BRAND_DARK,
-            spaceBefore=6, spaceAfter=10,
+            spaceBefore=6, spaceAfter=14,
         ),
+        identity,
+        Spacer(1, 0.5 * cm),
     ]
 
 
@@ -215,11 +263,11 @@ def _build_pdf(flowables: list, doc_label: str) -> bytes:
 # --------------------------------------------------------------------------- #
 
 def generate_filled_rubric_pdf(
-    grading_result: GradingResult, session: GradingSession, exam_filename: str
+    grading_result: GradingResult, session: GradingSession
 ) -> bytes:
     """PDF de la rúbrica rellenada: tabla de ítems y total destacado."""
     styles = _styles()
-    flowables = _title_block(session, grading_result, exam_filename, styles)
+    flowables = _title_block(session, grading_result, styles)
     flowables.append(Spacer(1, 0.1 * cm))
 
     rows = [["Ítem", "Asignada", "Máxima", "Comentario"]]
@@ -289,11 +337,11 @@ def generate_filled_rubric_pdf(
 # --------------------------------------------------------------------------- #
 
 def generate_feedback_report_pdf(
-    grading_result: GradingResult, session: GradingSession, exam_filename: str
+    grading_result: GradingResult, session: GradingSession
 ) -> bytes:
     """PDF del informe: resumen con nota destacada y feedback detallado."""
     styles = _styles()
-    flowables = _title_block(session, grading_result, exam_filename, styles)
+    flowables = _title_block(session, grading_result, styles)
 
     # Tarjeta de resumen con la nota propuesta destacada
     score_card = Table(
