@@ -24,9 +24,14 @@ porque en las rúbricas proporcionadas siempre aparecerán:
 3. "description": cómo se puntúa el ítem. La rúbrica puede expresarlo de dos formas;
    respeta la que use y NO transformes una en otra:
    - CON niveles/categorías de puntuación: enumera TODOS los niveles, cada uno con su
-     etiqueta y su puntuación o porcentaje EXACTOS. Ej.: "Bien (1 p): explica la maniobra
-     y aporta ejemplos; Regular (0,5 p): la explica pero sin ejemplos; Mal (0 p): no la
-     explica".
+     etiqueta y su valor EXACTO tal como aparece en la rúbrica. Si el nivel viene en
+     PUNTOS, deja los puntos; si viene en PORCENTAJE, deja el porcentaje LITERAL y NO
+     lo conviertas a puntos (de aplicar el porcentaje a la puntuación se encarga otra
+     fase posterior). Ejemplos:
+       · en puntos: "Bien (1 p): explica la maniobra y aporta ejemplos; Regular (0,5 p):
+         la explica pero sin ejemplos; Mal (0 p): no la explica".
+       · en porcentaje: "Excelente (100%): respuesta completa y correcta; Bien (70%):
+         correcta con alguna omisión; Insuficiente (0%): no contesta o es incorrecta".
    - SIN niveles (prosa que describe qué debe contener la respuesta): conserva
      fielmente ese criterio del profesor; NO te inventes niveles ni puntuaciones que la
      rúbrica no da.
