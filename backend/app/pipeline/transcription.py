@@ -111,11 +111,12 @@ async def transcribe_exam(
     """
     path = Path(file_path)
     images = _load_images(path)
+    schema = StructuredTranscription.model_json_schema()
 
     last_error: Exception | None = None
     attempts = max_retries + 1
     for attempt in range(1, attempts + 1):
-        raw = await vlm_provider.transcribe(images, TRANSCRIPTION_PROMPT)
+        raw = await vlm_provider.transcribe(images, TRANSCRIPTION_PROMPT, schema)
         try:
             payload = parse_json_object(raw)
             return StructuredTranscription.model_validate(payload)

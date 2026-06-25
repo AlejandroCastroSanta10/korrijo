@@ -167,10 +167,13 @@ export function useDeleteSession() {
 export const EXAM_ALLOWED_EXTENSIONS = [".pdf", ".jpg", ".jpeg", ".png"];
 export const MAX_EXAM_BYTES = 5 * 1024 * 1024; // 5 MB por examen
 export const MAX_EXAMS_PER_UPLOAD = 3;
+// Máximo de exámenes a la vez en cola de corrección (uno procesándose y hasta
+// dos esperando). Equivale a "no más de 2 esperando a ser procesados".
+export const MAX_EXAMS_IN_QUEUE = 3;
 // Intervalo de polling mientras haya exámenes sin terminar.
 export const POLL_INTERVAL_MS = 5000;
 
-const isExamActive = (status: ExamStatus) =>
+export const isExamActive = (status: ExamStatus) =>
   status === "pending" || status === "processing";
 
 export function useSession(id: string) {

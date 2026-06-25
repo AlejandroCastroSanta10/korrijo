@@ -63,7 +63,9 @@ class OllamaVLMProvider(VLMProvider):
         self.think = think
         self._client = AsyncClient(host=self.base_url, timeout=timeout)
 
-    async def transcribe(self, images: list[bytes], prompt: str) -> str:
+    async def transcribe(
+        self, images: list[bytes], prompt: str, schema: dict
+    ) -> str:
         encoded = [base64.b64encode(img).decode() for img in images]
 
         try:
@@ -75,6 +77,7 @@ class OllamaVLMProvider(VLMProvider):
                     "top_p": self.top_p,
                     "num_ctx": self.num_ctx,
                 },
+                format=schema,
                 think=self.think,
             )
         except ResponseError as exc:

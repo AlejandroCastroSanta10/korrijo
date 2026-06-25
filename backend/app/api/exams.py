@@ -21,6 +21,7 @@ from app.services.exams import EXAM_ALLOWED_EXTENSIONS
 from app.services.pdf_generator import (
     generate_feedback_report_pdf,
     generate_filled_rubric_pdf,
+    student_display_name,
 )
 from app.services.storage.base import FileStorage, InvalidKey, StorageError
 
@@ -167,8 +168,9 @@ async def download_rubric_pdf(
     grading_session, exam = await _graded_exam_or_error(
         session, session_id, exam_id, current_user
     )
-    pdf = generate_filled_rubric_pdf(exam.result, grading_session, exam.filename)
-    return _pdf_response(pdf, f"rubrica_{Path(exam.filename).stem}.pdf")
+    pdf = generate_filled_rubric_pdf(exam.result, grading_session)
+    name = student_display_name(exam.result).replace(" ", "_")
+    return _pdf_response(pdf, f"rubrica_rellenada_{name}.pdf")
 
 
 @router.get("/{session_id}/exams/{exam_id}/feedback.pdf")
@@ -182,8 +184,9 @@ async def download_feedback_pdf(
     grading_session, exam = await _graded_exam_or_error(
         session, session_id, exam_id, current_user
     )
-    pdf = generate_feedback_report_pdf(exam.result, grading_session, exam.filename)
-    return _pdf_response(pdf, f"informe_{Path(exam.filename).stem}.pdf")
+    pdf = generate_feedback_report_pdf(exam.result, grading_session)
+    name = student_display_name(exam.result).replace(" ", "_")
+    return _pdf_response(pdf, f"informe_feedback_{name}.pdf")
 
 
 # ----------------------

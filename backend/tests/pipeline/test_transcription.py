@@ -34,7 +34,9 @@ class FakeVLM:
         self.calls = 0
         self.last_images: list[bytes] | None = None
 
-    async def transcribe(self, images: list[bytes], prompt: str) -> str:
+    async def transcribe(
+        self, images: list[bytes], prompt: str, schema: dict | None = None
+    ) -> str:
         self.last_images = images
         index = min(self.calls, len(self._responses) - 1)
         self.calls += 1
@@ -182,7 +184,7 @@ async def test_imagen_se_envia_tal_cual(imagen_examen):
 
 async def test_propaga_errores_del_provider(imagen_examen):
     class BoomVLM:
-        async def transcribe(self, images, prompt):
+        async def transcribe(self, images, prompt, schema=None):
             raise OllamaUnavailableError("Ollama caído")
 
     with pytest.raises(ProviderError):

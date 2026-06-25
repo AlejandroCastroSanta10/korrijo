@@ -12,7 +12,7 @@ Uso:
 from pathlib import Path
 
 from openpyxl import Workbook
-from pypdf import PdfWriter
+from reportlab.pdfgen import canvas
 
 FIXTURES_DIR = Path(__file__).parent
 
@@ -62,13 +62,12 @@ def make_native_pdf(text: str, output_path: Path) -> None:
 def make_scanned_pdf(output_path: Path) -> None:
     """Crea un PDF con una página en blanco (sin texto extraíble).
 
-    Simula un PDF escaneado para el extractor: `pypdf.extract_text` devuelve
+    Simula un PDF escaneado para el extractor: la extracción de texto devuelve
     cadena vacía y el extractor debe lanzar `ScannedPDFNotSupportedError`.
     """
-    writer = PdfWriter()
-    writer.add_blank_page(width=612, height=792)
-    with output_path.open("wb") as fh:
-        writer.write(fh)
+    pdf = canvas.Canvas(str(output_path), pagesize=(612, 792))
+    pdf.showPage()
+    pdf.save()
 
 
 def make_rubric_xlsx(output_path: Path) -> None:

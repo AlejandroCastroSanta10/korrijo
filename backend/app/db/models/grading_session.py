@@ -78,4 +78,5 @@ class GradingSession(Base):
         back_populates="session",
         cascade="all, delete-orphan",
         passive_deletes=True,
+        order_by="Exam.created_at, Exam.id",
     )
