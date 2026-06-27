@@ -35,6 +35,10 @@ class OllamaVLMProvider(VLMProvider):
             'content' VACÍO; pasar think=False enruta el razonamiento aparte
             y deja la respuesta en 'content'. El '/no_think' del prompt por
             sí solo no basta.
+
+    Sobre el formato de salida: se usa format="json" (modo JSON ligero), NO el
+    JSON Schema completo. Forzar el schema de Pydantic es muy costoso. 
+    El prompt ya describe la forma del JSON y parse_json_object tolera los desvíos.
     """
     def __init__(
         self,
@@ -63,9 +67,7 @@ class OllamaVLMProvider(VLMProvider):
         self.think = think
         self._client = AsyncClient(host=self.base_url, timeout=timeout)
 
-    async def transcribe(
-        self, images: list[bytes], prompt: str, schema: dict
-    ) -> str:
+    async def transcribe(self, images: list[bytes], prompt: str) -> str:
         encoded = [base64.b64encode(img).decode() for img in images]
 
         try:
@@ -77,7 +79,7 @@ class OllamaVLMProvider(VLMProvider):
                     "top_p": self.top_p,
                     "num_ctx": self.num_ctx,
                 },
-                format=schema,
+                format="json",
                 think=self.think,
             )
         except ResponseError as exc:

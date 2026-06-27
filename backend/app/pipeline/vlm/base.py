@@ -8,9 +8,7 @@ Para añadir un nuevo proveedor de visión:
     class MiVLM(VLMProvider):
         def __init__(self, model: str, ...): ...
 
-        async def transcribe(
-            self, images: list[bytes], prompt: str, schema: dict
-        ) -> str:
+        async def transcribe(self, images: list[bytes], prompt: str) -> str:
             # Subir imágenes al servicio, devolver la transcripción.
             ...
 """
@@ -26,19 +24,15 @@ class VLMProvider(ABC):
     """
 
     @abstractmethod
-    async def transcribe(
-        self, images: list[bytes], prompt: str, schema: dict
-    ) -> str:
+    async def transcribe(self, images: list[bytes], prompt: str) -> str:
         """Transcribe las imágenes según las instrucciones del prompt.
 
         Parámetros:
             images: lista de imágenes en bytes. Una imagen
                 por página de examen.
-            prompt: instrucciones para el modelo.
-            schema: JSON Schema de la estructura que debe devolver el modelo.
-                La transcripción SIEMPRE se fuerza a esta forma (salida
-                estructurada); no es opcional.
+            prompt: instrucciones para el modelo. El prompt es el que pide el
+                JSON y describe su forma; el parseo posterior es tolerante.
 
         Devuelve:
-            La respuesta del modelo como string (JSON conforme a schema).
+            La respuesta del modelo como string (JSON descrito en el prompt).
         """
