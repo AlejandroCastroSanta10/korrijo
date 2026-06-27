@@ -207,8 +207,7 @@ async def run_exam_in_background(exam_id: UUID) -> None:
             llm = OllamaLLMProvider(
                 num_ctx=settings.pipeline_llm_num_ctx,
                 timeout=settings.pipeline_llm_timeout,
-                # La corrección SÍ razona : se obtienen mejores resultados.
-                think=True,
+                think=settings.pipeline_grading_think,
             )
         except ProviderError as exc:
             logger.error("Pipeline mal configurado para el examen %s: %s", exam_id, exc)

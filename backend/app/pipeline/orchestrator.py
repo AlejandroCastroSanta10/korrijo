@@ -372,7 +372,7 @@ async def run_pipeline(
         model=llm_model,
         num_ctx=settings.pipeline_llm_num_ctx,
         timeout=settings.pipeline_llm_timeout,
-        think=True,
+        think=settings.pipeline_grading_think,
     )
 
     # Fase 2: corregir cada examen

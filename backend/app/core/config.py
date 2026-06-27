@@ -67,6 +67,8 @@ class Settings(BaseSettings):
     pipeline_vlm_timeout: float = 200.0
     # Razonamiento del LLM textual al estructurar la rúbrica.
     pipeline_llm_think: bool = False
+    # Razonamiento del LLM textual al corregir cada examen (fase 2).
+    pipeline_grading_think: bool = True
 
 
 settings = Settings()
