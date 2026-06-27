@@ -25,8 +25,9 @@ class OllamaVLMProvider(VLMProvider):
         model: nombre del modelo de visión en Ollama (qwen3-vl:8b, etc.).
             Si es None, se lee de settings.pipeline_vlm_model.
         base_url: URL del servidor Ollama.
-        temperature, top_p, num_ctx: opciones de inferencia. num_ctx
-            debe ser generoso para imágenes grandes y prompts largos.
+        temperature, top_p, num_ctx: opciones de inferencia. temperature baja
+            (casi determinista) para OCR, sin llegar a greedy. num_ctx debe
+            ser generoso para imágenes grandes y prompts largos.
         timeout: segundos para la llamada HTTP completa. Los VLM son
             MUCHO más lentos que los LLM textuales; por defecto 300s.
         think: controla el modo razonamiento de modelos híbridos (ej. qwen3-vl).
@@ -45,7 +46,7 @@ class OllamaVLMProvider(VLMProvider):
         model: str | None = None,
         *,
         base_url: str | None = None,
-        temperature: float = 0.0,
+        temperature: float = 0.1,
         top_p: float = 0.9,
         num_ctx: int = 8192,
         timeout: float = 300.0,
