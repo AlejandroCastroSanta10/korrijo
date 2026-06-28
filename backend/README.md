@@ -1,23 +1,24 @@
 # Backend de Korrijo 
 
 Se trata de una API hecha en FastAPI, la cual tiene detrás toda la lógica de negocio de Korrijo, así como la interacción
-con los modelos de IA.
+con los modelos de IA abiertos.
 
 ## Requisitos y dependencias
 
-- Python 3.12+ y el módulo para poder crear entornos virtuales (venv).
-- Ollama corriendo (proveedor de inferencia) y tener descargados los modelos que se quiera usar (los que he usado yo 
-están en el .env.example).
+- **Python 3.12+** y el módulo para poder crear entornos virtuales (venv).
+- **Servidor Ollama** corriendo (proveedor de inferencia) y tener descargados los modelos que se quiera usar (los que he usado yo 
+están en /backend/.env.example).
 
-Para la descarga de dependencias necesarioas, desde este directorio `backend/`:
+Para la descarga de dependencias necesarias, desde este directorio `backend/`:
 
 ```bash
 # 1. Creamos el entorno virtual
 python3 -m venv .venv
+# python -m venv .venv  en Windows
 
 # 2. Lo activamos
 source .venv/bin/activate        # Linux / macOS
-.venv\Scripts\Activate.ps1     # Windows PowerShell
+# .venv\Scripts\Activate.ps1     en Windows (PowerShell)
 
 # 3. Actualizamos pip (recomendado)
 pip install --upgrade pip
@@ -26,7 +27,7 @@ pip install --upgrade pip
 pip install -r requirements-dev.txt
 ```
 
-## Configuración de las variables de entorno
+## Configuración de las variables de entorno del backend
 
 Es **obligatorio** crear un fichero `.env` en backend/ y rellenarlo con los valores adecuados.
 
@@ -38,8 +39,7 @@ cp .env.example .env
 
 ## Cuestiones relacionadas con la Base de Datos
 
-Se necesita que el backend tenga acceso a la base de datos PostgreSQL. Para ello los servicios de Docker 
-deben estar corriendo (se hace con `docker compose up -d` desde la raíz del proyecto).
+Ya se debe tener la BD corriendo en un contendor de Docker.
 
 Para aplicar las migraciones de la BD, desde el directorio `backend/` con el entorno virtual activado:
 
@@ -47,71 +47,56 @@ Para aplicar las migraciones de la BD, desde el directorio `backend/` con el ent
 alembic upgrade head
 ```
 
-Si se quisiera crear una migración a partir de a cambios realizados a los modelos:
-
-```bash
-alembic revision --autogenerate -m "descripción"
-```
-
-## Endpoints
-
-Se pondrá el listado definitivo de endpoints que configuran la API en versiones posteriores.
-
 ## Arrancar el backend
 
-Con el entorno virtual activado:
+Ya puedes arracancar la API REST. Con el entorno virtual activado:
 
 ```bash
 uvicorn app.main:app --reload
 ```
 
-El servidor que expone la API se levantará en [http://localhost:8000](http://localhost:8000).
+El servidor que expone la API se levantará en [http://localhost:8000](http://localhost:8000). En [http://localhost:8000/docs](http://localhost:8000/docs)
+puedes ver el listado de endpoints que hay disponibles.
 
+## Explicación del backend
 
-## Pipeline standalone (probar la funcionalidad principal sin frontend)
+El código vive en `app/` y está organizado por **capas**, de modo que cada una se
+ocupa de una cosa y se apoya en la de debajo:
 
-La funcionalidad principal de Korrijo (corregir exámenes manuscritos) se puede
-probar desde CLI, sin frontend ni base de datos, ni nada, con el script `app/pipeline/run.py`.
+- **`api/`** — Los *endpoints* de la API REST (FastAPI), agrupados por recurso:
+  `auth` (login con *magic link*), `users`, `sessions`, `documents`, `exams`,
+  `contact` y `health`. Aquí solo se valida la petición y se delega; la lógica
+  de verdad está en los servicios. En `deps.py` están las dependencias comunes de muchos de ellos,
+  como obtener el usuario autenticado a partir de la cookie de sesión.
+- **`services/`** — La lógica de negocio: gestión de sesiones de corrección,
+  validación y guardado de los documentos del profesor, corrección de los
+  exámenes del alumno, envío de correos (el *magic link* y el formulario de
+  contacto), generación de los PDF de salida (rúbrica rellenada e informe) y el
+  almacenamiento de ficheros (`storage/`, actualmente en disco local pero detrás de una
+  interfaz por si en el futuro se cambia a otro sitio).
+- **`pipeline/`** — Todo lo que tiene que ver con la IA, que es el núcleo del
+  producto. Está pensado en torno a las **dos fases** de una sesión:
+  1. *Preparar la sesión* (una sola vez): el material del profesor —rúbrica,
+     examen modelo y contexto— se **extrae a texto** con los `extractors/`
+     (PDF nativo, TXT, MD, CSV, XLSX) y la rúbrica se **estructura** a datos con
+     el LLM textual.
+  2. *Corregir cada examen* (una vez por examen subido): el examen manuscrito se
+     **transcribe** con el modelo de visión (VLM, que hace OCR página a página)
+     y después el LLM textual lo **corrige** contra el examen modelo y la
+     rúbrica, produciendo la nota propuesta y el informe de *feedback*.
+  Los proveedores de inferencia (`llm/` y `vlm/`) están detrás de una interfaz
+  común y la implementación actual habla con **Ollama**. El `orchestrator.py`
+  encadena estas fases y es lo que invocan los servicios.
+- **`db/`** — La capa de persistencia con SQLAlchemy: la conexión (`session.py`)
+  y los modelos (`models/`): usuario, token del *magic link*, sesión de
+  corrección, documentos de la sesión, examen y resultado de corrección. Las
+  migraciones se llevan con Alembic (carpeta `alembic/`).
+- **`schemas/`** — Los modelos Pydantic que definen la forma de los datos que
+  entran y salen por la API (separados de los modelos de base de datos).
+- **`core/`** — Configuración central (`config.py`), donde se cargan todas las
+  variables de entorno del `.env` (BD, SMTP, modelos, límites de subida, etc.).
 
-Reproduce el flujo de una **sesión de corrección**: el material del profesor
-(rúbrica, examen modelo y contexto) se extrae **una sola vez** y se reutiliza
-para corregir una **tanda de hasta 3 exámenes**. Por cada examen ejecuta
-transcripción (VLM) → corrección (LLM) y produce la rúbrica
-rellenada, una nota propuesta y un informe de feedback y métricas de ejecución
-(todo ello en un fichero JSON de salida).
-
-> El examen del alumno tiene que ser **PDF escaneado o imagen** (`.jpg`, `.jpeg`,
-> `.png`). La rúbrica, el examen modelo y el contexto deben ser **documentos
-> nativos** (`.pdf` nativo, `.xlsx`, `.txt`, `.md`, `.csv`): no se admiten PDFs
-> escaneados para estos.
-
-### Ejecución
-
-Desde `backend/`, con el entorno virtual activado:
-
-```bash
-# Mínimo: un examen
-python -m app.pipeline.run \
-    --exam examen.pdf --rubric rubrica.pdf --model-exam modelo.pdf \
-    --max-score 10 --output result.json
-
-# Tanda de varios exámenes (mismo material) + contexto e indicaciones
-python -m app.pipeline.run \
-    --exam alumno1.pdf --exam alumno2.pdf --exam alumno3.pdf \
-    --rubric rubrica.pdf --model-exam modelo.pdf \
-    --context apuntes.pdf --context temario.md \
-    --instructions indicaciones.txt \
-    --max-score 10 \
-    --output result.json --verbose
-```
-
-Argumentos:
-
-- **Obligatorios:** `--exam` (repetible, hasta 3), `--rubric`, `--model-exam`,
-  `--max-score` (> 0).
-- **Opcionales:** `--context` (repetible), `--instructions` (texto literal o
-  ruta a un fichero), `--output` (guarda el resultado completo en JSON),
-  `--verbose` (logging DEBUG con tiempos detallados).
-
-> **Rendimiento:** La corrección de un examen no debe tardar +5 min en el hardware de
-referencia (NVIDIA GeForce RTX 3060 de 12GB de VRAM).
+Una nota sobre el flujo: corregir un examen tarda un poco (interviene la IA),
+así que cuando se sube un examen la corrección se lanza **en segundo plano** y el
+examen va pasando por sus estados (esperando, procesando, corregido o error)
+hasta que termina. El frontend va consultando ese estado.
