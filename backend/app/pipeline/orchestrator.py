@@ -44,7 +44,9 @@ from app.pipeline.llm.base import LLMProvider
 from app.pipeline.llm.ollama import OllamaLLMProvider
 from app.pipeline.transcription import (
     StructuredTranscription,
+    StructuringError,
     TranscriptionError,
+    structure_transcription,
     transcribe_exam,
 )
 from app.pipeline.vlm.base import VLMProvider
@@ -83,6 +85,7 @@ class PhaseTimings(BaseModel):
 
     extraction_seconds: float = 0.0
     transcription_seconds: float
+    structuring_seconds: float
     grading_seconds: float
     total_seconds: float
 
@@ -235,17 +238,23 @@ async def correct_exam(
     )
 
     async with _VramSampler() as vram:
-        # 1. Transcripción del examen del alumno (VLM).
+        # 1. Transcripción a texto en bruto del examen del alumno (VLM / OCR).
         transcription_started = time.perf_counter()
-        transcription = await _transcribe(exam_path, vlm_provider)
+        raw_transcription = await _transcribe(exam_path, vlm_provider)
         transcription_seconds = time.perf_counter() - transcription_started
+        logger.info("Transcripción completada en %.2fs", transcription_seconds)
+
+        # 2. Estructuración de la transcripción en bruto (LLM textual).
+        structuring_started = time.perf_counter()
+        transcription = await _structure(raw_transcription, llm_provider)
+        structuring_seconds = time.perf_counter() - structuring_started
         logger.info(
-            "Transcripción completada en %.2fs (%d respuestas)",
-            transcription_seconds,
+            "Estructuración completada en %.2fs (%d respuestas)",
+            structuring_seconds,
             len(transcription.answers),
         )
 
-        # 2. Corrección contra el material de la sesión (LLM textual).
+        # 3. Corrección contra el material de la sesión (LLM textual).
         grading_started = time.perf_counter()
         grading = await _grade(transcription, session, llm_provider)
         grading_seconds = time.perf_counter() - grading_started
@@ -261,8 +270,11 @@ async def correct_exam(
         llm_model=_model_name(llm_provider),
         timings=PhaseTimings(
             transcription_seconds=transcription_seconds,
+            structuring_seconds=structuring_seconds,
             grading_seconds=grading_seconds,
-            total_seconds=transcription_seconds + grading_seconds,
+            total_seconds=transcription_seconds
+            + structuring_seconds
+            + grading_seconds,
         ),
         peak_vram_mb=vram.peak_mb,
     )
@@ -271,10 +283,8 @@ async def correct_exam(
     )
 
 
-async def _transcribe(
-    exam_path: str | Path, vlm: VLMProvider
-) -> StructuredTranscription:
-    """Transcribe el examen del alumno, contextualizando los errores."""
+async def _transcribe(exam_path: str | Path, vlm: VLMProvider) -> str:
+    """Transcribe el examen del alumno a texto, contextualizando los errores."""
     try:
         return await transcribe_exam(exam_path, vlm)
     except TranscriptionError as exc:
@@ -284,6 +294,20 @@ async def _transcribe(
     except ProviderError as exc:
         raise PipelineError(
             "transcripción", f"el proveedor de visión (VLM) falló: {exc}"
+        ) from exc
+
+
+async def _structure(
+    raw_transcription: str, llm: LLMProvider
+) -> StructuredTranscription:
+    """Estructura la transcripción en bruto, contextualizando los errores."""
+    try:
+        return await structure_transcription(raw_transcription, llm)
+    except StructuringError as exc:
+        raise PipelineError("estructuración", str(exc)) from exc
+    except ProviderError as exc:
+        raise PipelineError(
+            "estructuración", f"el proveedor textual (LLM) falló: {exc}"
         ) from exc
 
 

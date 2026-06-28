@@ -30,9 +30,9 @@ class VLMProvider(ABC):
         Parámetros:
             images: lista de imágenes en bytes. Una imagen
                 por página de examen.
-            prompt: instrucciones para el modelo. El prompt es el que pide el
-                JSON y describe su forma; el parseo posterior es tolerante.
+            prompt: instrucciones para el modelo. Pide transcribir; la
+                estructuración la hace después el LLM textual.
 
         Devuelve:
-            La respuesta del modelo como string (JSON descrito en el prompt).
+            La transcripción como texto libre (no JSON).
         """

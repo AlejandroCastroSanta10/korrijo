@@ -31,8 +31,8 @@ _GRADING_JSON = """\
 }
 """
 
-# Transcripción válida que devuelve el VLM falso.
-_TRANSCRIPTION_JSON = """\
+# Estructura válida que devuelve el LLM al estructurar la transcripción en bruto.
+_STRUCTURE_JSON = """\
 {
   "metadata": {"nombre": "Ana", "apellidos": "Pérez"},
   "answers": [
@@ -41,19 +41,25 @@ _TRANSCRIPTION_JSON = """\
 }
 """
 
+# Texto en bruto que devuelve el VLM (su contenido es indiferente para los fakes).
+_RAW = "1. Una pila es LIFO"
+
+
+def _is_structuring(schema: dict | None) -> bool:
+    """La estructuración pasa el schema de StructuredTranscription."""
+    return bool(schema) and schema.get("title") == "StructuredTranscription"
+
 
 class FakeVLM:
-    """VLMProvider falso: devuelve una transcripción predefinida."""
+    """VLMProvider falso: devuelve una transcripción en bruto predefinida."""
 
     model = "fake-vlm"
 
-    def __init__(self, response: str = _TRANSCRIPTION_JSON) -> None:
+    def __init__(self, response: str = _RAW) -> None:
         self.response = response
         self.calls = 0
 
-    async def transcribe(
-        self, images: list[bytes], prompt: str, schema: dict | None = None
-    ) -> str:
+    async def transcribe(self, images: list[bytes], prompt: str) -> str:
         self.calls += 1
         return self.response
 
@@ -67,29 +73,30 @@ class FlakyVLM:
         self.fail_on = fail_on
         self.calls = 0
 
-    async def transcribe(
-        self, images: list[bytes], prompt: str, schema: dict | None = None
-    ) -> str:
+    async def transcribe(self, images: list[bytes], prompt: str) -> str:
         self.calls += 1
         if self.calls in self.fail_on:
             raise OllamaUnavailableError("Ollama caído")
-        return _TRANSCRIPTION_JSON
+        return _RAW
 
 
 class FakeLLM:
-    """LLMProvider falso: devuelve una corrección predefinida y guarda el prompt."""
+    """LLMProvider falso: sirve estructuración y corrección según el schema."""
 
     model = "fake-llm"
 
-    def __init__(self, response: str = _GRADING_JSON) -> None:
-        self.response = response
+    def __init__(
+        self, structure: str = _STRUCTURE_JSON, grading: str = _GRADING_JSON
+    ) -> None:
+        self.structure = structure
+        self.grading = grading
         self.calls = 0
         self.last_prompt: str | None = None
 
     async def generate(self, prompt: str, schema: dict | None = None) -> str:
         self.last_prompt = prompt
         self.calls += 1
-        return self.response
+        return self.structure if _is_structuring(schema) else self.grading
 
 
 def _session() -> CorrectionSession:
@@ -188,10 +195,12 @@ async def test_correct_exam_no_imputa_tiempo_de_extraccion():
     )
 
     timings = result.metadata.timings
-    # correct_exam no extrae: ese tiempo es 0 y el total es transcripción + corrección.
+    # correct_exam no extrae: ese tiempo es 0 y el total es la suma de las fases.
     assert timings.extraction_seconds == 0.0
     assert timings.total_seconds == pytest.approx(
-        timings.transcription_seconds + timings.grading_seconds
+        timings.transcription_seconds
+        + timings.structuring_seconds
+        + timings.grading_seconds
     )
 
 
@@ -207,7 +216,7 @@ async def test_correct_exam_usa_el_material_de_la_sesion():
 
     await correct_exam(session, EXAM, vlm_provider=FakeVLM(), llm_provider=llm)
 
-    # El prompt de corrección incluye todo el material de la sesión.
+    # La corrección es la última llamada al LLM: su prompt lleva todo el material.
     assert "RUBRICA-MARCADOR" in llm.last_prompt
     assert "MODELO-MARCADOR" in llm.last_prompt
     assert "CONTEXTO-MARCADOR" in llm.last_prompt
@@ -218,7 +227,7 @@ async def test_correct_exam_error_del_vlm_es_transcripcion():
     class BoomVLM:
         model = "boom-vlm"
 
-        async def transcribe(self, images, prompt, schema=None):
+        async def transcribe(self, images, prompt):
             raise OllamaUnavailableError("Ollama caído")
 
     with pytest.raises(PipelineError) as exc_info:
@@ -230,31 +239,50 @@ async def test_correct_exam_error_del_vlm_es_transcripcion():
     assert isinstance(exc_info.value.__cause__, ProviderError)
 
 
-async def test_correct_exam_error_del_llm_es_correccion():
-    class BoomLLM:
+async def test_correct_exam_error_de_estructuracion_es_estructuracion():
+    class BoomStructureLLM:
         model = "boom-llm"
 
         async def generate(self, prompt, schema=None):
-            raise OllamaUnavailableError("Ollama caído")
+            if _is_structuring(schema):
+                raise OllamaUnavailableError("Ollama caído")
+            return _GRADING_JSON
 
     with pytest.raises(PipelineError) as exc_info:
         await correct_exam(
-            _session(), EXAM, vlm_provider=FakeVLM(), llm_provider=BoomLLM()
+            _session(), EXAM, vlm_provider=FakeVLM(), llm_provider=BoomStructureLLM()
         )
 
-    assert exc_info.value.phase == "corrección"
+    assert exc_info.value.phase == "estructuración"
 
 
-async def test_correct_exam_transcripcion_no_parseable_es_transcripcion():
+async def test_correct_exam_estructuracion_no_parseable_es_estructuracion():
     with pytest.raises(PipelineError) as exc_info:
         await correct_exam(
             _session(),
             EXAM,
-            vlm_provider=FakeVLM("esto no es json"),
-            llm_provider=FakeLLM(),
+            vlm_provider=FakeVLM(),
+            llm_provider=FakeLLM(structure="esto no es json"),
         )
 
-    assert exc_info.value.phase == "transcripción"
+    assert exc_info.value.phase == "estructuración"
+
+
+async def test_correct_exam_error_del_llm_es_correccion():
+    class BoomGradingLLM:
+        model = "boom-llm"
+
+        async def generate(self, prompt, schema=None):
+            if _is_structuring(schema):
+                return _STRUCTURE_JSON
+            raise OllamaUnavailableError("Ollama caído")
+
+    with pytest.raises(PipelineError) as exc_info:
+        await correct_exam(
+            _session(), EXAM, vlm_provider=FakeVLM(), llm_provider=BoomGradingLLM()
+        )
+
+    assert exc_info.value.phase == "corrección"
 
 
 # --------------------------------------------------------------------------- #
@@ -292,9 +320,10 @@ async def test_run_pipeline_corrige_tanda_reutilizando_material():
 
     assert len(run.exams) == 3
     assert all(e.result is not None for e in run.exams)
-    # La extracción se pagó una vez; cada examen pasó por VLM y LLM.
+    # La extracción se pagó una vez; cada examen pasó por VLM (1) y LLM (2:
+    # estructuración + corrección).
     assert vlm.calls == 3
-    assert llm.calls == 3
+    assert llm.calls == 6
 
 
 async def test_run_pipeline_imputa_tiempo_de_extraccion_a_la_tanda():
