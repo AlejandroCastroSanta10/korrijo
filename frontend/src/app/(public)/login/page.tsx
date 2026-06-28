@@ -76,19 +76,19 @@ export default function LandingPage() {
           </span>
         </h1>
 
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[2fr_5fr]">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[2fr_3fr]">
           <div className="flex flex-col justify-center items-center">
             <AuthForm />
           </div>
 
           <div className="flex flex-col gap-4">
-            <div className="relative min-h-[460px] overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800 lg:min-h-[560px]">
+            <div className="relative aspect-[1027/780] overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800">
               <Image
                 src="/images/korrijo-landing-image.png"
                 alt="Imagen de una sesión de corrección de Korrijo"
                 fill
                 priority
-                sizes="(min-width: 1024px) 71vw, 100vw"
+                sizes="(min-width: 1024px) 60vw, 100vw"
                 className="object-cover"
               />
             </div>
