@@ -13,9 +13,6 @@ from app.pipeline.errors import (
 )
 from app.pipeline.vlm.ollama import OllamaVLMProvider
 
-# JSON Schema de ejemplo que el provider debe reenviar como `format`.
-_SCHEMA = {"type": "object", "properties": {"answers": {"type": "array"}}}
-
 
 def _chat_response(content: str) -> ChatResponse:
     return ChatResponse(
@@ -48,7 +45,7 @@ async def test_transcribe_codifica_imagenes_en_base64(provider):
     with patch.object(provider, "_client") as client:
         client.chat = AsyncMock(return_value=_chat_response("transcrito"))
 
-        result = await provider.transcribe([raw], "Describe", _SCHEMA)
+        result = await provider.transcribe([raw], "Describe")
 
     assert result == "transcrito"
     sent_message = client.chat.await_args.kwargs["messages"][0]
@@ -56,20 +53,21 @@ async def test_transcribe_codifica_imagenes_en_base64(provider):
     assert sent_message["images"] == [base64.b64encode(raw).decode()]
 
 
-async def test_transcribe_fuerza_el_schema_como_format(provider):
+async def test_transcribe_no_fuerza_formato(provider):
+    # La transcripción es texto libre (OCR): no se fuerza ningún formato de salida.
     with patch.object(provider, "_client") as client:
         client.chat = AsyncMock(return_value=_chat_response("ok"))
 
-        await provider.transcribe([b"x"], "p", _SCHEMA)
+        await provider.transcribe([b"x"], "p")
 
-    assert client.chat.await_args.kwargs["format"] == _SCHEMA
+    assert "format" not in client.chat.await_args.kwargs
 
 
 async def test_transcribe_desactiva_thinking_por_defecto(provider):
     with patch.object(provider, "_client") as client:
         client.chat = AsyncMock(return_value=_chat_response("ok"))
 
-        await provider.transcribe([b"x"], "p", _SCHEMA)
+        await provider.transcribe([b"x"], "p")
 
     assert client.chat.await_args.kwargs["think"] is False
 
@@ -79,7 +77,7 @@ async def test_transcribe_traduce_connect_error(provider):
         client.chat = AsyncMock(side_effect=httpx.ConnectError("boom"))
 
         with pytest.raises(OllamaUnavailableError):
-            await provider.transcribe([b"x"], "p", _SCHEMA)
+            await provider.transcribe([b"x"], "p")
 
 
 async def test_transcribe_traduce_timeout(provider):
@@ -87,7 +85,7 @@ async def test_transcribe_traduce_timeout(provider):
         client.chat = AsyncMock(side_effect=httpx.ReadTimeout("slow"))
 
         with pytest.raises(ProviderTimeoutError):
-            await provider.transcribe([b"x"], "p", _SCHEMA)
+            await provider.transcribe([b"x"], "p")
 
 
 async def test_transcribe_traduce_404_a_model_not_found(provider):
@@ -95,7 +93,7 @@ async def test_transcribe_traduce_404_a_model_not_found(provider):
         client.chat = AsyncMock(side_effect=ResponseError("not found", 404))
 
         with pytest.raises(ModelNotFoundError, match="ollama pull qwen3-vl:8b"):
-            await provider.transcribe([b"x"], "p", _SCHEMA)
+            await provider.transcribe([b"x"], "p")
 
 
 async def test_transcribe_traduce_otros_response_error(provider):
@@ -103,6 +101,6 @@ async def test_transcribe_traduce_otros_response_error(provider):
         client.chat = AsyncMock(side_effect=ResponseError("server error", 500))
 
         with pytest.raises(ProviderError) as exc_info:
-            await provider.transcribe([b"x"], "p", _SCHEMA)
+            await provider.transcribe([b"x"], "p")
 
     assert "500" in str(exc_info.value)

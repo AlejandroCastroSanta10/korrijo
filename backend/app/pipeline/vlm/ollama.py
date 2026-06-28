@@ -37,9 +37,9 @@ class OllamaVLMProvider(VLMProvider):
             y deja la respuesta en 'content'. El '/no_think' del prompt por
             sí solo no basta.
 
-    Sobre el formato de salida: se usa format="json" (modo JSON ligero), NO el
-    JSON Schema completo. Forzar el schema de Pydantic es muy costoso. 
-    El prompt ya describe la forma del JSON y parse_json_object tolera los desvíos.
+    Sobre el formato de salida: la transcripción es texto libre (OCR), no JSON.
+    Por eso NO se fuerza ningún formato: la estructuración la hace después el LLM
+    textual. Así el prompt vale igual para un VLM con OCR que para un OCR puro.
     """
     def __init__(
         self,
@@ -80,7 +80,6 @@ class OllamaVLMProvider(VLMProvider):
                     "top_p": self.top_p,
                     "num_ctx": self.num_ctx,
                 },
-                format="json",
                 think=self.think,
             )
         except ResponseError as exc:

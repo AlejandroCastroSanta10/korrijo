@@ -25,7 +25,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from app.pipeline.extractors.router import extract
 from app.pipeline.grading import GradingResult, grade_exam
 from app.pipeline.llm.ollama import OllamaLLMProvider
-from app.pipeline.transcription import transcribe_exam
+from app.pipeline.transcription import structure_transcription, transcribe_exam
 from app.pipeline.vlm.ollama import OllamaVLMProvider
 
 POC = Path(__file__).parent / "pipeline_poc"
@@ -84,7 +84,10 @@ async def main() -> int:
     print(f"Examen: {exam_path}")
     print(f"VLM: {vlm.model} | LLM: {llm.model} @ {llm.base_url}")
     print("Transcribiendo el examen del alumno... (lento)")
-    transcription = await transcribe_exam(exam_path, vlm)
+    raw = await transcribe_exam(exam_path, vlm)
+
+    print("Estructurando la transcripción...")
+    transcription = await structure_transcription(raw, llm)
 
     print("Corrigiendo... (lento)")
     result = await grade_exam(
