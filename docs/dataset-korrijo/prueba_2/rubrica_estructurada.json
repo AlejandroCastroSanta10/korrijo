@@ -1,0 +1,102 @@
+[
+  {
+    "name": "Función del riñón y desecho nitrogenado",
+    "max_score": 4,
+    "description": "Completo (100%): menciona la filtración sanguínea y la regulación hídrica y nombra la urea como desecho; Parcial (70%): menciona la filtración o la función renal pero omite la urea o la nombra incorrectamente; Incompleto (35%): solo menciona una función sin precisar el producto de desecho; Incorrecto (0%): sin respuesta, en blanco o errónea."
+  },
+  {
+    "name": "Úlcera por presión: definición y zona más frecuente",
+    "max_score": 5,
+    "description": "Completo (100%): define correctamente la úlcera por presión (lesión por presión sostenida) e identifica el sacro; Parcial (70%): define la UPP de forma aceptable pero nombra otra zona de riesgo en lugar del sacro; Incompleto (35%): solo define o solo nombra una zona, sin completar ambos aspectos; Incorrecto (0%): sin respuesta o totalmente incorrecta."
+  },
+  {
+    "name": "5 momentos del lavado de manos (OMS)",
+    "max_score": 6,
+    "description": "Completo (100%): enumera los 5 momentos en orden correcto y completo; Parcial (70%): enumera 4 momentos correctos o los 5 con algún error de orden; Incompleto (35%): enumera 1-3 momentos correctos; Incorrecto (0%): menos de 1 momento correcto o sin respuesta."
+  },
+  {
+    "name": "Vía subcutánea vs. intramuscular",
+    "max_score": 5,
+    "description": "Completo (100%): diferencia correctamente las dos vías por tejido y por absorción; Parcial (70%): diferencia el tejido de administración pero omite la absorción; Incompleto (35%): solo describe una de las dos vías o confunde algún elemento clave; Incorrecto (0%): sin respuesta o confunde ambas vías."
+  },
+  {
+    "name": "Maniobra de Heimlich: indicación y técnica",
+    "max_score": 6,
+    "description": "Completo (100%): indica la situación (obstrucción total de la vía aérea) y describe la técnica completa; Parcial (70%): indica o bien la situación correcta o bien la técnica; Incompleto (35%): la respuesta es vaga pero hay algo que contesta bien; Incorrecto (0%): sin respuesta o descripción incorrecta."
+  },
+  {
+    "name": "Balance hídrico: definición y cálculo",
+    "max_score": 5,
+    "description": "Completo (100%): define el balance hídrico y explica el cálculo; Parcial (70%): define correctamente pero el cálculo es incorrecto; Incompleto (35%): solo define sin explicar el cálculo o viceversa; Incorrecto (0%): sin respuesta o definición incorrecta."
+  },
+  {
+    "name": "Valores normales de presión arterial",
+    "max_score": 4,
+    "description": "Completo (100%): indica 120/80 mmHg y menciona el umbral de hipertensión (a partir de 140/90); Parcial (70%): indica 120/80 mmHg sin mencionar el umbral de hipertensión; Incompleto (35%): valor aproximado pero impreciso (p. ej. solo la sistólica o solo la diastólica); Incorrecto (0%): sin respuesta o valor claramente erróneo."
+  },
+  {
+    "name": "Esterilización vs. desinfección",
+    "max_score": 5,
+    "description": "Completo (100%): diferencia correctamente ambos conceptos; Parcial (70%): solo 1 concepto se explica bien; Incompleto (35%): respuesta vaga o confusa, pero algo se puede puntuar; Incorrecto (0%): sin respuesta o claramente incorrecta."
+  },
+  {
+    "name": "Medicación oral en paciente con disfagia",
+    "max_score": 6,
+    "description": "Completo (100%): valora el riesgo de aspiración y menciona el cambio de vía o el triturado con restricciones; Parcial (70%): menciona valorar la deglución; Incompleto (35%): solo menciona que hay que tener cuidado sin indicar una actuación concreta; Incorrecto (0%): sin respuesta o claramente incorrecta."
+  },
+  {
+    "name": "Relación compresión-ventilación en RCP de adultos",
+    "max_score": 6,
+    "description": "Completo (100%): indica 30:2, la profundidad y la frecuencia (100-120/min); Parcial (70%): indica 30:2 correctamente pero omite la profundidad o la frecuencia; Incompleto (35%): menciona compresiones y ventilaciones pero con un ratio incorrecto; Incorrecto (0%): sin respuesta o ratio claramente erróneo."
+  },
+  {
+    "name": "Sonda nasogástrica: definición y usos",
+    "max_score": 4,
+    "description": "Completo (100%): define la sonda nasogástrica y menciona al menos 2 usos; Parcial (70%): define correctamente y menciona al menos 1 uso; Incompleto (35%): solo define; Incorrecto (0%): sin respuesta o definición incorrecta."
+  },
+  {
+    "name": "Signos vitales y valores normales",
+    "max_score": 5,
+    "description": "Completo (100%): enumera los 5 signos vitales con sus valores normales correctos; Parcial (70%): enumera 3 o 4 signos vitales con sus valores; Incompleto (35%): enumera 2 signos vitales con sus valores; Incorrecto (0%): menos de 2 correctos o sin respuesta."
+  },
+  {
+    "name": "Precauciones ante tuberculosis pulmonar activa",
+    "max_score": 5,
+    "description": "Completo (100%): menciona habitación aislada, mascarilla, puerta cerrada y notificación a salud pública; Parcial (70%): menciona 2-3 de las 4 medidas; Incompleto (35%): menciona 1 medida correcta; Incorrecto (0%): sin respuesta o medidas incorrectas."
+  },
+  {
+    "name": "Escala de Glasgow: definición y uso",
+    "max_score": 5,
+    "description": "Completo (100%): define los 3 parámetros (apertura ocular, respuesta verbal y motora) y nombra la conciencia; Parcial (70%): menciona al menos 2 parámetros de conciencia; Incompleto (35%): solo menciona 1 parámetro o solo el uso sin describirla; Incorrecto (0%): sin respuesta o descripción incorrecta."
+  },
+  {
+    "name": "Efecto adverso vs. efecto secundario",
+    "max_score": 4,
+    "description": "Completo (100%): diferencia correctamente secundario y adverso con un nivel de detalle decente; Parcial (70%): diferencia los conceptos correctamente pero brevemente; Incompleto (35%): solo define uno o los confunde parcialmente; Incorrecto (0%): sin respuesta o confunde ambos."
+  },
+  {
+    "name": "Actuación ante hemorragia externa abundante",
+    "max_score": 6,
+    "description": "Completo (100%): compresión directa, no retirar el apósito, elevar el miembro y compresión proximal si no cede; Parcial (70%): menciona compresión directa y al menos 1 paso más; Incompleto (35%): solo menciona compresión directa o algún paso aislado; Incorrecto (0%): sin respuesta o actuación incorrecta."
+  },
+  {
+    "name": "Movilización pasiva e indicaciones",
+    "max_score": 4,
+    "description": "Completo (100%): define correctamente (movimiento realizado por el profesional) e indica al menos 1 situación clínica; Parcial (70%): define correctamente; Incompleto (35%): explicación vaga; Incorrecto (0%): sin respuesta o definición incorrecta."
+  },
+  {
+    "name": "Función de la insulina y consecuencias del déficit",
+    "max_score": 4,
+    "description": "Completo (100%): explica la función (entrada de glucosa en las células) y las consecuencias del déficit; Parcial (70%): explica la función correctamente pero sin las consecuencias del déficit; Incompleto (35%): explicación vaga; Incorrecto (0%): sin respuesta o descripción incorrecta."
+  },
+  {
+    "name": "Guantes estériles vs. guantes de uso general",
+    "max_score": 4,
+    "description": "Completo (100%): diferencia correctamente ambos tipos con su criterio de uso y un ejemplo de cada uno; Parcial (70%): diferencia el criterio de uso pero sin ejemplos; Incompleto (35%): solo describe un tipo o confunde el criterio de uso; Incorrecto (0%): sin respuesta o confunde ambos."
+  },
+  {
+    "name": "Hipoglucemia: síntomas y primera actuación",
+    "max_score": 7,
+    "description": "Completo (100%): menciona al menos 4 síntomas y la primera actuación en paciente consciente (hidratos de carbono de absorción rápida) e inconsciente (nada por vía oral, activar emergencias); Parcial (70%): menciona al menos 3 síntomas y la actuación en paciente consciente; Incompleto (35%): menciona síntomas pero la actuación es incompleta o solo en un escenario; Incorrecto (0%): sin respuesta o actuación incorrecta."
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Explica la vida nómada en el Paleolítico",
+    "max_score": 2,
+    "description": "Debe explicar las actividades de subsistencia (caza, pesca, recolección) y cómo condicionaban el desplazamiento del grupo humano."
+  },
+  {
+    "name": "Papel de la agricultura en el paso al sedentarismo",
+    "max_score": 1.25,
+    "description": "Debe explicar qué es la agricultura y por qué la producción propia de alimento permitió a los grupos establecerse en un lugar fijo."
+  },
+  {
+    "name": "Papel de la ganadería en el paso al sedentarismo",
+    "max_score": 1.25,
+    "description": "Debe explicar qué aportó la ganadería (alimento controlado y otros recursos) y cómo complementó a la agricultura para fijar a los grupos humanos."
+  },
+  {
+    "name": "Edad del Cobre: características y ventaja tecnológica",
+    "max_score": 1,
+    "description": "Debe identificar el cobre como primer metal trabajado y señalar alguna característica o limitación (maleabilidad, blandura)."
+  },
+  {
+    "name": "Edad del Bronce: características y ventaja tecnológica",
+    "max_score": 1.25,
+    "description": "Debe explicar que el bronce es una aleación (cobre + estaño), más duro que el cobre, y la mejora que supuso en armas y herramientas."
+  },
+  {
+    "name": "Edad del Hierro: características y ventaja tecnológica",
+    "max_score": 1.25,
+    "description": "Debe indicar que el hierro es más abundante y más duro que el bronce, y el impacto que tuvo en el acceso a herramientas y armas."
+  },
+  {
+    "name": "Identificación del evento que marca el fin de la Prehistoria",
+    "max_score": 0.5,
+    "description": "Debe identificar la invención de la escritura como el hito que separa Prehistoria e Historia."
+  },
+  {
+    "name": "Análisis del impacto de la escritura",
+    "max_score": 1.5,
+    "description": "Debe explicar impactos concretos de la escritura (registro de leyes y comercio, transmisión del conocimiento, administración de las ciudades) y conectarlos con el cambio social."
+  }
+]

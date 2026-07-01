@@ -1,0 +1,31 @@
+{
+  "metadata": {
+    "nombre": "Aitana",
+    "apellidos": "Rojas Castillo",
+    "grupo": "6",
+    "fecha": "30/6/2026",
+    "dni": null
+  },
+  "answers": [
+    {
+      "question_number": 1,
+      "answer_text": "En el Paleolítico las personas eran nómadas, es decir, no vivían siempre en el mismo sitio. Se dedicaban sobre todo a cazar animales y a recoger plantas. Como dependían de lo que encontraban, se iban moviendo de un lugar a otro cuando se acababa la comida.",
+      "notes": null
+    },
+    {
+      "question_number": 2,
+      "answer_text": "Con la agricultura los humanos aprendieron a cultivar sus propios alimentos, así que ya no tenían que estar buscando comida todo el rato y podían quedarse en el mismo lugar. Por eso pasaron a ser sedentarios y empezaron a formar poblados. También tenían algunos animales.",
+      "notes": null
+    },
+    {
+      "question_number": 3,
+      "answer_text": "La Edad de los Metales se divide en tres etapas: el cobre, el bronce y el hierro. Primero se usó el cobre. Después vino el bronce, que era una mezcla de metales y más resistente, y servía para hacer mejores armas. Por último el hierro, que era el más fuerte de todos y se usaba mucho para herramientas y armas.",
+      "notes": null
+    },
+    {
+      "question_number": 4,
+      "answer_text": "La prehistoria termina cuando se inventa la escritura. La escritura fue importante porque a partir de ahí se podían escribir las cosas y guardarlas para que no se olvidaran.",
+      "notes": null
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+Examen: prueba_3_juan
+Modelo: qwen3:8b
+Nota propuesta: 7.5/10 (7.50/10)
+Nota de referencia: 5.5/10
+
+=== RÚBRICA RELLENADA ===
+- Principio de mínimo privilegio (0.5 puntos): 0.5/0.5
+    Define correctamente el principio y menciona su importancia en la seguridad, aunque la explicación sea breve.
+- Inyección SQL: definición, explotación y prevención (2 puntos): 1/2
+    Menciona la definición y una medida de prevención (validación), pero la explicación de la explotación es incompleta.
+- Autenticación vs. autorización (0.5 puntos): 0.5/0.5
+    Diferencia ambos conceptos correctamente, aunque la explicación sea concisa.
+- Modelado de amenazas: definición y fase (1 puntos): 0.5/1
+    Define correctamente el modelado de amenazas, pero no menciona la fase de diseño.
+- Defensa en profundidad: definición y ejemplos (2 puntos): 1.5/2
+    Define correctamente la defensa en profundidad y menciona dos ejemplos válidos (firewall y contraseñas).
+- OWASP Top 10: definición y utilidad (1 puntos): 0.5/1
+    Explica qué es el OWASP Top 10 correctamente, pero la utilidad mencionada es genérica.
+- Cross-Site Scripting (XSS): definición, impacto y mitigación (2 puntos): 2/2
+    Define XSS, menciona su impacto y dos técnicas de mitigación (validación y filtrado).
+- Cifrado en tránsito vs. cifrado en reposo (1 puntos): 1/1
+    Diferencia ambos conceptos y explica por qué son necesarios, aunque la explicación sea breve.
+
+=== INFORME ===
+El alumno muestra un buen dominio de los conceptos básicos de seguridad en el diseño de software. En la pregunta 1, define correctamente el principio de mínimo privilegio. En la pregunta 2, menciona la inyección SQL y una medida de prevención, aunque la explicación de la explotación sea incompleta. En la pregunta 3, diferencia autenticación y autorización correctamente. En la pregunta 4, define el modelado de amenazas pero no menciona la fase de diseño. En la pregunta 5, describe la defensa en profundidad y menciona dos ejemplos válidos. En la pregunta 6, explica el OWASP Top 10 correctamente pero con una utilidad genérica. En la pregunta 7, define XSS, menciona su impacto y dos técnicas de mitigación. En la pregunta 8, diferencia correctamente el cifrado en tránsito y en reposo. Señala que el alumno necesita mejorar en la precisión de las fases y ejemplos más detallados en algunos ítems.

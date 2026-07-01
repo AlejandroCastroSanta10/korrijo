@@ -1,0 +1,111 @@
+{
+  "metadata": {
+    "nombre": "Isabel",
+    "apellidos": "Santa Sánchez",
+    "grupo": "3",
+    "fecha": "8-6-26",
+    "dni": null
+  },
+  "answers": [
+    {
+      "question_number": 1,
+      "answer_text": "Excretar orina y el producto que se elimina es urea.",
+      "notes": null
+    },
+    {
+      "question_number": 2,
+      "answer_text": "Es una herida producida, sobre todo en superficies oseas debido al apoyo continuado en colchones u otras superficies. Son frecuentes: talones, sacro, codos, trocantes...",
+      "notes": null
+    },
+    {
+      "question_number": 3,
+      "answer_text": "Manipulación alimentos trabajos enfermos despues de ir al baño antes de comer trabajos con pacientes quirúrgicos",
+      "notes": null
+    },
+    {
+      "question_number": 4,
+      "answer_text": "Subcutanea -> bajo la piel. Intramuscular -> En el músculo.",
+      "notes": null
+    },
+    {
+      "question_number": 5,
+      "answer_text": "En un atragantamiento que ocluye la faringe, comprometiendo seriamente la función respiratoria con peligro de muerte por asfixia",
+      "notes": null
+    },
+    {
+      "question_number": 6,
+      "answer_text": "El balance hídrico es el estado de hidratación. Se calcula sumando la cantidad de líquidos suministrados y restando la salida de los mismos. (orina, sudor, vomitos...)",
+      "notes": null
+    },
+    {
+      "question_number": 7,
+      "answer_text": "120/80",
+      "notes": null
+    },
+    {
+      "question_number": 8,
+      "answer_text": "Esterilización: objeto o superficie que carece de ningún organismo vivo. Desinfeccion: ausencia de organismos patogenos.",
+      "notes": null
+    },
+    {
+      "question_number": 9,
+      "answer_text": "Que pueda tragarlo sin dificultad.",
+      "notes": null
+    },
+    {
+      "question_number": 10,
+      "answer_text": "100-1",
+      "notes": null
+    },
+    {
+      "question_number": 11,
+      "answer_text": "Una que se introduce por nariz, llega al estómago. Se utiliza para alimentar a alguien y evitar aspiración por vomito.",
+      "notes": null
+    },
+    {
+      "question_number": 12,
+      "answer_text": "FC: 60 - 100 x minuto\\nFR: 20\\nTA: 120/80\\nSat O₂: 95% a 100%\\nT°: 36,5°C",
+      "notes": null
+    },
+    {
+      "question_number": 13,
+      "answer_text": "el uso de mascarilla, ya que se transmite x la respiración.",
+      "notes": null
+    },
+    {
+      "question_number": 14,
+      "answer_text": "Se utiliza para valorar la consciencia de una persona.",
+      "notes": null
+    },
+    {
+      "question_number": 15,
+      "answer_text": "Efecto adverso: un error. Efecto secundario a un fármaco, una alergia al mismo o por ejemplo si es un ansiolitico sueño.",
+      "notes": null
+    },
+    {
+      "question_number": 16,
+      "answer_text": "Haciendo hemostasia sobre el sangrado, o haciendo un torniquete.",
+      "notes": null
+    },
+    {
+      "question_number": 17,
+      "answer_text": "Movilizar manualmente las extremidades. Esta indicada en pacientes encamados, o con problemas de movilidad.",
+      "notes": null
+    },
+    {
+      "question_number": 18,
+      "answer_text": "La insulina transporta la glucosa a las células. Cuando hay un deficit, se produce diabetes ya que aumenta la glucosa en sangre",
+      "notes": null
+    },
+    {
+      "question_number": 19,
+      "answer_text": "Esteriles -> curas quirurgicas, poner vías centrales, catéteres arteriales, cirugias... guantes no esteriles -> manipulación piel intacta, higienes...",
+      "notes": null
+    },
+    {
+      "question_number": 20,
+      "answer_text": "Sudoración profusa Mareo bajada de glucosa en sangre /no_think",
+      "notes": null
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+Examen: prueba_2_isabel
+Modelo: gemma4:12b
+Nota propuesta: 55.3/100 (5.53/10)
+Nota de referencia: 6.18/10
+
+=== RÚBRICA RELLENADA ===
+- Función del riñón y desecho nitrogenado (4 puntos): 2.8/4
+    Menciona el producto de desecho (urea), pero la descripción de la función es incompleta al omitir la regulación hídrica.
+- Úlcera por presión: definición y zona más frecuente (5 puntos): 3.5/5
+    Define correctamente la lesión por presión en superficies óseas e identifica el sacro como una de las zonas frecuentes.
+- 5 momentos del lavado de manos (OMS) (6 puntos): 0/6
+    La respuesta no corresponde a los 5 momentos de la OMS; menciona situaciones de higiene personal y laboral sin relación con el protocolo.
+- Vía subcutánea vs. intramuscular (5 puntos): 3.5/5
+    Diferencia correctamente los tejidos de administración (piel/músculo), pero omite la diferencia en el tiempo de absorción.
+- Maniobra de Heimlich: indicación y técnica (6 puntos): 3.5/6
+    Identifica correctamente la situación clínica (atragantamiento/obstrucción), pero no describe la técnica física de ejecución.
+- Balance hídrico: definición y cálculo (5 puntos): 3.5/5
+    Define el concepto como estado de hidratación y explica la fórmula de suma/resta, aunque la definición es menos precisa que en el modelo.
+- Valores normales de presión arterial (4 puntos): 2.8/4
+    Indica correctamente el valor 120/80, pero no menciona el umbral de hipertensión.
+- Esterilización vs. desinfección (5 puntos): 3.5/5
+    Diferencia ambos conceptos correctamente de forma breve.
+- Medicación oral en paciente con disfagia (6 puntos): 2.1/6
+    Menciona la capacidad de tragar, pero no incluye acciones concretas como el cambio de vía o las restricciones de triturado.
+- Relación compresión-ventilación en RCP de adultos (6 puntos): 0/6
+    La respuesta '100-1' no corresponde al ratio 30:2 ni a los parámetros de frecuencia/profundidad.
+- Sonda nasogástrica: definición y usos (4 puntos): 3.5/4
+    Define la sonda correctamente e indica dos usos (alimentar y evitar aspiración).
+- Signos vitales y valores normales (5 puntos): 3.5/5
+    Enumera 4 de los 5 signos vitales con sus valores correctos.
+- Precauciones ante tuberculosis pulmonar activa (5 puntos): 1.75/5
+    Solo menciona el uso de mascarilla como medida de precaución.
+- Escala de Glasgow: definición y uso (5 puntos): 1.75/5
+    Solo menciona el uso (valorar la consciencia) sin describir los parámetros que la componen.
+- Efecto adverso vs. efecto secundario (4 puntos): 2.8/4
+    Diferencia ambos conceptos correctamente pero de forma breve.
+- Actuación ante hemorragia externa abundante (6 puntos): 3.5/6
+    Menciona la hemostasia y el uso de torniquete; no incluye todos los pasos del protocolo (elevar miembro, no retirar apósito).
+- Movilización pasiva e indicaciones (4 puntos): 3.5/4
+    Define correctamente la acción y menciona dos situaciones clínicas de indicación.
+- Función de la insulina y consecuencias del déficit (4 puntos): 2.8/4
+    Explica la función correctamente, pero la consecuencia del déficit es incompleta (menciona solo el aumento de glucosa).
+- Guantes estériles vs. guantes de uso general (4 puntos): 3.5/4
+    Diferencia el criterio de uso pero no incluye ejemplos para ambos tipos.
+- Hipoglucemia: síntomas y primera actuación (7 puntos): 3.5/7
+    Menciona varios síntomas pero la actuación es incompleta al no diferenciar entre paciente consciente e inconsciente.
+
+=== INFORME ===
+La alumna demuestra un conocimiento aceptable en temas de procedimientos básicos y anatomía básica. Ha identificado correctamente conceptos como el uso de sondas nasogástricas, la diferencia entre esterilización y desinfección, y las indicaciones de la movilización pasiva. Sin embargo, muestra dificultades significativas en protocolos específicos de seguridad y emergencias: no identifica los 5 momentos del lavado de manos de la OMS, falla en la relación de compresión-ventilación en RCP y ofrece una respuesta incompleta sobre las precauciones ante la tuberculosis. En el caso de la hipoglucemia, identifica síntomas pero no describe correctamente el protocolo de actuación diferenciado por estado de conciencia. Se recomienda reforzar los protocolos de seguridad del paciente y las medidas de control de infecciones.

@@ -1,0 +1,25 @@
+Examen: prueba_1_aitana
+Modelo: gemma4:12b
+Nota propuesta: 8.25/10 (8.25/10)
+Nota de referencia: 5.25/10
+
+=== RÚBRICA RELLENADA ===
+- Explica la vida nómada en el Paleolítico (2 puntos): 2/2
+    El alumno identifica correctamente el nomadismo y menciona las actividades de caza y recolección como causa del desplazamiento por falta de recursos.
+- Papel de la agricultura en el paso al sedentarismo (1.25 puntos): 1.25/1.25
+    Explica correctamente que la producción propia de alimentos permitió dejar de buscar comida y establecerse en un lugar fijo.
+- Papel de la ganadería en el paso al sedentarismo (1.25 puntos): 0.75/1.25
+    Menciona que tenían animales, pero no explica qué aportaban estos (alimento controlado, recursos) ni cómo complementaron a la agricultura para el sedentarismo.
+- Edad del Cobre: características y ventaja tecnológica (1 puntos): 1/1
+    Identifica correctamente el cobre como la primera etapa de los metales.
+- Edad del Bronce: características y ventaja tecnológica (1.25 puntos): 1.25/1.25
+    Identifica correctamente que es una mezcla de metales, que es más resistente y su uso en armas.
+- Edad del Hierro: características y ventaja tecnológica (1.25 puntos): 1.25/1.25
+    Identifica correctamente que es el más fuerte y su uso en herramientas y armas.
+- Identificación del evento que marca el fin de la Prehistoria (0.5 puntos): 0.5/0.5
+    Identifica correctamente la invención de la escritura como hito final.
+- Análisis del impacto de la escritura (1.5 puntos): 0.25/1.5
+    Menciona que servía para 'escribir las cosas y guardarlas', pero no desarrolla impactos concretos como el registro de leyes, comercio o administración.
+
+=== INFORME ===
+La alumna demuestra una buena comprensión general de los conceptos básicos del tema. Identifica correctamente las actividades del Paleolítico y la transición al sedentarismo mediante la agricultura. En la sección de la Edad de los Metales, distingue bien las tres etapas y sus ventajas tecnológicas (resistencia y uso en armamento). Sin embargo, el análisis es más superficial en dos puntos: en la ganadería, no explica qué aportaban los animales a la economía; y en el impacto de la escritura, se limita a una respuesta muy genérica sobre 'guardar cosas', sin mencionar aspectos clave como el registro de leyes o la administración de ciudades.

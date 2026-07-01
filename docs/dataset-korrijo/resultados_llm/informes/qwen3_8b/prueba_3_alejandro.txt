@@ -1,0 +1,25 @@
+Examen: prueba_3_alejandro
+Modelo: qwen3:8b
+Nota propuesta: 9/10 (9.00/10)
+Nota de referencia: 9.5/10
+
+=== RÚBRICA RELLENADA ===
+- Principio de mínimo privilegio (0.5 puntos): 0.5/0.5
+    Define correctamente el principio como acceso estrictamente necesario y explica su importancia para limitar daños.
+- Inyección SQL: definición, explotación y prevención (2 puntos): 1/2
+    Menciona la explotación y medidas de prevención (sanitización, validación) pero no incluye consultas parametrizadas u ORMs como en el examen modelo.
+- Autenticación vs. autorización (0.5 puntos): 0.5/0.5
+    Diferencia ambos conceptos correctamente (identidad vs. permisos).
+- Modelado de amenazas: definición y fase (1 puntos): 1/1
+    Define el modelado de amenazas y menciona su fase en el diseño, aunque con formulación menos precisa que el examen modelo.
+- Defensa en profundidad: definición y ejemplos (2 puntos): 2/2
+    Define correctamente y menciona tres ejemplos válidos (perímetro, transporte, autenticación).
+- OWASP Top 10: definición y utilidad (1 puntos): 1/1
+    Explica que es una lista de vulnerabilidades críticas y su utilidad como referencia de diseño.
+- Cross-Site Scripting (XSS): definición, impacto y mitigación (2 puntos): 2/2
+    Define XSS, menciona impacto (robo de cookies, redirección) y dos técnicas de mitigación (validación, CSP).
+- Cifrado en tránsito vs. cifrado en reposo (1 puntos): 1/1
+    Diferencia ambos conceptos y explica su necesidad para amenazas distintas.
+
+=== INFORME ===
+El alumno demuestra comprensión general de los conceptos clave. En la inyección SQL, no menciona consultas parametrizadas u ORMs, que son esenciales según la rúbrica. En otros ítems, respuestas claras y correctas. Destaca en defensa en profundidad y XSS. Mejoraría con ejemplos más precisos en algunos casos.

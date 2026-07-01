@@ -1,0 +1,49 @@
+Examen: prueba_2_juana
+Modelo: qwen3:8b
+Nota propuesta: 56/100 (5.60/10)
+Nota de referencia: 7.37/10
+
+=== RÚBRICA RELLENADA ===
+- Función del riñón y desecho nitrogenado (4 puntos): 3/4
+    Menciona filtración y desecho nitrogenado (urea y creatinina), pero omite la regulación hídrica requerida en la definición completa.
+- Úlcera por presión: definición y zona más frecuente (5 puntos): 2/5
+    Menciona zonas de riesgo pero no identifica el sacro como zona más frecuente, que es clave según la rúbrica.
+- 5 momentos del lavado de manos (OMS) (6 puntos): 4/6
+    Enumera 4 momentos pero en orden incorrecto, lo que corresponde a parcial según la rúbrica.
+- Vía subcutánea vs. intramuscular (5 puntos): 3/5
+    Menciona tejidos pero omite la diferencia en absorción, clave para la puntuación parcial.
+- Maniobra de Heimlich: indicación y técnica (6 puntos): 3/6
+    Describe técnica pero no menciona la indicación (obstrucción total de vía aérea), requisito para parcial.
+- Balance hídrico: definición y cálculo (5 puntos): 3/5
+    Menciona cálculo pero no define el balance hídrico, lo que corresponde a parcial.
+- Valores normales de presión arterial (4 puntos): 1/4
+    Valores incorrectos (120-140/60-90) y omite el umbral de hipertensión, calificando como incompleto.
+- Esterilización vs. desinfección (5 puntos): 3/5
+    Menciona ambas pero no especifica la diferencia en microorganismos, lo que corresponde a parcial.
+- Medicación oral en paciente con disfagia (6 puntos): 2/6
+    Menciona elevación de cama y trituración, pero no evalúa deglución ni cambia vía, lo que es incompleto.
+- Relación compresión-ventilación en RCP de adultos (6 puntos): 2/6
+    Menciona ratios incorrectos (30:2 y 15:1), lo que califica como incompleto.
+- Sonda nasogástrica: definición y usos (4 puntos): 2/4
+    Menciona usos pero no define la sonda, lo que corresponde a incompleto.
+- Signos vitales y valores normales (5 puntos): 4/5
+    Enumera 4 signos vitales con valores parcialmente correctos, calificando como parcial.
+- Precauciones ante tuberculosis pulmonar activa (5 puntos): 3/5
+    Menciona aislamiento pero no todos los elementos (mascarillas, notificación), calificando como parcial.
+- Escala de Glasgow: definición y uso (5 puntos): 3/5
+    Menciona medir conciencia pero no los parámetros, lo que corresponde a parcial.
+- Efecto adverso vs. efecto secundario (4 puntos): 3/4
+    Diferencia conceptos pero con nivel de detalle insuficiente, calificando como parcial.
+- Actuación ante hemorragia externa abundante (6 puntos): 3/6
+    Menciona compresión directa pero omite pasos clave como elevar miembro y notificar, calificando como parcial.
+- Movilización pasiva e indicaciones (4 puntos): 2/4
+    Menciona definición pero no las indicaciones clínicas, lo que corresponde a incompleto.
+- Función de la insulina y consecuencias del déficit (4 puntos): 3/4
+    Explica función pero omite consecuencias del déficit, calificando como parcial.
+- Guantes estériles vs. guantes de uso general (4 puntos): 3/4
+    Menciona usos pero no el criterio de uso, lo que corresponde a parcial.
+- Hipoglucemia: síntomas y primera actuación (7 puntos): 4/7
+    Menciona síntomas y actuación en paciente consciente pero omite la actuación en inconsciente, calificando como parcial.
+
+=== INFORME ===
+El alumno muestra conocimientos básicos en varios ítems, como la función renal y la hipoglucemia, pero presenta errores en la definición de conceptos clave. En la úlcera por presión y los momentos de lavado de manos, no sigue el orden correcto. En la maniobra de Heimlich y la relación compresión-ventilación, no menciona la indicación precisa. Se necesita mejorar la precisión en definiciones y la aplicación de protocolos. La puntuación refleja un esfuerzo, pero se requiere mayor rigor en la estructura y la coherencia con los criterios del examen modelo.

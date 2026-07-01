@@ -1,0 +1,25 @@
+Examen: prueba_1_aitana
+Modelo: qwen3:8b
+Nota propuesta: 8/10 (8.00/10)
+Nota de referencia: 5.25/10
+
+=== RÚBRICA RELLENADA ===
+- Explica la vida nómada en el Paleolítico (2 puntos): 2/2
+    El alumno menciona la nómada, caza, recolección y movimiento por agotamiento de recursos, cubriendo los aspectos clave de la vida nómada.
+- Papel de la agricultura en el paso al sedentarismo (1.25 puntos): 1.25/1.25
+    Explica que la agricultura permitió producir alimentos propios, reduciendo la necesidad de desplazarse y facilitando la sedentarización.
+- Papel de la ganadería en el paso al sedentarismo (1.25 puntos): 0.5/1.25
+    Menciona la existencia de animales pero no detalla su aporte específico (alimento controlado, fuerza de trabajo, etc.).
+- Edad del Cobre: características y ventaja tecnológica (1 puntos): 0.5/1
+    Identifica el cobre como primer metal, pero no menciona su blandura ni limitaciones.
+- Edad del Bronce: características y ventaja tecnológica (1.25 puntos): 1.25/1.25
+    Explica que el bronce es una aleación más dura y su uso en armas y herramientas, coincidiendo con el modelo.
+- Edad del Hierro: características y ventaja tecnológica (1.25 puntos): 1.25/1.25
+    Indica que el hierro es más abundante y duro que el bronce, y su impacto en herramientas y armas.
+- Identificación del evento que marca el fin de la Prehistoria (0.5 puntos): 0.5/0.5
+    Identifica correctamente la invención de la escritura como el hito que separa Prehistoria e Historia.
+- Análisis del impacto de la escritura (1.5 puntos): 0.75/1.5
+    Menciona que la escritura permite guardar información, pero no detalla impactos concretos como leyes, comercio o administración.
+
+=== INFORME ===
+El alumno responde correctamente a la vida nómada en el Paleolítico y al papel de la agricultura en el sedentarismo, obteniendo el máximo en ambos ítems. En el papel de la ganadería, aunque menciona la existencia de animales, no detalla su aporte específico, lo que le resta puntos. En la Edad del Cobre, identifica el metal pero no menciona su blandura, lo que le resta 0.5 puntos. En el impacto de la escritura, aunque reconoce su utilidad, no desarrolla los impactos concretos como el registro de leyes o la administración, lo que limita su puntuación. En general, el alumno muestra comprensión de los conceptos clave pero necesita profundizar en detalles específicos para alcanzar la puntuación máxima.

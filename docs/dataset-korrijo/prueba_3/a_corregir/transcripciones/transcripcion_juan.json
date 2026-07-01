@@ -1,0 +1,51 @@
+{
+  "metadata": {
+    "nombre": "Juan",
+    "apellidos": "Felipe Viñales",
+    "grupo": "19",
+    "fecha": "30/06/2026",
+    "dni": "78500742"
+  },
+  "answers": [
+    {
+      "question_number": 1,
+      "answer_text": "El principio de mínimo privilegio consiste en darle a cada usuario o programa solo los permisos que necesita para hacer su tarea, y ninguno más. Así hay más seguridad.",
+      "notes": null
+    },
+    {
+      "question_number": 2,
+      "answer_text": "Una inyección SQL es un ataque en el que alguien mete código SQL malicioso en la web para acceder a la base de datos y robar información. Para prevenirla hay que validar bien lo que escribe el usuario en los formularios.",
+      "notes": null
+    },
+    {
+      "question_number": 3,
+      "answer_text": "La autenticación es comprobar quién eres, por ejemplo con usuario y contraseña. La autorización es ver qué cosas puedes hacer una vez que ya has entrado.",
+      "notes": null
+    },
+    {
+      "question_number": 4,
+      "answer_text": "El modelado de amenazas es analizar las posibles amenazas que puede tener un sistema para poder protegerlo mejor y poner medidas contra ellas.",
+      "notes": null
+    },
+    {
+      "question_number": 5,
+      "answer_text": "La defensa en profundidad es poner varias medidas de seguridad distintas para estar más protegido, en vez de depender de una sola. Por ejemplo, un cortafuegos y usar contraseñas.",
+      "notes": null
+    },
+    {
+      "question_number": 6,
+      "answer_text": "El OWASP Top 10 es una lista con los fallos de seguridad más comunes que suele haber en las páginas web.",
+      "notes": null
+    },
+    {
+      "question_number": 7,
+      "answer_text": "El Cross-Site Scripting (XSS) es cuando un atacante mete código JavaScript en una web para robar datos de los usuarios que la visitan. Para evitarlo hay que validar y filtrar lo que se introduce en la página.",
+      "notes": null
+    },
+    {
+      "question_number": 8,
+      "answer_text": "El cifrado en tránsito protege los datos cuando viajan por la red y el cifrado en reposo los protege cuando están guardados en el sistema. Los dos hacen falta para que la información esté segura.",
+      "notes": null
+    }
+  ]
+}

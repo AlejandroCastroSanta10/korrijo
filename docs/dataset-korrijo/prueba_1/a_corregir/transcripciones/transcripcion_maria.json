@@ -1,0 +1,31 @@
+{
+  "metadata": {
+    "nombre": "María",
+    "apellidos": "Pérez Molina",
+    "grupo": "7",
+    "fecha": "19-6-26",
+    "dni": null
+  },
+  "answers": [
+    {
+      "question_number": 1,
+      "answer_text": "El paleolítico es el perido mas largo de la Prehistoria, en el que el ser humano fabricaba sus propias herramientas, principalmente con piedra, madera y hueso de animales, útiles para caza pesca y usos cotidianos. Estaban organizados en pequeños grupos y clanes. Vivían en cuevas, la pesca y la caza de los animales les servía de alimento y las pieles de estas de abrigo. También se alimentaban de bayas, frutas silvestres y raices.",
+      "notes": null
+    },
+    {
+      "question_number": 2,
+      "answer_text": "El Mesolitico fue la etapa de transicion climatica, y el Neolitico estuvo marcado por el descubrimiento de la Agricultura y la Ganaderia, dando lugar al surgimiento de los primeros asentamientos poblacionales, pues ya no tenian que ir de un sitio a otro para encontrar alimento, abrigo y refugio.",
+      "notes": null
+    },
+    {
+      "question_number": 3,
+      "answer_text": "Con el cobre, se inicio los primeros pasos de la metalurgia, y se desarrolló la jerarquización social de los individuos, formando herramientas más resistentes y diversas. Al cobre un metal muy maleable le siguio una aleacion de Cobre y Estaño y así nacio el Bronce, lo que dio paso a armas más solidas y resistentes. El surgimiento del Hierro permitio civilizaciones más fuertes y complejas.",
+      "notes": null
+    },
+    {
+      "question_number": 4,
+      "answer_text": "El periodo final de la Prehistoria culmina con la invención de la escritura, cuyos origenes estan marcados en el proximo Oriente, Mesopotamia y Egipto, apartir de este momento el ser humano comenzo a registrar los acontecimientos, dando lugar a relatar experiencias, economia y hechos ocurridos, comenzando así la Historia.",
+      "notes": null
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+Examen: prueba_3_juan
+Modelo: gemma4:12b
+Nota propuesta: 6/10 (6.00/10)
+Nota de referencia: 5.5/10
+
+=== RÚBRICA RELLENADA ===
+- Principio de mínimo privilegio (0.5 puntos): 0.5/0.5
+    Define correctamente el concepto como otorgar solo los permisos necesarios para la tarea.
+- Inyección SQL: definición, explotación y prevención (2 puntos): 1/2
+    Define el ataque y menciona la validación de entradas como medida, pero no menciona las consultas parametrizadas ni otras medidas específicas del contexto.
+- Autenticación vs. autorización (0.5 puntos): 0.5/0.5
+    Diferencia correctamente ambos conceptos (quién eres vs. qué puedes hacer).
+- Modelado de amenazas: definición y fase (1 puntos): 0.5/1
+    Define correctamente el concepto pero no menciona que debe realizarse en la fase de diseño.
+- Defensa en profundidad: definición y ejemplos (2 puntos): 1/2
+    Transmite la idea de múltiples medidas/capas pero no define con precisión el concepto de independencia de las capas ni aporta dos ejemplos claros de diferentes tipos de capas.
+- OWASP Top 10: definición y utilidad (1 puntos): 0.5/1
+    Define correctamente qué es la lista pero no explica su utilidad en el diseño seguro.
+- Cross-Site Scripting (XSS): definición, impacto y mitigación (2 puntos): 1/2
+    Define el ataque e indica un impacto (robar datos), pero solo menciona una técnica de mitigación (validar/filtrar).
+- Cifrado en tránsito vs. cifrado en reposo (1 puntos): 1/1
+    Diferencia correctamente ambos conceptos y menciona que ambos son necesarios para la seguridad.
+
+=== INFORME ===
+El alumno demuestra una comprensión sólida de los conceptos básicos de seguridad, especialmente en lo que respecta a las definiciones de autenticación vs. autorización y las diferencias entre el cifrado en tránsito y en reposo. Sin embargo, muestra debilidades en la profundidad técnica de algunas respuestas: en la inyección SQL no menciona la medida principal (consultas parametrizadas); en el modelado de amenazas omite la importancia de la fase de diseño; y en la defensa en profundidad, aunque entiende la idea de capas, su respuesta es algo genérica. En cuanto al XSS, identifica correctamente el riesgo pero solo propone una técnica de mitigación cuando se requerían al menos dos para obtener la puntuación máxima.

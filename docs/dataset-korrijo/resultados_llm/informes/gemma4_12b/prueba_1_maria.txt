@@ -1,0 +1,25 @@
+Examen: prueba_1_maria
+Modelo: gemma4:12b
+Nota propuesta: 9/10 (9.00/10)
+Nota de referencia: 7.25/10
+
+=== RÚBRICA RELLENADA ===
+- Explica la vida nómada en el Paleolítico (2 puntos): 2/2
+    El alumno identifica correctamente las tres actividades de subsistencia (caza, pesca y recolección de bayas/raíces) y menciona que vivían en pequeños grupos en cuevas.
+- Papel de la agricultura en el paso al sedentarismo (1.25 puntos): 0.75/1.25
+    Menciona que la agricultura permitió dejar de ir de un sitio a otro para encontrar alimento, pero no explica explícitamente qué es la agricultura (producción propia) como pide la rúbrica.
+- Papel de la ganadería en el paso al sedentarismo (1.25 puntos): 0.75/1.25
+    Menciona que la ganadería junto a la agricultura dio lugar a asentamientos por no tener que desplazarse, pero no detalla qué aportó específicamente la ganadería (alimento controlado/recursos).
+- Edad del Cobre: características y ventaja tecnológica (1 puntos): 1/1
+    Identifica el cobre como inicio de la metalurgia y menciona correctamente su maleabilidad.
+- Edad del Bronce: características y ventaja tecnológica (1.25 puntos): 1.25/1.25
+    Define correctamente el bronce como una aleación de cobre y estaño, y menciona que permitió armas más sólidas.
+- Edad del Hierro: características y ventaja tecnológica (1.25 puntos): 1.25/1.25
+    Indica que el hierro permitió civilizaciones más fuertes y complejas (implica mayor dureza/abundancia en el contexto de la pregunta).
+- Identificación del evento que marca el fin de la Prehistoria (0.5 puntos): 0.5/0.5
+    Identifica correctamente la invención de la escritura como el hito que separa las etapas.
+- Análisis del impacto de la escritura (1.5 puntos): 1.5/1.5
+    Menciona el registro de acontecimientos, economía y hechos ocurridos como consecuencia de la escritura.
+
+=== INFORME ===
+La alumna demuestra un buen dominio general de los contenidos del tema. En la primera pregunta, identifica correctamente las actividades de subsistencia del Paleolítico (caza, pesca y recolección) y el modo de vida en grupos pequeños. En la sección sobre la Edad de los Metales, distingue bien las características del cobre (maleabilidad), el bronce (como aleación de cobre y estaño) y el impacto del hierro. Identifica correctamente la escritura como el hito que marca el fin de la Prehistoria y describe sus funciones básicas en el registro de información. El único punto de mejora se encuentra en la explicación detallada de por qué la agricultura y la ganadería permitieron específicamente el sedentarismo; aunque entiende el concepto de fijar el asentamiento, no profundiza tanto en las ventajas específicas que cada actividad aportó (como la producción propia o los recursos controlados) como se solicitaba en la rúbrica.

@@ -1,0 +1,25 @@
+Examen: prueba_3_alejandro
+Modelo: gemma4:12b
+Nota propuesta: 9.25/10 (9.25/10)
+Nota de referencia: 9.5/10
+
+=== RÚBRICA RELLENADA ===
+- Principio de mínimo privilegio (0.5 puntos): 0.5/0.5
+    Define correctamente el principio como tener acceso solo a elementos estrictamente necesarios y explica su importancia en la limitación de daños.
+- Inyección SQL: definición, explotación y prevención (2 puntos): 1.5/2
+    Explica bien qué es la inyección y menciona medidas de prevención como saneamiento y validación, pero no menciona explícitamente las consultas parametrizadas (prepared statements).
+- Autenticación vs. autorización (0.5 puntos): 0.5/0.5
+    Diferencia correctamente ambos conceptos: autenticación como acceso al sistema y autorización como permisos para acciones/recursos.
+- Modelado de amenazas: definición y fase (1 puntos): 1/1
+    Define el proceso como análisis de riesgos y especifica correctamente que debe hacerse en la fase de diseño.
+- Defensa en profundidad: definición y ejemplos (2 puntos): 2/2
+    Define correctamente la estrategia de múltiples capas independientes y aporta tres ejemplos claros (red/WAF, transporte/TLS, autenticación).
+- OWASP Top 10: definición y utilidad (1 puntos): 1/1
+    Define correctamente el ranking de vulnerabilidades y explica su utilidad para que el desarrollador tenga presentes las amenazas relevantes.
+- Cross-Site Scripting (XSS): definición, impacto y mitigación (2 puntos): 2/2
+    Define XSS, menciona impactos claros (redirección, robo de cookies) y propone dos técnicas de mitigación válidas (validación/saneamiento y CSP).
+- Cifrado en tránsito vs. cifrado en reposo (1 puntos): 0.75/1
+    Diferencia ambos conceptos correctamente, pero la justificación de por qué ambos son necesarios es algo genérica comparada con el modelo.
+
+=== INFORME ===
+El alumno demuestra un sólido dominio de los conceptos fundamentales de seguridad en el diseño. Ha respondido correctamente a casi todos los puntos, destacando especialmente en las definiciones de 'Defensa en profundidad' y 'Modelado de amenazas', donde identifica con precisión tanto la teoría como la aplicación práctica. En el caso de la inyección SQL, aunque describe bien el ataque y propone medidas de validación, no menciona específicamente las consultas parametrizadas (aunque estas son la medida principal). En cuanto al XSS, cumple con todos los requisitos de la rúbrica incluyendo impacto y mitigaciones. La respuesta sobre cifrado es correcta en su diferenciación técnica, aunque la justificación final de su necesidad conjunta es menos detallada que en el modelo.

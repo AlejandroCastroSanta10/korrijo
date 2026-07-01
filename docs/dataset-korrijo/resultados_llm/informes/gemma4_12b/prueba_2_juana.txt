@@ -1,0 +1,49 @@
+Examen: prueba_2_juana
+Modelo: gemma4:12b
+Nota propuesta: 66.7/100 (6.67/10)
+Nota de referencia: 7.37/10
+
+=== RÚBRICA RELLENADA ===
+- Función del riñón y desecho nitrogenado (4 puntos): 4/4
+    Menciona la filtración de sangre, eliminación de desechos y nombra correctamente la urea.
+- Úlcera por presión: definición y zona más frecuente (5 puntos): 3.5/5
+    Define la úlcera por presión correctamente, pero incluye una lista de zonas sin destacar específicamente el sacro como la principal.
+- 5 momentos del lavado de manos (OMS) (6 puntos): 4.2/6
+    Enumera 4 momentos correctos (aunque el orden no es el estándar de la OMS).
+- Vía subcutánea vs. intramuscular (5 puntos): 3.5/5
+    Diferencia correctamente el tejido de administración para ambas vías.
+- Maniobra de Heimlich: indicación y técnica (6 puntos): 6/6
+    Indica correctamente la situación de obstrucción y describe la técnica de presión hacia adentro y arriba.
+- Balance hídrico: definición y cálculo (5 puntos): 3.5/5
+    Define el concepto de entrada/salida en 24h, pero el cálculo descrito es inverso al correcto (resta las salidas a las entradas).
+- Valores normales de presión arterial (4 puntos): 1/4
+    Indica un rango amplio (120-140) pero no especifica el valor estándar de 120/80 ni el umbral de hipertensión.
+- Esterilización vs. desinfección (5 puntos): 5/5
+    Diferencia correctamente ambos conceptos basándose en la presencia de esporas.
+- Medicación oral en paciente con disfagia (6 puntos): 1/6
+    Menciona triturar el comprimido, pero no menciona la valoración de la deglución ni las restricciones de seguridad.
+- Relación compresión-ventilación en RCP de adultos (6 puntos): 3/6
+    Menciona el ratio 30:2 pero también incluye un ratio incorrecto (15:1).
+- Sonda nasogástrica: definición y usos (4 puntos): 4/4
+    Define correctamente la sonda y menciona varios usos (lavado, alimentación, fármacos).
+- Signos vitales y valores normales (5 puntos): 3.5/5
+    Enumera la mayoría de los signos con valores aproximados, aunque el formato de la TA es poco preciso.
+- Precauciones ante tuberculosis pulmonar activa (5 puntos): 1/5
+    Solo menciona 'aislamiento estricto' sin detallar las medidas específicas requeridas.
+- Escala de Glasgow: definición y uso (5 puntos): 1/5
+    Solo menciona que mide el nivel de conciencia sin detallar los parámetros.
+- Efecto adverso vs. efecto secundario (4 puntos): 1/4
+    Solo define el efecto secundario como una intolerancia, sin diferenciarlo del adverso.
+- Actuación ante hemorragia externa abundante (6 puntos): 6/6
+    Describe correctamente la presión directa y el manejo del apósito empapado.
+- Movilización pasiva e indicaciones (4 puntos): 3.5/4
+    Define la movilización por parte de otra persona y menciona el contexto de pacientes encamados.
+- Función de la insulina y consecuencias del déficit (4 puntos): 3/4
+    Explica la función de la insulina y menciona la hiperglucemia como consecuencia del déficit.
+- Guantes estériles vs. guantes de uso general (4 puntos): 3/4
+    Diferencia el criterio de uso y da ejemplos para los guantes estériles.
+- Hipoglucemia: síntomas y primera actuación (7 puntos): 6/7
+    Menciona síntomas y la actuación en consciente; incluye el uso de glucagón para inconscientes.
+
+=== INFORME ===
+El alumno demuestra un buen dominio en temas de procedimientos de emergencia (Maniobra de Heimlich, hemorragias) y conceptos básicos de anatomía y farmacología (función renal, diferencia entre esterilización/desinfección). Sin embargo, muestra debilidades importantes en la precisión técnica de los protocolos: no identifica correctamente el umbral de hipertensión ni los valores exactos de presión arterial, tiene dificultades para diferenciar efectos adversos de secundarios y ofrece respuestas muy genéricas en las medidas de aislamiento por tuberculosis y la escala de Glasgow. En el caso de la disfagia, omite las precauciones críticas sobre qué fármacos no deben triturarse.

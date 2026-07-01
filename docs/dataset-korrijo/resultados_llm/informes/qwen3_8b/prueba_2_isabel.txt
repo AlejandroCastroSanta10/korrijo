@@ -1,0 +1,49 @@
+Examen: prueba_2_isabel
+Modelo: qwen3:8b
+Nota propuesta: 53/100 (5.30/10)
+Nota de referencia: 6.18/10
+
+=== RÚBRICA RELLENADA ===
+- Función del riñón y desecho nitrogenado: 3/4
+    Menciona la urea como desecho pero no incluye la filtración sanguínea ni la regulación hídrica.
+- Úlcera por presión: definición y zona más frecuente: 2/5
+    No define correctamente la úlcera por presión, aunque menciona el sacro como zona frecuente.
+- 5 momentos del lavado de manos (OMS): 0/6
+    Respuesta incorrecta y desorganizada, no enumera los momentos correctamente.
+- Vía subcutánea vs. intramuscular: 4/5
+    Menciona el tejido de administración pero omite la absorción.
+- Maniobra de Heimlich: indicación y técnica: 4/6
+    Indica la situación correctamente pero no describe la técnica completa.
+- Balance hídrico: definición y cálculo: 4/5
+    Define correctamente pero el cálculo es incompleto.
+- Valores normales de presión arterial: 3/4
+    Indica 120/80 mmHg pero no menciona el umbral de hipertensión.
+- Esterilización vs. desinfección: 4/5
+    Diferencia correctamente los conceptos pero sin ejemplos.
+- Medicación oral en paciente con disfagia: 2/6
+    Menciona valorar la deglución pero no indica actuaciones concretas.
+- Relación compresión-ventilación en RCP de adultos: 0/6
+    Respuesta incorrecta, no menciona el ratio 30:2.
+- Sonda nasogástrica: definición y usos: 3/4
+    Define correctamente y menciona al menos un uso.
+- Signos vitales y valores normales: 4/5
+    Enumera 4 signos vitales con valores correctos.
+- Precauciones ante tuberculosis pulmonar activa: 2/5
+    Menciona la mascarilla pero no las medidas completas.
+- Escala de Glasgow: definición y uso: 2/5
+    Menciona el uso pero no los tres parámetros de la escala.
+- Efecto adverso vs. efecto secundario: 3/4
+    Diferencia los conceptos correctamente pero brevemente.
+- Actuación ante hemorragia externa abundante: 2/6
+    Menciona compresión directa pero omite pasos clave.
+- Movilización pasiva e indicaciones: 3/4
+    Define correctamente pero no menciona situaciones clínicas.
+- Función de la insulina y consecuencias del déficit: 3/4
+    Explica la función correctamente pero no las consecuencias del déficit.
+- Guantes estériles vs. guantes de uso general: 3/4
+    Diferencia el criterio de uso pero sin ejemplos.
+- Hipoglucemia: síntomas y primera actuación: 2/7
+    Menciona síntomas pero la actuación es incompleta.
+
+=== INFORME ===
+El alumno muestra conocimientos básicos en algunos ítems, como la diferencia entre vías de administración y el balance hídrico. Sin embargo, presenta dificultades en definiciones clave (úlcera por presión, maniobra de Heimlich) y en la precisión de cálculos. La respuesta a la hipoglucemia es incompleta. Se necesitan reforzar conceptos fundamentales y la estructura de las respuestas para mejorar la claridad y la cobertura de los contenidos.

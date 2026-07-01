@@ -1,0 +1,25 @@
+Examen: prueba_1_maria
+Modelo: qwen3:8b
+Nota propuesta: 8.25/10 (8.25/10)
+Nota de referencia: 7.25/10
+
+=== RÚBRICA RELLENADA ===
+- Explica la vida nómada en el Paleolítico (2 puntos): 2/2
+    Menciona caza, pesca y recolección como actividades de subsistencia y explica que el desplazamiento dependía de la disponibilidad de recursos.
+- Papel de la agricultura en el paso al sedentarismo (1.25 puntos): 0.75/1.25
+    Menciona la agricultura como factor del sedentarismo, pero confunde el Mesolítico con el Neolítico y no define claramente qué es la agricultura.
+- Papel de la ganadería en el paso al sedentarismo (1.25 puntos): 0.75/1.25
+    Explica que la ganadería aportó carne, pieles y fuerza de trabajo, pero nuevamente confunde el Mesolítico con el Neolítico.
+- Edad del Cobre: características y ventaja tecnológica (1 puntos): 1/1
+    Identifica el cobre como primer metal trabajado y menciona su maleabilidad y blandura.
+- Edad del Bronce: características y ventaja tecnológica (1.25 puntos): 1.25/1.25
+    Explica que el bronce es una aleación de cobre y estaño, más duro, y menciona su impacto en armas y herramientas.
+- Edad del Hierro: características y ventaja tecnológica (1.25 puntos): 1.25/1.25
+    Indica que el hierro es más abundante y duro que el bronce, y menciona su democratización del acceso a herramientas.
+- Identificación del evento que marca el fin de la Prehistoria (0.5 puntos): 0.5/0.5
+    Identifica correctamente la invención de la escritura como el hito que separa Prehistoria e Historia.
+- Análisis del impacto de la escritura (1.5 puntos): 0.75/1.5
+    Menciona que la escritura permitió registrar eventos y dar inicio a la Historia, pero no detalla impactos como leyes, comercio o administración.
+
+=== INFORME ===
+El alumno responde correctamente a la vida nómada en el Paleolítico, identifica el cobre, el bronce y el hierro como etapas de la Edad de los Metales, y señala la escritura como el fin de la Prehistoria. Sin embargo, confunde el Mesolítico con el Neolítico en las preguntas sobre la agricultura y la ganadería, lo que limita su puntuación en esos ítems. En el análisis del impacto de la escritura, la respuesta es breve y carece de ejemplos concretos como el registro de leyes o la administración de ciudades. Se recomienda reforzar la distinción entre etapas prehistóricas y profundizar en los efectos sociales de la escritura.

@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Principio de mínimo privilegio",
+    "max_score": 0.5,
+    "description": "Bien (0,5 p): define el principio correctamente, es decir, otorgar a cada componente, usuario o proceso solo los permisos estrictamente necesarios; Regular (0,25 p): transmite la idea de restringir o limitar permisos pero sin una definición precisa; Mal (0 p): no responde o la definición es incorrecta."
+  },
+  {
+    "name": "Inyección SQL: definición, explotación y prevención",
+    "max_score": 2,
+    "description": "Bien (2 p): explica qué es la inyección SQL, menciona las consultas parametrizadas como medida de prevención y añade además cómo se explota o alguna otra medida; Notable (1,5 p): explica qué es a grandes rasgos y menciona las consultas parametrizadas; Regular (1 p): menciona las consultas parametrizadas u otra medida de prevención válida, aunque la explicación del ataque sea pobre o falte; Mal (0 p): no responde o no menciona ninguna medida de prevención válida."
+  },
+  {
+    "name": "Autenticación vs. autorización",
+    "max_score": 0.5,
+    "description": "Bien (0,5 p): diferencia ambos conceptos (autenticación = quién eres; autorización = qué puedes hacer); Regular (0,25 p): intuye la diferencia pero la expresa de forma imprecisa o confusa; Mal (0 p): no responde o confunde ambos conceptos."
+  },
+  {
+    "name": "Modelado de amenazas: definición y fase",
+    "max_score": 1,
+    "description": "Bien (1 p): define el modelado de amenazas e indica que se realiza en la fase de diseño; Regular (0,5 p): define correctamente sin precisar la fase, o indica la fase con una definición algo vaga; Mal (0 p): no responde o la descripción es incorrecta."
+  },
+  {
+    "name": "Defensa en profundidad: definición y ejemplos",
+    "max_score": 2,
+    "description": "Bien (2 p): define la estrategia (múltiples capas de seguridad independientes) y aporta al menos dos ejemplos de capas; Notable (1,5 p): define correctamente y aporta uno o dos ejemplos; Regular (1 p): transmite la idea de capas o aporta algún ejemplo válido, aunque sin una definición precisa; Mal (0 p): no responde o la definición es incorrecta y no aporta ejemplos."
+  },
+  {
+    "name": "OWASP Top 10: definición y utilidad",
+    "max_score": 1,
+    "description": "Bien (1 p): explica qué es (lista de los riesgos más críticos en aplicaciones web) e indica para qué sirve; Regular (0,5 p): explica qué es correctamente aunque la utilidad sea genérica, o lo menciona como referencia de seguridad sin precisar más; Mal (0 p): no responde o la descripción es incorrecta."
+  },
+  {
+    "name": "Cross-Site Scripting (XSS): definición, impacto y mitigación",
+    "max_score": 2,
+    "description": "Bien (2 p): define qué es XSS, menciona algún impacto y al menos dos técnicas de mitigación; Notable (1,5 p): define correctamente y menciona al menos una técnica de mitigación junto con algún impacto; Regular (1 p): transmite la idea de XSS aunque mencione una sola contramedida o el impacto sea vago; Mal (0 p): no responde o no menciona ninguna técnica de mitigación."
+  },
+  {
+    "name": "Cifrado en tránsito vs. cifrado en reposo",
+    "max_score": 1,
+    "description": "Bien (1 p): diferencia ambos conceptos (datos en transmisión vs. datos almacenados) e indica que cubren amenazas distintas; Regular (0,5 p): diferencia ambos conceptos pero la formulación es imprecisa o no justifica por qué ambos son necesarios; Mal (0 p): no responde o confunde ambos conceptos."
+  }
+]
