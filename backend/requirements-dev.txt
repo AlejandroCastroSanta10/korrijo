@@ -3,3 +3,5 @@ ruff==0.15.10
 pytest
 pytest-asyncio
 httpx
+jiwer
+matplotlib

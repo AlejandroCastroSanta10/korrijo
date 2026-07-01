@@ -1,0 +1,4 @@
+modelo,examenes_ok,cer_medio,wer_medio,segundos_medio,vram_pico_medio_mb
+qwen2.5vl:7b,6/6,0.0099,0.0295,34.29,8974
+qwen3-vl:8b,6/6,0.0102,0.0291,41.57,9187
+minicpm-v4.5:8b,6/6,0.049,0.1013,22.9,7815
