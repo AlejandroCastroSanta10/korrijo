@@ -90,3 +90,9 @@ a Korrijo desde [http://localhost:3000](http://localhost:3000). Ten en cuenta qu
 
 Consulta [`frontend/README.md`](./frontend/README.md) para para entender todo lo relacionado con la parte frontend, incluido
 como ejecutarlo para poder probar el sistema.
+
+---
+
+## D. Dataset para probar la herramienta
+
+En `docs/dataset-korrijo` hay tres modelos de examen, cada uno con dos instancias rellenadas por personas diferentes. Además, para cada modelo hay documentos de contexto, *gold standards*, rúbricas, indicaciones adicionales del profesor, entre otras cosas. Por lo tanto se proporciona un conjunto bastante completo para poder probar el sistema.
