@@ -72,7 +72,7 @@ A mí, con una **NVIDIA RTX 3060** de **12 GB de VRAM** me funcionan bien estos:
 
 - **qwen2.5vl:7b** como modelo de visión. Se encarga de las transcripciones de los exámenes. Súper rápido y bueno para OCR manuscrito en español.
 
-- **qwen3:8b** como modelo textual, que se encarga, principalmente, de corregir los exámenes.
+- **gemma4:12b** como modelo textual (aunque es multimodal), que se encarga, principalmente, de corregir los exámenes.
 
 ## B. Backend
 
